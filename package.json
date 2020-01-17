@@ -1,12 +1,11 @@
 {
   "license": "MIT",
   "scripts": {
-    "heroku-postbuild": "cd client && npm install && npm run build",
-    "server": "node -r dotenv-override-true/config -r @babel/register index.js"
+    "heroku-postbuild": "cd client && npm install && npm run build && npm start",
+    "start": "node -r dotenv-override-true/config -r @babel/register index.js"
   },
   "dependencies": {
-    "@ringcentral/sdk": "^4.0.0-alpha.7",
-    "@ringcentral/subscriptions": "^4.0.0-alpha.7",
+    "@ringcentral/sdk": "^4.0.0",
     "dotenv": "^8.1.0",
     "dotenv-override-true": "^6.2.0",
     "ibm-watson": "^4.5.0",
