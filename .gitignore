@@ -1,4 +1,5 @@
 node_modules/
+node_modules_old/
 .env
 dotenv
 *.raw
@@ -7,4 +8,4 @@ README.md
 *.txt
 *lock.json
 tyler.js
-yarn.lock
+yarn_remove.lock
