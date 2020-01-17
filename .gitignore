@@ -4,6 +4,7 @@ dotenv
 *.raw
 temp.*
 README.md
-.txt
+*.txt
 *lock.json
 tyler.js
+yarn.lock
