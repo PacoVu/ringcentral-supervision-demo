@@ -178,8 +178,8 @@ export default class App extends Component {
   }
 
   updatePhoneStatus(phoneStatus) {
+    var cannotRecord = true
     if (phoneStatus.agent === "120"){
-      var cannotRecord = true
       if (phoneStatus.status === "connected"){
         this.clearTranscript(phoneStatus.agent)
         cannotRecord = false
@@ -193,7 +193,6 @@ export default class App extends Component {
           }
       }))
     }else{
-      var cannotRecord = true
       if (phoneStatus.status === "connected"){
         this.clearTranscript(phoneStatus.agent)
         cannotRecord = false
@@ -496,10 +495,10 @@ export default class App extends Component {
           <div className="conversations">
             {this.agent1Items}
           </div>
-          <span>Phone status: {this.state.agent1.phoneStatus} </span> &nbsp;
+          <span>Phone status: {this.state.agent2.phoneStatus} </span> &nbsp;
           <button onClick={() => this.clearTranscript("122")}>Clear Transcript</button> &nbsp;
-          <button disabled={this.state.agent1.cannotRecord} onClick={() => this.recordingCall("122")}>{this.state.agent1.recordingButtonName}</button> &nbsp;
-          <button onClick={() => this.enableTranslation("122")}>{this.state.agent1.buttonName}</button> &nbsp;
+          <button disabled={this.state.agent2.cannotRecord} onClick={() => this.recordingCall("122")}>{this.state.agent2.recordingButtonName}</button> &nbsp;
+          <button onClick={() => this.enableTranslation("122")}>{this.state.agent2.buttonName}</button> &nbsp;
           <button onClick={() => this.superviseAgents("122")}>Monitor 122</button> &nbsp;
           <br/><br/>
           <div className="conversations">
