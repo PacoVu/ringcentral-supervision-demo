@@ -1,0 +1,9 @@
+node_modules/
+.env
+dotenv
+*.raw
+temp.*
+README.md
+.txt
+*lock.json
+tyler.js

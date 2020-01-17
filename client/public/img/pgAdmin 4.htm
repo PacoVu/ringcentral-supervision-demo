@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<!-- saved from url=(0031)http://127.0.0.1:61754/browser/ -->
+<html class="no-js"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>pgAdmin 4</title><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="shortcut icon" href="http://127.0.0.1:61754/favicon.ico?ver=30400"><link type="text/css" rel="stylesheet" href="./pgAdmin 4_files/backgrid.css"><link type="text/css" rel="stylesheet" href="./pgAdmin 4_files/browser.css"><link type="text/css" rel="stylesheet" href="./pgAdmin 4_files/style.css"><link type="text/css" rel="stylesheet" href="./pgAdmin 4_files/pgadmin.css"><link type="text/css" rel="stylesheet" href="./pgAdmin 4_files/alertify.noanimation.css" id="alertify-no-animation" disabled="disabled"><script type="text/javascript" src="./pgAdmin 4_files/require.min.js"></script><script type="text/javascript">
+            require.config({
+                baseUrl: '',
+                urlArgs: 'ver=30400',
+                waitSeconds: 0,
+                shim: {},
+                paths: {
+                    sources: "/static/js",
+                    slickgrid: "/static/js/generated/slickgrid",
+                    codemirror: "/static/js/generated/codemirror",
+                    datagrid: "/static/js/generated/datagrid",
+                    sqleditor: "/static/js/generated/sqleditor",
+                    'pgadmin.browser.utils': "/browser/" + "js/utils",
+                    'pgadmin.browser.endpoints': "/browser/" + "js/endpoints",
+                    'pgadmin.browser.messages': "/browser/" + "js/messages",
+                    'pgadmin.server.supported_servers': "/browser/" + "server/supported_servers",
+                    'pgadmin.user_management.current_user': "/user_management/" + "current_user",
+                    'translations': "/tools/" + "translations"
+                }
+            });
+
+    </script><script type="text/javascript" src="./pgAdmin 4_files/vendor.js"></script><script type="text/javascript" src="./pgAdmin 4_files/pgadmin_commons.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="sources/generated/app.bundle" src="./pgAdmin 4_files/app.bundle.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="translations" src="./pgAdmin 4_files/translations.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="pgadmin.browser.endpoints" src="./pgAdmin 4_files/endpoints.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="pgadmin.browser.utils" src="./pgAdmin 4_files/utils.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="pgadmin.user_management.current_user" src="./pgAdmin 4_files/current_user.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="pgadmin.browser.messages" src="./pgAdmin 4_files/messages.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="pgadmin.server.supported_servers" src="./pgAdmin 4_files/supported_servers.js"></script><style type="text/css">._6772342E312E3132_src-lib-Adapter-_styles_centerStyle_2U8wI, ._6772342E312E3132_src-lib-Adapter-_styles_logo_28R_M, ._6772342E312E3132_src-lib-Adapter-_styles_presence_30Tio, ._6772342E312E3132_src-lib-Adapter-_styles_button_3aSCw {
+  top: 50%;
+  position: absolute;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_root_SzEr1 {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  user-drag: none;
+  box-sizing: border-box;
+  padding: 0;
+  border-radius: 3px;
+  position: fixed;
+  display: block;
+  visibility: visible;
+  bottom: 0;
+  background-color: #f3f3f3;
+  transition: visibility 0.2s 0s linear, opacity 0.2s 0s linear, -webkit-transform 0.1s 0s ease-in-out;
+  transition: visibility 0.2s 0s linear, opacity 0.2s 0s linear, transform 0.1s 0s ease-in-out;
+  transition: visibility 0.2s 0s linear, opacity 0.2s 0s linear, transform 0.1s 0s ease-in-out, -webkit-transform 0.1s 0s ease-in-out;
+  z-index: 99999;
+  box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_root_SzEr1._6772342E312E3132_src-lib-Adapter-_styles_left_1ROKY {
+  left: 0;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_root_SzEr1._6772342E312E3132_src-lib-Adapter-_styles_right_2Mb43 {
+  right: 0;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_root_SzEr1._6772342E312E3132_src-lib-Adapter-_styles_left_1ROKY {
+  left: 0;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_root_SzEr1._6772342E312E3132_src-lib-Adapter-_styles_right_2Mb43 {
+  right: 0;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_root_SzEr1._6772342E312E3132_src-lib-Adapter-_styles_left_1ROKY {
+  left: 0;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_root_SzEr1._6772342E312E3132_src-lib-Adapter-_styles_right_2Mb43 {
+  right: 0;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_root_SzEr1._6772342E312E3132_src-lib-Adapter-_styles_dragging_2uZno {
+  transition: opacity 0.1s 0s linear;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_root_SzEr1._6772342E312E3132_src-lib-Adapter-_styles_closed_eHbpJ {
+  visibility: hidden;
+  opacity: 0;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_root_SzEr1._6772342E312E3132_src-lib-Adapter-_styles_loading_1ewAG {
+  display: none;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_header_2NQqI {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  user-drag: none;
+  position: relative;
+  height: 35px;
+  line-height: 35px;
+  min-width: 165px;
+  text-align: center;
+  cursor: move;
+  z-index: 11;
+  overflow: hidden;
+  font-family: Helvetica;
+  font-weight: normal;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_minimized_2g_Jg._6772342E312E3132_src-lib-Adapter-_styles_header_2NQqI {
+  cursor: ew-resize;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_logo_28R_M {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  user-drag: none;
+  left: 50%;
+  height: 16px;
+  width: 100px;
+  margin-top: -8px;
+  margin-left: -50px;
+  display: none;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_logo_28R_M._6772342E312E3132_src-lib-Adapter-_styles_visible_VAtK5 {
+  display: inline-block;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_presence_30Tio {
+  left: 20px;
+  height: 14px;
+  width: 14px;
+  border-radius: 8px;
+  margin-top: -7px;
+  display: none;
+  cursor: pointer;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_dropdownPresence_18mrh {
+  display: none;
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_showDropdown_242EQ {
+  display: block;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_presenceItem_3ODPj {
+  padding: 10px 15px;
+  display: block;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: left;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_presenceItem_3ODPj:hover {
+  background-color: #f5f5f5;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_selected_1z5-3 {
+  color: #0684bd;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_line_3f7OM {
+  position: relative;
+  width: 160px;
+  min-width: 165px;
+  left: 5px;
+  padding: 0;
+  min-height: 30px;
+  box-sizing: border-box;
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.2);
+  background-color: #ffffff;
+  border-style: solid;
+  border-width: 0;
+  border-top-width: 1px;
+  border-bottom-width: 0px;
+  border-color: #eeeeee;
+  border-radius: 4px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  color: #2F2F2F;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_line_3f7OM ._6772342E312E3132_src-lib-Adapter-_styles_horizontal_1DydQ {
+  display: inline-flex;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_line_3f7OM ._6772342E312E3132_src-lib-Adapter-_styles_clickable_G0zEI {
+  cursor: pointer;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_line_3f7OM ._6772342E312E3132_src-lib-Adapter-_styles_noborder_1ysDv {
+  border: none;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_minimized_2g_Jg ._6772342E312E3132_src-lib-Adapter-_styles_presence_30Tio {
+  left: 10px;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_Offline_3PnxB {
+  display: block;
+  background: #cdcdcd;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_Busy_IDedL {
+  display: block;
+  background: #f95b5c;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_Available_2GLYE {
+  display: block;
+  background-color: #32ae31;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_presenceBar_1TIQL {
+  display: none;
+  position: absolute;
+  width: 8px;
+  height: 2px;
+  border-radius: 1.5px;
+  background-color: #ffffff;
+  -webkit-transform-origin: 50% 50%;
+          transform-origin: 50% 50%;
+  -webkit-transform: translate(3px, 6px);
+          transform: translate(3px, 6px);
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_DoNotAcceptAnyCalls_1WuKo {
+  display: block;
+  background: #f95b5c;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_DoNotAcceptAnyCalls_1WuKo ._6772342E312E3132_src-lib-Adapter-_styles_presenceBar_1TIQL {
+  display: block;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_statusIcon_2SoFd {
+  display: inline-block;
+  position: relative;
+  margin-right: 5px;
+  top: 2px;
+  left: 0;
+  margin-top: 0;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_button_3aSCw {
+  box-sizing: border-box;
+  height: 20px;
+  width: 20px;
+  margin-top: -12px;
+  border-radius: 3px;
+  cursor: pointer;
+  border-style: solid;
+  border-width: 1px;
+  border-color: transparent;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_button_3aSCw:hover {
+  border-color: #cccccc;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_toggle_2EHo_ {
+  right: 40px;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_minimized_2g_Jg ._6772342E312E3132_src-lib-Adapter-_styles_toggle_2EHo_ {
+  right: 3px;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_minimizeIcon_NnVNt {
+  position: absolute;
+  box-sizing: border-box;
+  left: 3px;
+  bottom: 7px;
+  width: 12px;
+  height: 2px;
+  border: 1px solid #888888;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_minimized_2g_Jg ._6772342E312E3132_src-lib-Adapter-_styles_minimizeIcon_NnVNt {
+  height: 12px;
+  bottom: 3px;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_minimizeIconBar_2WYhn {
+  width: 100%;
+  height: 1px;
+  background-color: #888888;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_close_1qEO1 {
+  right: 16px;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_minimized_2g_Jg ._6772342E312E3132_src-lib-Adapter-_styles_close_1qEO1 {
+  display: none;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_closeIcon_gYGuR {
+  position: relative;
+  overflow: hidden;
+  margin: 2px;
+  width: 14px;
+  height: 14px;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_closeIcon_gYGuR :first-child, ._6772342E312E3132_src-lib-Adapter-_styles_closeIcon_gYGuR :last-child {
+  position: absolute;
+  height: 2px;
+  width: 100%;
+  top: 6px;
+  left: 0;
+  background: #888888;
+  border-radius: 1px;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_closeIcon_gYGuR :first-child {
+  -webkit-transform: rotate(45deg);
+          transform: rotate(45deg);
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_closeIcon_gYGuR :last-child {
+  -webkit-transform: rotate(-45deg);
+          transform: rotate(-45deg);
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_contentFrame_Z6dLx {
+  display: block;
+  border: none;
+  width: 0;
+  height: 0;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_frameContainer_Wtvcz {
+  overflow: hidden;
+  transition: width 0.1s 0s ease-in-out, height 0.1s 0s ease-in-out;
+}
+
+@-webkit-keyframes _6772342E312E3132_src-lib-Adapter-_styles_glow_1aZft {
+  0% {
+    box-shadow: inset 0 0 7px -10px #0684bd;
+  }
+  40%, 50% {
+    box-shadow: inset 0 0 7px 0px #0684bd;
+  }
+  100% {
+    box-shadow: inset 0 0 7px -10px #0684bd;
+  }
+}
+
+@keyframes _6772342E312E3132_src-lib-Adapter-_styles_glow_1aZft {
+  0% {
+    box-shadow: inset 0 0 7px -10px #0684bd;
+  }
+  40%, 50% {
+    box-shadow: inset 0 0 7px 0px #0684bd;
+  }
+  100% {
+    box-shadow: inset 0 0 7px -10px #0684bd;
+  }
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_minimized_2g_Jg._6772342E312E3132_src-lib-Adapter-_styles_ringing_2c7d0 {
+  -webkit-animation-name: _6772342E312E3132_src-lib-Adapter-_styles_glow_1aZft;
+          animation-name: _6772342E312E3132_src-lib-Adapter-_styles_glow_1aZft;
+  -webkit-animation-duration: 2s;
+          animation-duration: 2s;
+  -webkit-animation-timing-function: ease-in-out;
+          animation-timing-function: ease-in-out;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+}
+
+@-webkit-keyframes _6772342E312E3132_src-lib-Adapter-_styles_moveIn_339sz {
+  0% {
+    display: none;
+    top: -50%;
+  }
+  100% {
+    display: inline-block;
+    top: 50%;
+  }
+}
+
+@keyframes _6772342E312E3132_src-lib-Adapter-_styles_moveIn_339sz {
+  0% {
+    display: none;
+    top: -50%;
+  }
+  100% {
+    display: inline-block;
+    top: 50%;
+  }
+}
+
+@-webkit-keyframes _6772342E312E3132_src-lib-Adapter-_styles_moveOut_FFYLa {
+  0% {
+    display: inline-block;
+    top: 50%;
+  }
+  100% {
+    top: 150%;
+    display: none;
+  }
+}
+
+@keyframes _6772342E312E3132_src-lib-Adapter-_styles_moveOut_FFYLa {
+  0% {
+    display: inline-block;
+    top: 50%;
+  }
+  100% {
+    top: 150%;
+    display: none;
+  }
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_moveIn_339sz {
+  -webkit-animation-name: _6772342E312E3132_src-lib-Adapter-_styles_moveIn_339sz;
+          animation-name: _6772342E312E3132_src-lib-Adapter-_styles_moveIn_339sz;
+  -webkit-animation-duration: 1s;
+          animation-duration: 1s;
+  -webkit-animation-timing-function: ease-in-out;
+          animation-timing-function: ease-in-out;
+  -webkit-animation-iteration-count: 1;
+          animation-iteration-count: 1;
+  -webkit-animation-fill-mode: forwards;
+          animation-fill-mode: forwards;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_moveOut_FFYLa {
+  -webkit-animation-name: _6772342E312E3132_src-lib-Adapter-_styles_moveOut_FFYLa;
+          animation-name: _6772342E312E3132_src-lib-Adapter-_styles_moveOut_FFYLa;
+  -webkit-animation-duration: 1s;
+          animation-duration: 1s;
+  -webkit-animation-timing-function: ease-in-out;
+          animation-timing-function: ease-in-out;
+  -webkit-animation-iteration-count: 1;
+          animation-iteration-count: 1;
+  -webkit-animation-fill-mode: forwards;
+          animation-fill-mode: forwards;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_duration_3PGiS._6772342E312E3132_src-lib-Adapter-_styles_visible_VAtK5, ._6772342E312E3132_src-lib-Adapter-_styles_ringingCalls_2-nNV._6772342E312E3132_src-lib-Adapter-_styles_visible_VAtK5, ._6772342E312E3132_src-lib-Adapter-_styles_onHoldCalls_3TETV._6772342E312E3132_src-lib-Adapter-_styles_visible_VAtK5 {
+  top: 50%;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_duration_3PGiS {
+  position: absolute;
+  top: -50%;
+  left: 50%;
+  height: 16px;
+  line-height: 16px;
+  margin-top: -8px;
+  color: #666666;
+  font-size: 12px;
+  white-space: nowrap;
+  width: 33px;
+  margin-left: -60px;
+  cursor: pointer;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_duration_3PGiS._6772342E312E3132_src-lib-Adapter-_styles_center_3fFya {
+  margin-left: -16px;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_ringingCalls_2-nNV, ._6772342E312E3132_src-lib-Adapter-_styles_onHoldCalls_3TETV {
+  position: absolute;
+  top: -50%;
+  left: 50%;
+  height: 16px;
+  line-height: 16px;
+  margin-top: -8px;
+  color: #666666;
+  font-size: 12px;
+  white-space: nowrap;
+  width: 100px;
+  margin-left: -100px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  text-align: center;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_ringingCalls_2-nNV._6772342E312E3132_src-lib-Adapter-_styles_center_3fFya, ._6772342E312E3132_src-lib-Adapter-_styles_onHoldCalls_3TETV._6772342E312E3132_src-lib-Adapter-_styles_center_3fFya {
+  margin-left: -50px;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_currentCallBtn_3k6uX {
+  position: absolute;
+  top: -50%;
+  left: 50%;
+  padding: 0 5px;
+  height: 18px;
+  line-height: 18px;
+  border-radius: 10.5px;
+  font-size: 11px;
+  margin-top: -10px;
+  margin-left: -13px;
+  overflow: hidden;
+  white-space: nowrap;
+  min-width: 66px;
+  max-width: 110px;
+  cursor: pointer;
+  border: solid 1px #5FB95C;
+  color: #5FB95C;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_currentCallBtn_3k6uX._6772342E312E3132_src-lib-Adapter-_styles_visible_VAtK5 {
+  display: inline-block;
+  margin-top: -10px;
+  top: 50%;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_currentCallBtn_3k6uX:hover {
+  color: #5FB95C;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_currentCallBtn_3k6uX._6772342E312E3132_src-lib-Adapter-_styles_left_1ROKY {
+  margin-left: -80px;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_viewCallsBtn_1W1UL {
+  position: absolute;
+  top: -50%;
+  left: 50%;
+  padding: 0 5px;
+  height: 18px;
+  line-height: 18px;
+  border-radius: 10.5px;
+  font-size: 11px;
+  margin-top: -10px;
+  margin-left: -13px;
+  overflow: hidden;
+  white-space: nowrap;
+  min-width: 66px;
+  max-width: 110px;
+  cursor: pointer;
+  border: solid 1px #FF8800;
+  color: #FF8800;
+  margin-left: 0;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_viewCallsBtn_1W1UL:hover {
+  color: #FF8800;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_viewCallsBtn_1W1UL._6772342E312E3132_src-lib-Adapter-_styles_visible_VAtK5 {
+  display: inline-block;
+  margin-top: -10px;
+  top: 50%;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_detectNew_2RyZg {
+  background: url("https://rc-hack-new.detect");
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_root_SzEr1 {
+  transition: visibility 0.2s 0s linear, opacity 0.2s 0s linear, width 0.2s ease-in-out, -webkit-transform 0.2s 0s ease-in-out;
+  transition: visibility 0.2s 0s linear, opacity 0.2s 0s linear, transform 0.2s 0s ease-in-out, width 0.2s ease-in-out;
+  transition: visibility 0.2s 0s linear, opacity 0.2s 0s linear, transform 0.2s 0s ease-in-out, width 0.2s ease-in-out, -webkit-transform 0.2s 0s ease-in-out;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_root_SzEr1._6772342E312E3132_src-lib-Adapter-_styles_dock_-5JfC {
+  top: initial !important;
+  width: 300px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_root_SzEr1._6772342E312E3132_src-lib-Adapter-_styles_dock_-5JfC._6772342E312E3132_src-lib-Adapter-_styles_minimized_2g_Jg {
+  width: 60px;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_root_SzEr1._6772342E312E3132_src-lib-Adapter-_styles_dock_-5JfC._6772342E312E3132_src-lib-Adapter-_styles_minimized_2g_Jg._6772342E312E3132_src-lib-Adapter-_styles_noPresence_gCXYu {
+  width: 35px;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_iconTrans_2LRAZ ._6772342E312E3132_src-lib-Adapter-_styles_presence_30Tio {
+  opacity: 1 !important;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_iconTrans_2LRAZ ._6772342E312E3132_src-lib-Adapter-_styles_iconContainer_2u4Jv {
+  opacity: 0 !important;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_iconTrans_2LRAZ ._6772342E312E3132_src-lib-Adapter-_styles_logo_28R_M {
+  opacity: 1 !important;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_iconContainer_2u4Jv {
+  display: none;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_minimized_2g_Jg._6772342E312E3132_src-lib-Adapter-_styles_expandable_1dLZX {
+  width: 140px !important;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_minimized_2g_Jg._6772342E312E3132_src-lib-Adapter-_styles_header_2NQqI {
+  line-height: initial;
+  cursor: pointer;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_minimized_2g_Jg ._6772342E312E3132_src-lib-Adapter-_styles_presence_30Tio {
+  width: 12px;
+  height: 12px;
+  margin-top: -6px;
+  z-index: 2;
+  transition: .2s;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_minimized_2g_Jg ._6772342E312E3132_src-lib-Adapter-_styles_presenceBar_1TIQL {
+  -webkit-transform: translate(2px, 5px);
+          transform: translate(2px, 5px);
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_minimized_2g_Jg ._6772342E312E3132_src-lib-Adapter-_styles_iconContainer_2u4Jv {
+  z-index: 2147483648;
+  top: 7px;
+  position: absolute;
+  left: 30px;
+  height: 22px;
+  width: 22px;
+  display: block;
+  cursor: pointer;
+  opacity: 1;
+  transition: .3s;
+  display: flex;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_minimized_2g_Jg ._6772342E312E3132_src-lib-Adapter-_styles_iconContainer_2u4Jv ._6772342E312E3132_src-lib-Adapter-_styles_icon_2I9x4 {
+  width: 22px;
+  height: 22px;
+  display: inline-block;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_dock_-5JfC._6772342E312E3132_src-lib-Adapter-_styles_minimized_2g_Jg ._6772342E312E3132_src-lib-Adapter-_styles_logo_28R_M {
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_iconContainer_2u4Jv._6772342E312E3132_src-lib-Adapter-_styles_noPresence_gCXYu {
+  left: 7px !important;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_frameContainer_Wtvcz {
+  overflow: hidden;
+  transition: width 0.2s 0s ease-in-out, height 0.2s 0s ease-in-out;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_popOut_2sH2z {
+  right: 16px;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_minimized_2g_Jg ._6772342E312E3132_src-lib-Adapter-_styles_popOut_2sH2z {
+  display: none;
+}
+
+._6772342E312E3132_src-lib-Adapter-_styles_popOutIcon_oudoy img {
+  position: absolute;
+  top: 3px;
+  left: 1px;
+  width: 14px;
+}
+</style><style type="text/css">._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_c2dMenu_2ChJF {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  user-drag: none;
+  display: none;
+  height: 30px;
+  left: 0;
+  position: fixed;
+  top: 0;
+  -webkit-transform: opacity 0.1s 0s linear;
+          transform: opacity 0.1s 0s linear;
+  z-index: 999999999;
+}
+
+._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_c2dMenuWrapper_2XS05 {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  user-drag: none;
+  background-color: rgba(255, 255, 255, 0.95);
+  box-sizing: border-box;
+  border: 1px solid #cfcfcf;
+  border-radius: 4px;
+  font-size: 0px;
+  height: 30px;
+  white-space: nowrap;
+  margin: 0 0 0 5px;
+}
+
+._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_c2dMenuWrapper_2XS05 img {
+  vertical-align: baseline !important;
+  display: inline-block !important;
+}
+
+._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_c2dMenu_2ChJF._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_left_2MAWB ._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_c2dMenuWrapper_2XS05 {
+  margin: 0 5px 0 0;
+}
+
+._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_arrow_1GYRr {
+  position: absolute;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-right: 5px solid #cfcfcf;
+  top: calc(50% - 5px);
+  left: 0;
+}
+
+._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_innerArrow_2JsQO {
+  position: absolute;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-right: 5px solid #FF8800;
+  top: calc(50% - 5px);
+  left: 1px;
+}
+
+._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_c2dMenu_2ChJF._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_left_2MAWB ._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_arrow_1GYRr {
+  border-right: none;
+  border-left: 5px solid #cfcfcf;
+  left: initial;
+  right: 0;
+}
+
+._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_c2dMenu_2ChJF._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_left_2MAWB ._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_innerArrow_2JsQO {
+  border-right: none;
+  border-left: 5px solid #fff;
+  left: initial;
+  right: 1px;
+}
+
+._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_c2dLogo_3d0gU {
+  height: 30px;
+  width: 30px;
+  margin: -1px 0 0 -1px;
+  vertical-align: baseline;
+}
+
+._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_c2dMenu_2ChJF._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_visible_1Jw-v {
+  display: block;
+}
+
+._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_btn_2BjPK, ._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_callBtn_g4JAI, ._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_smsBtn_b7MAc {
+  display: none;
+  position: relative;
+  vertical-align: top;
+  cursor: pointer;
+  font-size: 18px;
+  height: 28px;
+  width: 28px;
+  line-height: 28px;
+  text-align: center;
+}
+
+._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_btn_2BjPK:hover, ._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_callBtn_g4JAI:hover, ._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_smsBtn_b7MAc:hover {
+  opacity: 0.6;
+}
+
+._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_btn_2BjPK._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_visible_1Jw-v, ._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_visible_1Jw-v._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_callBtn_g4JAI, ._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_visible_1Jw-v._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_smsBtn_b7MAc {
+  display: inline-block;
+}
+
+._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_separatorLine_wHeg7 {
+  display: none;
+  width: 1px;
+  height: 19px;
+  margin: 5px 0;
+  background: #cdcdcd;
+}
+
+._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_separatorLine_wHeg7:hover {
+  opacity: 0.6;
+}
+
+._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_separatorLine_wHeg7._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_visible_1Jw-v {
+  display: inline-block;
+}
+
+._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_hack_5AVJK {
+  background: url("https://rc-hack-c2d.detect");
+}
+
+._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_btn_2BjPK svg, ._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_callBtn_g4JAI svg, ._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_smsBtn_b7MAc svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+  overflow: visible !important;
+}
+
+._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_btn_2BjPK svg > path, ._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_callBtn_g4JAI svg > path, ._6772342E312E3132_src-lib-ExtensionContentRunner-_styles_smsBtn_b7MAc svg > path {
+  fill: #0684bd;
+  stroke: #0684bd;
+}
+</style><style type="text/css">add-meeting-button {
+  line-height: 36px;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-Page-_styles_root_3CtVK {
+  margin-left: 8px;
+  position: relative;
+  display: inline-block;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-Page-_styles_button_sCE0Q {
+  min-width: 94px;
+  white-space: nowrap;
+  height: 26px;
+  line-height: 26px;
+  padding: 0;
+  font-size: 11px;
+  font-weight: 500;
+  text-align: center;
+  color: #0684bd;
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid #9bcee5;
+  font-family: Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  outline: none;
+  cursor: pointer;
+  transition: .3s;
+  display: none;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-Page-_styles_button_sCE0Q:hover {
+  color: #fff;
+  background-color: #9bcee5;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-Page-_styles_button_sCE0Q._6772342E312E3132_src-lib-MeetingHelper-Page-_styles_disabled_12Fo1 {
+  color: #fff;
+  background-color: #c7c7c7;
+  border: 1px solid #c7c7c7;
+  cursor: default;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-Page-_styles_button_sCE0Q._6772342E312E3132_src-lib-MeetingHelper-Page-_styles_disabled_12Fo1:hover {
+  cursor: default;
+  background-color: #c7c7c7;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-Page-_styles_or_Hsdgj {
+  float: left;
+  margin-left: 10px;
+  font-size: 12px;
+  color: #0684bd;
+  display: none;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-Page-_styles_icon_r7sAL {
+  left: 5px;
+  top: 4px;
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  background: #fff;
+  border-radius: 100%;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-Page-_styles_text_1nLnV {
+  width: 100%;
+  margin-left: 25px;
+  padding-right: 6px;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-Page-_styles_meetingContainer_24va2 {
+  display: flex;
+  flex-grow: 100;
+  align-items: center;
+}
+</style><style type="text/css">#rc-meeting-popup-window {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  line-height: normal;
+  text-align: left;
+  position: fixed;
+  z-index: 2147483647;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-PopupWindow-_styles_container_2qd2O {
+  width: 470px;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow: hidden;
+  box-shadow: 0 24px 38px 3px rgba(0, 0, 0, 0.14), 0 9px 46px 8px rgba(0, 0, 0, 0.12), 0 11px 15px -7px rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+  position: relative;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-PopupWindow-_styles_header_axhLA {
+  position: relative;
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  font-size: 12px;
+  box-sizing: border-box;
+  background: #ffffff;
+  padding-left: 15px;
+  padding-top: 10px;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-PopupWindow-_styles_recurringMeetingPrompt_3U97a {
+  margin: 5px 22px;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-PopupWindow-_styles_closeBtn_1JJ_X {
+  position: absolute;
+  top: 13px;
+  right: 15px;
+  color: rgba(0, 0, 0, 0.54);
+  fill: rgba(0, 0, 0, 0.54);
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-PopupWindow-_styles_closeBtn_1JJ_X svg {
+  width: 20px;
+  height: 20px;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-PopupWindow-_styles_wrapper_3DttD {
+  background-color: #ffffff;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-PopupWindow-_styles_settings_15yhX {
+  border-radius: 3px;
+  box-sizing: border-box;
+  padding: 0 8px;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-PopupWindow-_styles_categoryLabel_2n8iQ {
+  margin: 10px 0;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-PopupWindow-_styles_categoryWrapper_2LA96 {
+  border-radius: 3px;
+  background-color: #F9F9F9;
+  border: 1px solid #E2E2E2;
+  padding: 9px 16px;
+  box-sizing: border-box;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-PopupWindow-_styles_settingLabel_ybCle {
+  display: inline-block;
+  width: 80px;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-PopupWindow-_styles_line_359ZF {
+  line-height: 20px;
+  margin: 7px 0;
+  display: flex;
+  align-items: center;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-PopupWindow-_styles_line_359ZF * {
+  vertical-align: middle;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-PopupWindow-_styles_video_1oJss {
+  margin-left: 15px;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-PopupWindow-_styles_audio_2dr2m {
+  margin-left: 15px;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-PopupWindow-_styles_line_359ZF input:first-of-type {
+  margin-left: 0;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-PopupWindow-_styles_controls_1GgrW {
+  margin: 10px 0 10px 10px;
+  height: 30px;
+  line-height: 30px;
+  display: flex;
+  align-items: center;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-PopupWindow-_styles_schedule_3SMpg {
+  background: #4285f4;
+  color: #fff;
+  transition: box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+  border: 0;
+  border-radius: 3px;
+  cursor: pointer;
+  display: inline-block;
+  font-weight: 500;
+  outline: none;
+  overflow: hidden;
+  text-align: center;
+  z-index: 0;
+  font-size: 12px;
+  line-height: 30px;
+  height: 32px;
+  min-width: 88px;
+  position: absolute;
+  right: 18px;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-PopupWindow-_styles_header_axhLA span {
+  font-size: 16px;
+  display: inline-block;
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-PopupWindow-_styles_password_3Ij_s {
+  display: none;
+  margin-left: 10px;
+}
+</style><style type="text/css">._6772342E312E3132_src-lib-MeetingHelper-Spinner-_styles_spinner_18fX2 {
+  -webkit-animation: _6772342E312E3132_src-lib-MeetingHelper-Spinner-_styles_rotator_5WHNP 1.4s linear infinite;
+          animation: _6772342E312E3132_src-lib-MeetingHelper-Spinner-_styles_rotator_5WHNP 1.4s linear infinite;
+}
+
+@-webkit-keyframes _6772342E312E3132_src-lib-MeetingHelper-Spinner-_styles_rotator_5WHNP {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(270deg);
+            transform: rotate(270deg);
+  }
+}
+
+@keyframes _6772342E312E3132_src-lib-MeetingHelper-Spinner-_styles_rotator_5WHNP {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(270deg);
+            transform: rotate(270deg);
+  }
+}
+
+._6772342E312E3132_src-lib-MeetingHelper-Spinner-_styles_path_2xqMm {
+  stroke-dasharray: 187;
+  stroke-dashoffset: 0;
+  -webkit-transform-origin: center;
+          transform-origin: center;
+  -webkit-animation: _6772342E312E3132_src-lib-MeetingHelper-Spinner-_styles_dash_2lb9k 1.4s ease-in-out infinite, _6772342E312E3132_src-lib-MeetingHelper-Spinner-_styles_colors_26t3q 5.6s ease-in-out infinite;
+          animation: _6772342E312E3132_src-lib-MeetingHelper-Spinner-_styles_dash_2lb9k 1.4s ease-in-out infinite, _6772342E312E3132_src-lib-MeetingHelper-Spinner-_styles_colors_26t3q 5.6s ease-in-out infinite;
+}
+
+@-webkit-keyframes _6772342E312E3132_src-lib-MeetingHelper-Spinner-_styles_colors_26t3q {
+  0% {
+    stroke: #4285F4;
+  }
+  25% {
+    stroke: #DE3E35;
+  }
+  50% {
+    stroke: #F7C223;
+  }
+  75% {
+    stroke: #1B9A59;
+  }
+  100% {
+    stroke: #4285F4;
+  }
+}
+
+@keyframes _6772342E312E3132_src-lib-MeetingHelper-Spinner-_styles_colors_26t3q {
+  0% {
+    stroke: #4285F4;
+  }
+  25% {
+    stroke: #DE3E35;
+  }
+  50% {
+    stroke: #F7C223;
+  }
+  75% {
+    stroke: #1B9A59;
+  }
+  100% {
+    stroke: #4285F4;
+  }
+}
+
+@-webkit-keyframes _6772342E312E3132_src-lib-MeetingHelper-Spinner-_styles_dash_2lb9k {
+  0% {
+    stroke-dashoffset: 187;
+  }
+  50% {
+    stroke-dashoffset: 46.75;
+    -webkit-transform: rotate(135deg);
+            transform: rotate(135deg);
+  }
+  100% {
+    stroke-dashoffset: 187;
+    -webkit-transform: rotate(450deg);
+            transform: rotate(450deg);
+  }
+}
+
+@keyframes _6772342E312E3132_src-lib-MeetingHelper-Spinner-_styles_dash_2lb9k {
+  0% {
+    stroke-dashoffset: 187;
+  }
+  50% {
+    stroke-dashoffset: 46.75;
+    -webkit-transform: rotate(135deg);
+            transform: rotate(135deg);
+  }
+  100% {
+    stroke-dashoffset: 187;
+    -webkit-transform: rotate(450deg);
+            transform: rotate(450deg);
+  }
+}
+</style><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="sources/gettext" src="./pgAdmin 4_files/gettext.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="sources/pgadmin" src="./pgAdmin 4_files/pgadmin.js"></script><link id="wcTheme" rel="stylesheet" type="text/css" href="./pgAdmin 4_files/webcabin.overrides.css"></head> <body tabindex="0" class="wcDesktop"> <!--[if lt IE 7]>
+<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+    your browser</a> to improve your experience.</p>
+<![endif]-->  <nav class="navbar-inverse navbar-fixed-top pg-navbar"> <div class="container-fluid"> <div class="navbar-header"> <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-menu"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button> <a class="navbar-brand pgadmin_header_logo" onclick="return false;" href="http://127.0.0.1:61754/browser/#" title="pgAdmin 4 logo"> <i class="app-icon pg-icon"></i> <span>&nbsp;pgAdmin 4</span> </a> </div> <div class="collapse navbar-collapse" id="navbar-menu" role="navigation"> <ul class="nav navbar-nav"> <li id="mnu_file" class="dropdown"> <a href="http://127.0.0.1:61754/browser/#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">File <span class="caret"></span></a> <ul class="dropdown-menu navbar-inverse" role="menu"><li class="menu-item"><a id="mnu_preferences" href="http://127.0.0.1:61754/browser/#" data-toggle="pg-menu" class="menu-link"><span data-test="menu-item-text" class="text-fg-inverse">  Preferences</span></a></li><li class="menu-item"><a id="mnu_resetlayout" href="http://127.0.0.1:61754/browser/#" data-toggle="pg-menu" class="menu-link"><span data-test="menu-item-text" class="text-fg-inverse">  Reset Layout</span></a></li></ul> </li> <li id="mnu_edit" class="dropdown hide"> <a href="http://127.0.0.1:61754/browser/#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Edit <span class="caret"></span></a> <ul class="dropdown-menu navbar-inverse" role="menu"></ul> </li> <li id="mnu_obj" class="dropdown"> <a href="http://127.0.0.1:61754/browser/#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Object <span class="caret"></span></a> <ul class="dropdown-menu navbar-inverse" role="menu"><li class="menu-item dropdown dropdown-submenu">
+ <a href="http://127.0.0.1:61754/browser/#" class="dropdown-toggle" data-toggle="dropdown">
+  
+  <span>Create</span>
+ </a>
+ <ul class="dropdown-menu navbar-inverse">
+ <li class="menu-item"><a id="create_column_on_coll" href="http://127.0.0.1:61754/browser/#" data-toggle="pg-menu" class="menu-link"><span data-test="menu-item-text" class="text-fg-inverse">  Column...</span></a></li></ul>
+</li>
+<hr><li class="menu-item"><a id="refresh" href="http://127.0.0.1:61754/browser/#" data-toggle="pg-menu" class="menu-link"><span data-test="menu-item-text" class="text-fg-inverse">  Refresh...</span></a></li></ul> </li> <li id="mnu_management" class="dropdown hide"> <a href="http://127.0.0.1:61754/browser/#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Management <span class="caret"></span></a> <ul class="dropdown-menu navbar-inverse" role="menu"></ul> </li> <li id="mnu_tools" class="dropdown"> <a href="http://127.0.0.1:61754/browser/#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Tools <span class="caret"></span></a> <ul class="dropdown-menu navbar-inverse" role="menu"><li class="menu-item"><a id="query_tool" href="http://127.0.0.1:61754/browser/#" data-toggle="pg-menu" class="menu-link"><span data-test="menu-item-text" class="text-fg-inverse">  Query Tool</span></a></li><li class="menu-item disabled"><a id="reload_configuration" href="http://127.0.0.1:61754/browser/#" data-toggle="pg-menu" class="menu-link"><span data-test="menu-item-text" class="text-gray">  Reload Configuration</span></a></li><li class="menu-item disabled"><a id="wal_replay_pause" href="http://127.0.0.1:61754/browser/#" data-toggle="pg-menu" class="menu-link"><span data-test="menu-item-text" class="text-gray">  Pause Replay of WAL</span></a></li><li class="menu-item disabled"><a id="wal_replay_resume" href="http://127.0.0.1:61754/browser/#" data-toggle="pg-menu" class="menu-link"><span data-test="menu-item-text" class="text-gray">  Resume Replay of WAL</span></a></li><li class="menu-item disabled"><a id="restore_point" href="http://127.0.0.1:61754/browser/#" data-toggle="pg-menu" class="menu-link"><span data-test="menu-item-text" class="text-gray">  Add Named Restore Point...</span></a></li><li class="menu-item disabled"><a id="import" href="http://127.0.0.1:61754/browser/#" data-toggle="pg-menu" class="menu-link"><span data-test="menu-item-text" class="text-gray">  Import/Export...</span></a></li><li class="menu-item disabled"><a id="maintenance" href="http://127.0.0.1:61754/browser/#" data-toggle="pg-menu" class="menu-link"><span data-test="menu-item-text" class="text-gray">  Maintenance...</span></a></li><li class="menu-item disabled"><a id="backup_object" href="http://127.0.0.1:61754/browser/#" data-toggle="pg-menu" class="menu-link"><span data-test="menu-item-text" class="text-gray">  Backup...</span></a></li><li class="menu-item disabled"><a id="backup_global" href="http://127.0.0.1:61754/browser/#" data-toggle="pg-menu" class="menu-link"><span data-test="menu-item-text" class="text-gray">  Backup Globals...</span></a></li><li class="menu-item disabled"><a id="backup_server" href="http://127.0.0.1:61754/browser/#" data-toggle="pg-menu" class="menu-link"><span data-test="menu-item-text" class="text-gray">  Backup Server...</span></a></li><li class="menu-item disabled"><a id="restore_object" href="http://127.0.0.1:61754/browser/#" data-toggle="pg-menu" class="menu-link"><span data-test="menu-item-text" class="text-gray">  Restore...</span></a></li><li class="menu-item disabled"><a id="grant_wizard_schema" href="http://127.0.0.1:61754/browser/#" data-toggle="pg-menu" class="menu-link"><span data-test="menu-item-text" class="text-gray">  Grant Wizard...</span></a></li></ul> </li> <li id="mnu_help" class="dropdown"> <a href="http://127.0.0.1:61754/browser/#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Help <span class="caret"></span></a> <ul class="dropdown-menu navbar-inverse" role="menu"><li class="menu-item"><a id="mnu_online_help" href="http://127.0.0.1:61754/help/help/index.html?ver=30400" target="_blank" data-toggle="pg-menu" class="menu-link"><span data-test="menu-item-text" class="text-fg-inverse">  Online Help</span></a></li><li class="menu-item"><a id="mnu_pgadmin_website" href="https://www.pgadmin.org/" target="_blank" data-toggle="pg-menu" class="menu-link"><span data-test="menu-item-text" class="text-fg-inverse">  pgAdmin Website</span></a></li><li class="menu-item"><a id="mnu_postgresql_website" href="https://www.postgresql.org/" target="_blank" data-toggle="pg-menu" class="menu-link"><span data-test="menu-item-text" class="text-fg-inverse">  PostgreSQL Website</span></a></li><li class="menu-item"><a id="mnu_about" href="http://127.0.0.1:61754/browser/#" data-toggle="pg-menu" class="menu-link"><span data-test="menu-item-text" class="text-fg-inverse">  About pgAdmin 4</span></a></li></ul> </li> </ul> </div> </div> </nav> <div id="dockerContainer" class="pg-docker"><div class="wcDocker"><div class="wcDockerTransition"></div><div class="wcLayoutPane" style="width: 435.008px; left: 0px; top: 0px; bottom: 0px;"><div class="wcFrame wcWide wcTall"><div class="wcFrameTitleBar wcTabTop" style="width: 435px;"><div class="wcFrameTitle"><div class="wcTabIcon fa fa-binoculars"></div><a href="http://127.0.0.1:61754/browser/#" tabindex="0" class="panel-link-heading">Browser</a></div><div class="wcTabScroller" style="left: 0px;"></div><div class="wcFrameButtonBar" style="min-width: 0px; width: 0px; right: 0px;"></div></div><div class="wcFrameButtonBar" style="min-width: 0px; width: 0px;"><div class="wcFrameButton" title="Close the currently active panel tab" style="display: none;"><div class="fa fa-close"></div>X</div><div class="wcFrameButton" title="Collapse the active panel" style="display: none;"><div class="fa fa-download"></div>C</div></div><div class="wcFrameCenter wcPanelBackground wcScrollableX wcScrollableY" style="left: 0px; right: 0px; bottom: 0px;"><div class="wcPanelTabContent" id="0"><table class="wcLayout wcWide wcTall"><tbody><tr><td><div class="pg-panel-content"><div id="tree" class="aciTree aciTree0" role="tree" tabindex="0" unselectable="on" onselectstart="return false" style="user-select: none;"><ul role="group" class="aciTreeUl" style=""><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel0 aciTreeFirst aciTreeVisible aciTreeOdd"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="1" aria-expanded="false"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-server_group"></span><span class="aciTreeText">Remote-Heroku</span></span></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel0 aciTreeLast aciTreeVisible aciTreeEven aciTreeOpen"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="1" aria-expanded="true"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-server_group"></span><span class="aciTreeText">Servers <span>(1)</span></span></span></div></div><ul role="group" class="aciTreeUl" style=""><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel1 aciTreeFirst aciTreeLast aciTreeOdd aciTreeVisible aciTreeOpen"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="2" aria-expanded="true"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><div class="aciTreeIcon icon-pg"></div><span class="aciTreeText">LocalMachine</span></span></div></div></div><ul role="group" class="aciTreeUl" style=""><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel2 aciTreeFirst aciTreeEven aciTreeVisible aciTreeOpen"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="3" aria-expanded="true"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-database"></span><span class="aciTreeText">Databases <span>(2)</span></span></span></div></div></div></div><ul role="group" class="aciTreeUl" style=""><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel3 aciTreeFirst aciTreeOdd aciTreeVisible aciTreeOpen"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="4" aria-expanded="true"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><div class="aciTreeIcon pg-icon-database"></div><span class="aciTreeText">localtest</span></span></div></div></div></div></div><ul role="group" class="aciTreeUl" style=""><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel4 aciTreeFirst aciTreeEven aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="5" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-cast"></span><span class="aciTreeText">Casts</span></span></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel4 aciTreeOdd aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="5" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-catalog"></span><span class="aciTreeText">Catalogs</span></span></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel4 aciTreeEven aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="5" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-event_trigger"></span><span class="aciTreeText">Event Triggers</span></span></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel4 aciTreeOdd aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="5" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-extension"></span><span class="aciTreeText">Extensions</span></span></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel4 aciTreeEven aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="5" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-foreign_data_wrapper"></span><span class="aciTreeText">Foreign Data Wrappers</span></span></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel4 aciTreeOdd aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="5" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-language"></span><span class="aciTreeText">Languages</span></span></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel4 aciTreeLast aciTreeEven aciTreeVisible aciTreeOpen"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="5" aria-expanded="true"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-schema"></span><span class="aciTreeText">Schemas <span>(1)</span></span></span></div></div></div></div></div></div><ul role="group" class="aciTreeUl" style=""><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel5 aciTreeFirst aciTreeLast aciTreeOdd aciTreeVisible aciTreeOpen"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="6" aria-expanded="true"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-schema"></span><span class="aciTreeText">public</span></span></div></div></div></div></div></div></div><ul role="group" class="aciTreeUl" style=""><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel6 aciTreeFirst aciTreeEven aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="7" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-collation"></span><span class="aciTreeText">Collations</span></span></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel6 aciTreeOdd aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="7" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-domain"></span><span class="aciTreeText">Domains</span></span></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel6 aciTreeEven aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="7" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-fts_configuration"></span><span class="aciTreeText">FTS Configurations</span></span></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel6 aciTreeOdd aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="7" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-fts_dictionary"></span><span class="aciTreeText">FTS Dictionaries</span></span></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel6 aciTreeEven aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="7" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-fts_parser"></span><span class="aciTreeText">FTS Parsers</span></span></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel6 aciTreeOdd aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="7" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-fts_template"></span><span class="aciTreeText">FTS Templates</span></span></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel6 aciTreeEven aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="7" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-foreign_table"></span><span class="aciTreeText">Foreign Tables</span></span></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel6 aciTreeOdd aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="7" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-function"></span><span class="aciTreeText">Functions</span></span></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel6 aciTreeEven aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="7" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-mview"></span><span class="aciTreeText">Materialized Views</span></span></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel6 aciTreeOdd aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="7" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-procedure"></span><span class="aciTreeText">Procedures</span></span></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel6 aciTreeEven aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="7" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-sequence"></span><span class="aciTreeText">Sequences</span></span></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel6 aciTreeOdd aciTreeVisible aciTreeOpen"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="7" aria-expanded="true"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-table"></span><span class="aciTreeText">Tables <span>(7)</span></span></span></div></div></div></div></div></div></div></div><ul role="group" class="aciTreeUl" style=""><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel7 aciTreeFirst aciTreeEven aciTreeVisible aciTreeOpen"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="8" aria-expanded="true"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeBranch aciTreeLevel6"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-table"></span><span class="aciTreeText">customers</span></span></div></div></div></div></div></div></div></div></div><ul role="group" class="aciTreeUl" style=""><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel8 aciTreeFirst aciTreeOdd aciTreeVisible aciTreeSelected aciTreeFocus aciTreeOpen"><div tabindex="-1" role="treeitem" aria-selected="true" class="aciTreeLine" aria-level="9" aria-expanded="true"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeBranch aciTreeLevel6"><div class="aciTreeBranch aciTreeLevel7"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-column"></span><span class="aciTreeText">Columns <span>(5)</span></span></span></div></div></div></div></div></div></div></div></div></div><ul role="group" class="aciTreeUl" style=""><li role="presentation" class="aciTreeLi aciTreeLeaf aciTreeLevel9 aciTreeFirst aciTreeEven aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="10"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeBranch aciTreeLevel6"><div class="aciTreeBranch aciTreeLevel7"><div class="aciTreeBranch aciTreeLevel8"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-column"></span><span class="aciTreeText">customer_id</span></span></div></div></div></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeLeaf aciTreeLevel9 aciTreeOdd aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="10"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeBranch aciTreeLevel6"><div class="aciTreeBranch aciTreeLevel7"><div class="aciTreeBranch aciTreeLevel8"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-column"></span><span class="aciTreeText">first_name</span></span></div></div></div></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeLeaf aciTreeLevel9 aciTreeEven aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="10"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeBranch aciTreeLevel6"><div class="aciTreeBranch aciTreeLevel7"><div class="aciTreeBranch aciTreeLevel8"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-column"></span><span class="aciTreeText">last_name</span></span></div></div></div></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeLeaf aciTreeLevel9 aciTreeOdd aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="10"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeBranch aciTreeLevel6"><div class="aciTreeBranch aciTreeLevel7"><div class="aciTreeBranch aciTreeLevel8"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-column"></span><span class="aciTreeText">phone_number</span></span></div></div></div></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeLeaf aciTreeLevel9 aciTreeLast aciTreeEven aciTreeVisible"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="10"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeBranch aciTreeLevel6"><div class="aciTreeBranch aciTreeLevel7"><div class="aciTreeBranch aciTreeLevel8"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-column"></span><span class="aciTreeText">phone_number_type</span></span></div></div></div></div></div></div></div></div></div></div></div></li></ul></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel8 aciTreeVisible aciTreeOdd"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="9" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeBranch aciTreeLevel6"><div class="aciTreeBranch aciTreeLevel7"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-constraints"></span><span class="aciTreeText">Constraints</span></span></div></div></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel8 aciTreeVisible aciTreeEven"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="9" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeBranch aciTreeLevel6"><div class="aciTreeBranch aciTreeLevel7"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-index"></span><span class="aciTreeText">Indexes</span></span></div></div></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel8 aciTreeVisible aciTreeOdd"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="9" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeBranch aciTreeLevel6"><div class="aciTreeBranch aciTreeLevel7"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-rule"></span><span class="aciTreeText">Rules</span></span></div></div></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel8 aciTreeLast aciTreeVisible aciTreeEven"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="9" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeBranch aciTreeLevel6"><div class="aciTreeBranch aciTreeLevel7"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-trigger"></span><span class="aciTreeText">Triggers</span></span></div></div></div></div></div></div></div></div></div></div></li></ul></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel7 aciTreeVisible aciTreeOdd"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="8" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeBranch aciTreeLevel6"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-table"></span><span class="aciTreeText">extension_178009004</span></span></div></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel7 aciTreeVisible aciTreeEven"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="8" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeBranch aciTreeLevel6"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-table"></span><span class="aciTreeText">extension_244609004</span></span></div></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel7 aciTreeVisible aciTreeOdd"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="8" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeBranch aciTreeLevel6"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-table"></span><span class="aciTreeText">inprogressedtranscription</span></span></div></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel7 aciTreeVisible aciTreeEven"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="8" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeBranch aciTreeLevel6"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-table"></span><span class="aciTreeText">phonereputation</span></span></div></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel7 aciTreeVisible aciTreeOdd"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="8" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeBranch aciTreeLevel6"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-table"></span><span class="aciTreeText">subscriptionids</span></span></div></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel7 aciTreeLast aciTreeVisible aciTreeEven"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="8" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeBranch aciTreeLevel6"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-table"></span><span class="aciTreeText">users</span></span></div></div></div></div></div></div></div></div></div></li></ul></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel6 aciTreeVisible aciTreeOdd"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="7" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-trigger_function"></span><span class="aciTreeText">Trigger Functions</span></span></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel6 aciTreeVisible aciTreeEven"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="7" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-type"></span><span class="aciTreeText">Types</span></span></div></div></div></div></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel6 aciTreeLast aciTreeVisible aciTreeOdd"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="7" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeBranch aciTreeLevel3"><div class="aciTreeBranch aciTreeLevel4"><div class="aciTreeBranch aciTreeLevel5"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-view"></span><span class="aciTreeText">Views</span></span></div></div></div></div></div></div></div></div></li></ul></li></ul></li></ul></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel3 aciTreeLast aciTreeVisible aciTreeEven"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="4" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeBranch aciTreeLevel2"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon pg-icon-database"></span><span class="aciTreeText">postgres</span></span></div></div></div></div></div></li></ul></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel2 aciTreeVisible aciTreeOdd"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="3" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-role"></span><span class="aciTreeText">Login/Group Roles</span></span></div></div></div></div></li><li role="presentation" class="aciTreeLi aciTreeInode aciTreeLevel2 aciTreeLast aciTreeVisible aciTreeEven"><div tabindex="-1" role="treeitem" aria-selected="false" class="aciTreeLine" aria-level="3" aria-expanded="false"><div class="aciTreeBranch aciTreeLevel0"><div class="aciTreeBranch aciTreeLevel1"><div class="aciTreeEntry"><span class="aciTreeButton"><span class="aciTreePush"><span></span></span></span><span class="aciTreeItem"><span class="aciTreeIcon icon-coll-tablespace"></span><span class="aciTreeText">Tablespaces</span></span></div></div></div></div></li></ul></li></ul></li></ul></div></div></td></tr></tbody></table></div></div></div></div><div class="wcLayoutPane" style="right: 0px; width: 1481.01px; top: 0px; bottom: 0px;"><div class="wcFrame wcWide wcTall"><div class="wcFrameTitleBar wcTabTop" style="width: 1480.99px;"><div class="wcTabScroller" style="left: 0px;"><div class="wcPanelTab wcPanelTabActive" id="0"><div><div class="wcTabIcon fa fa-tachometer"></div><a href="http://127.0.0.1:61754/browser/#" tabindex="0" class="panel-link-heading">Dashboard</a></div></div><div class="wcPanelTab" id="1"><div><div class="wcTabIcon fa fa-cogs"></div><a href="http://127.0.0.1:61754/browser/#" tabindex="0" class="panel-link-heading">Properties</a></div></div><div class="wcPanelTab" id="2"><div><div class="wcTabIcon fa fa-file-text-o"></div><a href="http://127.0.0.1:61754/browser/#" tabindex="0" class="panel-link-heading">SQL</a></div></div><div class="wcPanelTab" id="3"><div><div class="wcTabIcon fa fa-line-chart"></div><a href="http://127.0.0.1:61754/browser/#" tabindex="0" class="panel-link-heading">Statistics</a></div></div><div class="wcPanelTab" id="4"><div><div class="wcTabIcon fa fa-hand-o-up"></div><a href="http://127.0.0.1:61754/browser/#" tabindex="0" class="panel-link-heading">Dependencies</a></div></div><div class="wcPanelTab" id="5"><div><div class="wcTabIcon fa fa-hand-o-down"></div><a href="http://127.0.0.1:61754/browser/#" tabindex="0" class="panel-link-heading">Dependents</a></div></div></div><div class="wcFrameButtonBar" style="min-width: 0px; width: 0px; right: 23.9766px;"></div></div><div class="wcFrameButtonBar" style="min-width: 23.9766px; width: 23.9766px;"><div class="wcFrameButton" title="Close the currently active panel tab" style=""><div class="fa fa-close"></div>X</div><div class="wcFrameButton" title="Collapse the active panel" style="display: none;"><div class="fa fa-download"></div>C</div></div><div class="wcFrameCenter wcPanelBackground wcScrollableX wcScrollableY" style="left: 0px; right: 0px; bottom: 0px;"><div class="wcPanelTabContent" id="0"><table class="wcLayout wcWide wcTall"><tbody><tr><td><div class="pg-panel-content"><div class="dashboard-container"> <div id="dashboard-graphs" class=""> <div class="row"> <div class="col-xs-6"> <div class="obj_properties"> <legend class="badge">Database sessions</legend> </div> </div> <div class="col-xs-6"> <div class="obj_properties"> <legend class="badge">Transactions per second</legend> </div> </div> </div> <div class="row dashboard-row"> <div class="col-xs-6"> <div id="graph-sessions" class="graph-container" style="position: relative;"><canvas class="flotr-canvas" width="2133" height="450" style="position: absolute; left: 0px; top: 0px; width: 711px; height: 150px;"></canvas><canvas class="flotr-overlay" width="2133" height="450" style="position: absolute; left: 0px; top: 0px; width: 711px; height: 150px;"></canvas><div style="position: absolute; top: -10000px;"><div style="font-size:smaller;" class="flotr-grid-label flotr-dummy-div">10.0</div></div><div class="flotr-labels" style="font-size: smaller; color: rgb(84, 84, 84);"><div style="position:absolute; text-align:right;  top:137px;  left:0px;  width:28px;    " class="flotr-grid-label first flotr-grid-label-y">0.0</div><div style="position:absolute; text-align:right;  top:108px;  left:0px;  width:28px;    " class="flotr-grid-label flotr-grid-label-y">2.0</div><div style="position:absolute; text-align:right;  top:79px;  left:0px;  width:28px;    " class="flotr-grid-label flotr-grid-label-y">4.0</div><div style="position:absolute; text-align:right;  top:50px;  left:0px;  width:28px;    " class="flotr-grid-label flotr-grid-label-y">6.0</div><div style="position:absolute; text-align:right;  top:21px;  left:0px;  width:28px;    " class="flotr-grid-label flotr-grid-label-y">8.0</div><div style="position:absolute; text-align:right;  top:-8px;  left:0px;  width:28px;    " class="flotr-grid-label last flotr-grid-label-y">10.0</div></div><div class="flotr-titles"><div class="flotr-axis-title" style="font-weight:bold;"></div></div><div class="flotr-legend" style="position: absolute; z-index: 2; border: 1px solid rgb(204, 204, 204); top: 6px; bottom: auto; left: 36px; right: auto;"><table style="font-size:smaller;color:#545454"><tbody><tr><td class="flotr-legend-color-box"><div style="border:1px solid #CCCCCC;padding:1px"><div style="width:13px;height:9px;border:1px solid rgb(0,168,240)"><div style="width:14px;height:10px;background-color:rgb(0,168,240);"></div></div></div></td><td class="flotr-legend-label">Total</td></tr><tr><td class="flotr-legend-color-box"><div style="border:1px solid #CCCCCC;padding:1px"><div style="width:13px;height:9px;border:1px solid rgb(192,216,0)"><div style="width:14px;height:10px;background-color:rgb(192,216,0);"></div></div></div></td><td class="flotr-legend-label">Active</td></tr><tr><td class="flotr-legend-color-box"><div style="border:1px solid #CCCCCC;padding:1px"><div style="width:13px;height:9px;border:1px solid rgb(203,75,75)"><div style="width:14px;height:10px;background-color:rgb(203,75,75);"></div></div></div></td><td class="flotr-legend-label">Idle</td></tr></tbody></table></div><div class="flotr-legend-bg" style="position: absolute; top: 6px; bottom: auto; left: 36px; right: auto; height: 56px; width: 57px; background-color: rgb(210, 232, 255); opacity: 0.85;"> </div></div> </div> <div class="col-xs-6"> <div id="graph-tps" class="graph-container" style="position: relative;"><canvas class="flotr-canvas" width="2133" height="450" style="position: absolute; left: 0px; top: 0px; width: 711px; height: 150px;"></canvas><canvas class="flotr-overlay" width="2133" height="450" style="position: absolute; left: 0px; top: 0px; width: 711px; height: 150px;"></canvas><div style="position: absolute; top: -10000px;"><div style="font-size:smaller;" class="flotr-grid-label flotr-dummy-div">0.00</div></div><div class="flotr-labels" style="font-size: smaller; color: rgb(84, 84, 84);"><div style="position:absolute; text-align:right;  top:137px;  left:0px;  width:28px;    " class="flotr-grid-label first flotr-grid-label-y">0.00</div><div style="position:absolute; text-align:right;  top:100.75px;  left:0px;  width:28px;    " class="flotr-grid-label flotr-grid-label-y">0.50</div><div style="position:absolute; text-align:right;  top:64.5px;  left:0px;  width:28px;    " class="flotr-grid-label flotr-grid-label-y">1.00</div><div style="position:absolute; text-align:right;  top:28.25px;  left:0px;  width:28px;    " class="flotr-grid-label flotr-grid-label-y">1.50</div><div style="position:absolute; text-align:right;  top:-8px;  left:0px;  width:28px;    " class="flotr-grid-label last flotr-grid-label-y">2.00</div></div><div class="flotr-titles"><div class="flotr-axis-title" style="font-weight:bold;"></div></div><div class="flotr-legend" style="position: absolute; z-index: 2; border: 1px solid rgb(204, 204, 204); top: 6px; bottom: auto; left: 36px; right: auto;"><table style="font-size:smaller;color:#545454"><tbody><tr><td class="flotr-legend-color-box"><div style="border:1px solid #CCCCCC;padding:1px"><div style="width:13px;height:9px;border:1px solid rgb(0,168,240)"><div style="width:14px;height:10px;background-color:rgb(0,168,240);"></div></div></div></td><td class="flotr-legend-label">Transactions</td></tr><tr><td class="flotr-legend-color-box"><div style="border:1px solid #CCCCCC;padding:1px"><div style="width:13px;height:9px;border:1px solid rgb(192,216,0)"><div style="width:14px;height:10px;background-color:rgb(192,216,0);"></div></div></div></td><td class="flotr-legend-label">Commits</td></tr><tr><td class="flotr-legend-color-box"><div style="border:1px solid #CCCCCC;padding:1px"><div style="width:13px;height:9px;border:1px solid rgb(203,75,75)"><div style="width:14px;height:10px;background-color:rgb(203,75,75);"></div></div></div></td><td class="flotr-legend-label">Rollbacks</td></tr></tbody></table></div><div class="flotr-legend-bg" style="position: absolute; top: 6px; bottom: auto; left: 36px; right: auto; height: 56px; width: 101px; background-color: rgb(210, 232, 255); opacity: 0.85;"> </div></div> </div> </div> <div class="row"> <div class="col-xs-4"> <div class="obj_properties"> <legend class="badge">Tuples in</legend> </div> </div> <div class="col-xs-4"> <div class="obj_properties"> <legend class="badge">Tuples out</legend> </div> </div> <div class="col-xs-4"> <div class="obj_properties"> <legend class="badge">Block I/O</legend> </div> </div> </div> <div class="row dashboard-row"> <div class="col-xs-4"> <div id="graph-ti" class="graph-container" style="position: relative;"><canvas class="flotr-canvas" width="1392" height="450" style="position: absolute; left: 0px; top: 0px; width: 464px; height: 150px;"></canvas><canvas class="flotr-overlay" width="1392" height="450" style="position: absolute; left: 0px; top: 0px; width: 464px; height: 150px;"></canvas><div style="position: absolute; top: -10000px;"><div style="font-size:smaller;" class="flotr-grid-label flotr-dummy-div">0.00</div></div><div class="flotr-labels" style="font-size: smaller; color: rgb(84, 84, 84);"><div style="position:absolute; text-align:right;  top:137px;  left:0px;  width:28px;    " class="flotr-grid-label first flotr-grid-label-y">0.00</div><div style="position:absolute; text-align:right;  top:64.5px;  left:0px;  width:28px;    " class="flotr-grid-label flotr-grid-label-y">0.50</div><div style="position:absolute; text-align:right;  top:-8px;  left:0px;  width:28px;    " class="flotr-grid-label last flotr-grid-label-y">1.00</div></div><div class="flotr-titles"><div class="flotr-axis-title" style="font-weight:bold;"></div></div><div class="flotr-legend" style="position: absolute; z-index: 2; border: 1px solid rgb(204, 204, 204); top: 6px; bottom: auto; left: 36px; right: auto;"><table style="font-size:smaller;color:#545454"><tbody><tr><td class="flotr-legend-color-box"><div style="border:1px solid #CCCCCC;padding:1px"><div style="width:13px;height:9px;border:1px solid rgb(0,168,240)"><div style="width:14px;height:10px;background-color:rgb(0,168,240);"></div></div></div></td><td class="flotr-legend-label">Inserts</td></tr><tr><td class="flotr-legend-color-box"><div style="border:1px solid #CCCCCC;padding:1px"><div style="width:13px;height:9px;border:1px solid rgb(192,216,0)"><div style="width:14px;height:10px;background-color:rgb(192,216,0);"></div></div></div></td><td class="flotr-legend-label">Updates</td></tr><tr><td class="flotr-legend-color-box"><div style="border:1px solid #CCCCCC;padding:1px"><div style="width:13px;height:9px;border:1px solid rgb(203,75,75)"><div style="width:14px;height:10px;background-color:rgb(203,75,75);"></div></div></div></td><td class="flotr-legend-label">Deletes</td></tr></tbody></table></div><div class="flotr-legend-bg" style="position: absolute; top: 6px; bottom: auto; left: 36px; right: auto; height: 56px; width: 74px; background-color: rgb(210, 232, 255); opacity: 0.85;"> </div></div> </div> <div class="col-xs-4"> <div id="graph-to" class="graph-container" style="position: relative;"><canvas class="flotr-canvas" width="1392" height="450" style="position: absolute; left: 0px; top: 0px; width: 464px; height: 150px;"></canvas><canvas class="flotr-overlay" width="1392" height="450" style="position: absolute; left: 0px; top: 0px; width: 464px; height: 150px;"></canvas><div style="position: absolute; top: -10000px;"><div style="font-size:smaller;" class="flotr-grid-label flotr-dummy-div">1000</div></div><div class="flotr-labels" style="font-size: smaller; color: rgb(84, 84, 84);"><div style="position:absolute; text-align:right;  top:137px;  left:0px;  width:33px;    " class="flotr-grid-label first flotr-grid-label-y">0</div><div style="position:absolute; text-align:right;  top:112.83333333333333px;  left:0px;  width:33px;    " class="flotr-grid-label flotr-grid-label-y">200</div><div style="position:absolute; text-align:right;  top:88.66666666666666px;  left:0px;  width:33px;    " class="flotr-grid-label flotr-grid-label-y">400</div><div style="position:absolute; text-align:right;  top:64.5px;  left:0px;  width:33px;    " class="flotr-grid-label flotr-grid-label-y">600</div><div style="position:absolute; text-align:right;  top:40.33333333333333px;  left:0px;  width:33px;    " class="flotr-grid-label flotr-grid-label-y">800</div><div style="position:absolute; text-align:right;  top:16.16666666666667px;  left:0px;  width:33px;    " class="flotr-grid-label flotr-grid-label-y">1000</div><div style="position:absolute; text-align:right;  top:-8px;  left:0px;  width:33px;    " class="flotr-grid-label last flotr-grid-label-y">1200</div></div><div class="flotr-titles"><div class="flotr-axis-title" style="font-weight:bold;"></div></div><div class="flotr-legend" style="position: absolute; z-index: 2; border: 1px solid rgb(204, 204, 204); top: 6px; bottom: auto; left: 41px; right: auto;"><table style="font-size:smaller;color:#545454"><tbody><tr><td class="flotr-legend-color-box"><div style="border:1px solid #CCCCCC;padding:1px"><div style="width:13px;height:9px;border:1px solid rgb(0,168,240)"><div style="width:14px;height:10px;background-color:rgb(0,168,240);"></div></div></div></td><td class="flotr-legend-label">Fetched</td></tr><tr><td class="flotr-legend-color-box"><div style="border:1px solid #CCCCCC;padding:1px"><div style="width:13px;height:9px;border:1px solid rgb(192,216,0)"><div style="width:14px;height:10px;background-color:rgb(192,216,0);"></div></div></div></td><td class="flotr-legend-label">Returned</td></tr></tbody></table></div><div class="flotr-legend-bg" style="position: absolute; top: 6px; bottom: auto; left: 41px; right: auto; height: 38px; width: 80px; background-color: rgb(210, 232, 255); opacity: 0.85;"> </div></div> </div> <div class="col-xs-4"> <div id="graph-bio" class="graph-container" style="position: relative;"><canvas class="flotr-canvas" width="1392" height="450" style="position: absolute; left: 0px; top: 0px; width: 464px; height: 150px;"></canvas><canvas class="flotr-overlay" width="1392" height="450" style="position: absolute; left: 0px; top: 0px; width: 464px; height: 150px;"></canvas><div style="position: absolute; top: -10000px;"><div style="font-size:smaller;" class="flotr-grid-label flotr-dummy-div">10</div></div><div class="flotr-labels" style="font-size: smaller; color: rgb(84, 84, 84);"><div style="position:absolute; text-align:right;  top:137px;  left:0px;  width:16px;    " class="flotr-grid-label first flotr-grid-label-y">0</div><div style="position:absolute; text-align:right;  top:118.875px;  left:0px;  width:16px;    " class="flotr-grid-label flotr-grid-label-y">10</div><div style="position:absolute; text-align:right;  top:100.75px;  left:0px;  width:16px;    " class="flotr-grid-label flotr-grid-label-y">20</div><div style="position:absolute; text-align:right;  top:82.625px;  left:0px;  width:16px;    " class="flotr-grid-label flotr-grid-label-y">30</div><div style="position:absolute; text-align:right;  top:64.5px;  left:0px;  width:16px;    " class="flotr-grid-label flotr-grid-label-y">40</div><div style="position:absolute; text-align:right;  top:46.375px;  left:0px;  width:16px;    " class="flotr-grid-label flotr-grid-label-y">50</div><div style="position:absolute; text-align:right;  top:28.25px;  left:0px;  width:16px;    " class="flotr-grid-label flotr-grid-label-y">60</div><div style="position:absolute; text-align:right;  top:10.125px;  left:0px;  width:16px;    " class="flotr-grid-label flotr-grid-label-y">70</div><div style="position:absolute; text-align:right;  top:-8px;  left:0px;  width:16px;    " class="flotr-grid-label last flotr-grid-label-y">80</div></div><div class="flotr-titles"><div class="flotr-axis-title" style="font-weight:bold;"></div></div><div class="flotr-legend" style="position: absolute; z-index: 2; border: 1px solid rgb(204, 204, 204); top: 6px; bottom: auto; left: 24px; right: auto;"><table style="font-size:smaller;color:#545454"><tbody><tr><td class="flotr-legend-color-box"><div style="border:1px solid #CCCCCC;padding:1px"><div style="width:13px;height:9px;border:1px solid rgb(0,168,240)"><div style="width:14px;height:10px;background-color:rgb(0,168,240);"></div></div></div></td><td class="flotr-legend-label">Reads</td></tr><tr><td class="flotr-legend-color-box"><div style="border:1px solid #CCCCCC;padding:1px"><div style="width:13px;height:9px;border:1px solid rgb(192,216,0)"><div style="width:14px;height:10px;background-color:rgb(192,216,0);"></div></div></div></td><td class="flotr-legend-label">Hits</td></tr></tbody></table></div><div class="flotr-legend-bg" style="position: absolute; top: 6px; bottom: auto; left: 24px; right: auto; height: 38px; width: 59px; background-color: rgb(210, 232, 255); opacity: 0.85;"> </div></div> </div> </div> </div> <div id="dashboard-activity" class=""> <div class="row"> <div class="col-xs-12"> <div class="obj_properties"> <legend class="badge">Database activity</legend> </div> </div> </div> <div class="row dashboard-row"> <div class="col-xs-12"> <div class="dashboard-tab-container"> <ul class="nav nav-tabs dashboard-tab-panel" role="tablist"> <li role="presentation" class="active dashboard-tab"><a href="http://127.0.0.1:61754/browser/#tab_panel_database_activity" aria-controls="tab_database_activity" role="tab" data-toggle="tab">Sessions</a> </li> <li role="presentation" class="dashboard-tab"><a href="http://127.0.0.1:61754/browser/#tab_panel_database_locks" aria-controls="tab_database_locks" role="tab" data-toggle="tab">Locks</a></li> <li role="presentation" class="dashboard-tab"><a href="http://127.0.0.1:61754/browser/#tab_panel_database_prepared" aria-controls="tab_database_prepared" role="tab" data-toggle="tab">Prepared Transactions</a></li> </ul> <div class="tab-content"> <div role="tabpanel" class="tab-pane active" id="tab_panel_database_activity"> <div class="dashboard-tab-btn-group pg-prop-btn-group-above"> <button id="btn_database_activity_refresh" type="button" class="btn btn-default" title="Refresh"> <span class="fa fa-lg fa-refresh"></span></button> <form class="backgrid-filter form-search" style="float: right; margin: 3px 2px 5px 5px;"><span class="search">&nbsp;</span><input type="search" name="q"><a class="clear" data-backgrid-action="clear" href="http://127.0.0.1:61754/browser/#" style="display: none;">×</a></form><div id="database_activity_filter"></div> </div> <div id="database_activity" class="grid-container pg-el-container" el="sm"><table class="backgrid table-bordered presentation table backgrid-striped"><thead><tr><th class="sortable renderable pg-backform-delete"><button><span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable pg-backform-delete"><button><span class="sort-caret" aria-hidden="true"></span></button></th><th class="editable sortable renderable pg-backform-expand"><button><span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable pid"><button>PID<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable usename"><button>User<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable application_name"><button>Application<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable client_addr"><button>Client<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable backend_start"><button>Backend start<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable state"><button>State<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable wait_event"><button>Wait Event<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable blocking_pids"><button>Blocking PIDs<span class="sort-caret" aria-hidden="true"></span></button></th></tr></thead><tbody><tr><td class="delete-cell sortable renderable"><i class="fa fa-times-circle" data-toggle="tooltip" title="Terminate the session"></i></td><td class="delete-cell sortable renderable"><i class="fa fa-stop" data-toggle="tooltip" title="Cancel the active query"></i></td><td class="edit-cell editable sortable renderable" tabindex="1"><i class="fa fa-caret-right" data-toggle="tooltip" title="View the active session details"></i></td><td class="string-cell sortable renderable pid">39431</td><td class="string-cell sortable renderable usename">postgres</td><td class="string-cell sortable renderable application_name">pgAdmin 4 - DB:localtest</td><td class="string-cell sortable renderable client_addr">::1</td><td class="string-cell sortable renderable backend_start">2019-06-07 10:49:02 PDT</td><td class="string-cell sortable renderable state">idle</td><td class="string-cell sortable renderable wait_event">Client: ClientRead</td><td class="string-cell sortable renderable blocking_pids"></td></tr><tr><td class="delete-cell sortable renderable"><i class="fa fa-times-circle" data-toggle="tooltip" title="Terminate the session"></i></td><td class="delete-cell sortable renderable"><i class="fa fa-stop" data-toggle="tooltip" title="Cancel the active query"></i></td><td class="edit-cell editable sortable renderable" tabindex="1"><i class="fa fa-caret-right" data-toggle="tooltip" title="View the active session details"></i></td><td class="string-cell sortable renderable pid">39482</td><td class="string-cell sortable renderable usename">postgres</td><td class="string-cell sortable renderable application_name">pgAdmin 4 - CONN:7942532</td><td class="string-cell sortable renderable client_addr">::1</td><td class="string-cell sortable renderable backend_start">2019-06-07 10:50:56 PDT</td><td class="string-cell sortable renderable state">idle</td><td class="string-cell sortable renderable wait_event">Client: ClientRead</td><td class="string-cell sortable renderable blocking_pids"></td></tr><tr><td class="delete-cell sortable renderable"><i class="fa fa-times-circle" data-toggle="tooltip" title="Terminate the session"></i></td><td class="delete-cell sortable renderable"><i class="fa fa-stop" data-toggle="tooltip" title="Cancel the active query"></i></td><td class="edit-cell editable sortable renderable" tabindex="1"><i class="fa fa-caret-right" data-toggle="tooltip" title="View the active session details"></i></td><td class="string-cell sortable renderable pid">46063</td><td class="string-cell sortable renderable usename">postgres</td><td class="string-cell sortable renderable application_name">pgAdmin 4 - DB:localtest</td><td class="string-cell sortable renderable client_addr">::1</td><td class="string-cell sortable renderable backend_start">2019-06-08 11:50:18 PDT</td><td class="string-cell sortable renderable state">idle</td><td class="string-cell sortable renderable wait_event">Client: ClientRead</td><td class="string-cell sortable renderable blocking_pids"></td></tr><tr><td class="delete-cell sortable renderable"><i class="fa fa-times-circle" data-toggle="tooltip" title="Terminate the session"></i></td><td class="delete-cell sortable renderable"><i class="fa fa-stop" data-toggle="tooltip" title="Cancel the active query"></i></td><td class="edit-cell editable sortable renderable" tabindex="1"><i class="fa fa-caret-right" data-toggle="tooltip" title="View the active session details"></i></td><td class="string-cell sortable renderable pid">49213</td><td class="string-cell sortable renderable usename">postgres</td><td class="string-cell sortable renderable application_name">pgAdmin 4 - CONN:7269674</td><td class="string-cell sortable renderable client_addr">::1</td><td class="string-cell sortable renderable backend_start">2019-06-08 16:26:48 PDT</td><td class="string-cell sortable renderable state">idle</td><td class="string-cell sortable renderable wait_event">Client: ClientRead</td><td class="string-cell sortable renderable blocking_pids"></td></tr><tr><td class="delete-cell sortable renderable"><i class="fa fa-times-circle" data-toggle="tooltip" title="Terminate the session"></i></td><td class="delete-cell sortable renderable"><i class="fa fa-stop" data-toggle="tooltip" title="Cancel the active query"></i></td><td class="edit-cell editable sortable renderable" tabindex="1"><i class="fa fa-caret-right" data-toggle="tooltip" title="View the active session details"></i></td><td class="string-cell sortable renderable pid">50474</td><td class="string-cell sortable renderable usename">postgres</td><td class="string-cell sortable renderable application_name">pgAdmin 4 - CONN:8117738</td><td class="string-cell sortable renderable client_addr">::1</td><td class="string-cell sortable renderable backend_start">2019-06-08 17:10:16 PDT</td><td class="string-cell sortable renderable state">idle</td><td class="string-cell sortable renderable wait_event">Client: ClientRead</td><td class="string-cell sortable renderable blocking_pids"></td></tr><tr><td class="delete-cell sortable renderable"><i class="fa fa-times-circle" data-toggle="tooltip" title="Terminate the session"></i></td><td class="delete-cell sortable renderable"><i class="fa fa-stop" data-toggle="tooltip" title="Cancel the active query"></i></td><td class="edit-cell editable sortable renderable" tabindex="1"><i class="fa fa-caret-right" data-toggle="tooltip" title="View the active session details"></i></td><td class="string-cell sortable renderable pid">63395</td><td class="string-cell sortable renderable usename">postgres</td><td class="string-cell sortable renderable application_name">pgAdmin 4 - DB:localtest</td><td class="string-cell sortable renderable client_addr">::1</td><td class="string-cell sortable renderable backend_start">2019-06-03 08:55:47 PDT</td><td class="string-cell sortable renderable state">idle</td><td class="string-cell sortable renderable wait_event">Client: ClientRead</td><td class="string-cell sortable renderable blocking_pids"></td></tr><tr><td class="delete-cell sortable renderable"><i class="fa fa-times-circle" data-toggle="tooltip" title="Terminate the session"></i></td><td class="delete-cell sortable renderable"><i class="fa fa-stop" data-toggle="tooltip" title="Cancel the active query"></i></td><td class="edit-cell editable sortable renderable" tabindex="1"><i class="fa fa-caret-right" data-toggle="tooltip" title="View the active session details"></i></td><td class="string-cell sortable renderable pid">64241</td><td class="string-cell sortable renderable usename">postgres</td><td class="string-cell sortable renderable application_name">pgAdmin 4 - CONN:7298847</td><td class="string-cell sortable renderable client_addr">::1</td><td class="string-cell sortable renderable backend_start">2019-06-03 09:24:00 PDT</td><td class="string-cell sortable renderable state">idle</td><td class="string-cell sortable renderable wait_event">Client: ClientRead</td><td class="string-cell sortable renderable blocking_pids"></td></tr><tr><td class="delete-cell sortable renderable"><i class="fa fa-times-circle" data-toggle="tooltip" title="Terminate the session"></i></td><td class="delete-cell sortable renderable"><i class="fa fa-stop" data-toggle="tooltip" title="Cancel the active query"></i></td><td class="edit-cell editable sortable renderable" tabindex="1"><i class="fa fa-caret-right" data-toggle="tooltip" title="View the active session details"></i></td><td class="string-cell sortable renderable pid">64586</td><td class="string-cell sortable renderable usename">postgres</td><td class="string-cell sortable renderable application_name">pgAdmin 4 - CONN:8249041</td><td class="string-cell sortable renderable client_addr">::1</td><td class="string-cell sortable renderable backend_start">2019-06-03 09:35:40 PDT</td><td class="string-cell sortable renderable state">idle</td><td class="string-cell sortable renderable wait_event">Client: ClientRead</td><td class="string-cell sortable renderable blocking_pids"></td></tr><tr><td class="delete-cell sortable renderable"><i class="fa fa-times-circle" data-toggle="tooltip" title="Terminate the session"></i></td><td class="delete-cell sortable renderable"><i class="fa fa-stop" data-toggle="tooltip" title="Cancel the active query"></i></td><td class="edit-cell editable sortable renderable" tabindex="1"><i class="fa fa-caret-right" data-toggle="tooltip" title="View the active session details"></i></td><td class="string-cell sortable renderable pid">81554</td><td class="string-cell sortable renderable usename">postgres</td><td class="string-cell sortable renderable application_name">pgAdmin 4 - DB:localtest</td><td class="string-cell sortable renderable client_addr">::1</td><td class="string-cell sortable renderable backend_start">2019-06-10 09:47:16 PDT</td><td class="string-cell sortable renderable state">idle</td><td class="string-cell sortable renderable wait_event">Client: ClientRead</td><td class="string-cell sortable renderable blocking_pids"></td></tr></tbody></table></div> </div> <div role="tabpanel" class="tab-pane" id="tab_panel_database_locks"> <div class="dashboard-tab-btn-group pg-prop-btn-group-above"> <button id="btn_database_locks_refresh" type="button" class="btn btn-default" title="Refresh"> <span class="fa fa-lg fa-refresh"></span></button> <form class="backgrid-filter form-search" style="float: right; margin: 3px 2px 5px 5px;"><span class="search">&nbsp;</span><input type="search" name="q"><a class="clear" data-backgrid-action="clear" href="http://127.0.0.1:61754/browser/#" style="display: none;">×</a></form><div id="database_locks_filter"></div> </div> <div id="database_locks" class="grid-container"><table class="backgrid table-bordered presentation table backgrid-striped"><thead><tr><th class="sortable renderable pid"><button>PID<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable locktype"><button>Lock type<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable relation"><button>Target relation<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable page"><button>Page<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable tuple"><button>Tuple<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable virtualxid"><button>vXID (target)<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable transactionid"><button>XID (target)<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable classid"><button>Class<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable objid"><button>Object ID<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable virtualtransaction"><button>vXID (owner)<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable mode"><button>Mode<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable granted"><button>Granted?<span class="sort-caret" aria-hidden="true"></span></button></th></tr></thead><tbody></tbody></table></div> </div> <div role="tabpanel" class="tab-pane" id="tab_panel_database_prepared"> <div class="dashboard-tab-btn-group pg-prop-btn-group-above"> <button id="btn_database_prepared_refresh" type="button" class="btn btn-default" title="Refresh"> <span class="fa fa-lg fa-refresh"></span></button> <form class="backgrid-filter form-search" style="float: right; margin: 3px 2px 5px 5px;"><span class="search">&nbsp;</span><input type="search" name="q"><a class="clear" data-backgrid-action="clear" href="http://127.0.0.1:61754/browser/#" style="display: none;">×</a></form><div id="database_prepared_filter"></div> </div> <div id="database_prepared" class="grid-container"><table class="backgrid table-bordered presentation table backgrid-striped"><thead><tr><th class="sortable renderable git"><button>Name<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable Owner"><button>Owner<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable transaction"><button>XID<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable prepared"><button>Prepared at<span class="sort-caret" aria-hidden="true"></span></button></th></tr></thead><tbody></tbody></table></div> </div> </div> </div> </div> </div> </div> <div id="dashboard-none-show" class="alert alert-info pg-panel-message dashboard-hidden" role="alert"> All Dashboard elements are currently disabled. </div> </div></div></td></tr></tbody></table></div><div class="wcPanelTabContent wcPanelTabContentHidden" id="1"><table class="wcLayout wcWide wcTall"><tbody><tr><td><div class="pg-panel-content pg-no-overflow pg-el-container"><div class="obj_properties"><div class="alert alert-info pg-panel-message">Please select an object in the tree view.</div></div></div></td></tr></tbody></table></div><div class="wcPanelTabContent wcPanelTabContentHidden" id="2"><table class="wcLayout wcWide wcTall"><tbody><tr><td><div class="pg-panel-content"><div class="sql_textarea"><textarea id="sql-textarea" name="sql-textarea" style="display: none;"></textarea><div class="CodeMirror cm-s-default" style="font-size: 1em;"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 0px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;" tabindex="0"></textarea></div><div class="CodeMirror-vscrollbar" cm-not-content="true"><div style="min-width: 1px;"></div></div><div class="CodeMirror-hscrollbar" cm-not-content="true"><div style="height: 100%; min-height: 1px;"></div></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-width: 3px;"><div style="position: relative;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"></div><div class="CodeMirror-measure"><pre class="CodeMirror-line" role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment">-- Please select an object in the tree view.</span></span></pre></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-cursors"></div><div class="CodeMirror-code" role="presentation"></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px;"></div><div class="CodeMirror-gutters" style="left: 0px;"><div class="CodeMirror-gutter CodeMirror-linenumbers" style="width: 1px;"></div></div></div></div></div></div></td></tr></tbody></table></div><div class="wcPanelTabContent wcPanelTabContentHidden" id="3"><table class="wcLayout wcWide wcTall"><tbody><tr><td><div class="pg-panel-content"><div><div class="alert alert-info pg-panel-message pg-panel-statistics-message">Please select an object in the tree view.</div><div class="pg-panel-statistics-container hidden"></div></div></div></td></tr></tbody></table></div><div class="wcPanelTabContent wcPanelTabContentHidden" id="4"><table class="wcLayout wcWide wcTall"><tbody><tr><td><div class="pg-panel-content"><div><div class="alert alert-info pg-panel-message pg-panel-depends-message">Please select an object in the tree view.</div><div class="pg-panel-depends-container hidden"><table class="backgrid presentation table backgrid-striped table-bordered table-hover"><thead><tr><th class="sortable renderable type"><button>Type<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable name"><button>Name<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable field"><button><span class="sort-caret" aria-hidden="true"></span></button></th></tr></thead><tbody></tbody></table></div></div></div></td></tr></tbody></table></div><div class="wcPanelTabContent wcPanelTabContentHidden" id="5"><table class="wcLayout wcWide wcTall"><tbody><tr><td><div class="pg-panel-content"><div><div class="alert alert-info pg-panel-message pg-panel-depends-message">Please select an object in the tree view.</div><div class="pg-panel-depends-container hidden"><table class="backgrid presentation table backgrid-striped table-bordered table-hover"><thead><tr><th class="sortable renderable type"><button>Type<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable name"><button>Name<span class="sort-caret" aria-hidden="true"></span></button></th><th class="sortable renderable field"><button><span class="sort-caret" aria-hidden="true"></span></button></th></tr></thead><tbody></tbody></table></div></div></div></td></tr></tbody></table></div></div></div></div><div class="wcSplitterBar wcTall wcSplitterBarV" style="left: 435.008px; top: 0px; height: 831.516px;"></div></div></div> <div style="position: fixed; top: 70px; right: 20px; width: 400px; z-index: 9999"> <div class="alert alert-warning alert-dismissible" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button> <p>You are currently running version 3.4 of pgAdmin 4, however the current version is 4.8.</p> <p>Please click <a class="alert-link" href="https://www.pgadmin.org/download/" target="_new">here</a> for more information.</p> </div> </div> <script>
+            try {
+require(
+['sources/generated/app.bundle'],
+function() {
+},
+function() {
+/* TODO:: Show proper error dialog */
+console.log(arguments);
+});
+} catch (err) {
+/* Show proper error dialog */
+console.log(err);
+}
+
+/*
+ * Show loading spinner till every js module is loaded completely
+ * Referenced url:
+ * http://stackoverflow.com/questions/15581563/requirejs-load-script-progress
+ * Little bit tweaked as per need
+ */
+require.onResourceLoad = function (context, map, depMaps) {
+  var loadingStatusEl = panel = document.getElementById('pg-spinner');
+  if (loadingStatusEl) {
+    if (!context) {
+      // we will call onResourceLoad(false) by ourselves when requirejs
+      // is not loading anything hide the indicator and exit
+      setTimeout(function() {
+        if (panel != null) {
+            try{
+                $(panel).remove();
+            }
+            catch(e){
+                panel.outerHTML = "";
+                delete panel;
+            }
+          return;
+        }
+      }, 500);
+    }
+
+    // show indicator when any module is loaded and
+    // shedule requirejs status (loading/idle) check
+    panel.style.display = "";
+    clearTimeout(panel.ttimer);
+    panel.ttimer = setTimeout(function () {
+      var context = require.s.contexts._;
+      var inited = true;
+      for (name in context.registry) {
+        var m = context.registry[name];
+        if (m.inited !== true) {
+          inited = false;
+          break;
+        }
+      }
+
+      // here the "inited" variable will be true, if requirejs is "idle",
+      // false if "loading"
+      if (inited) {
+        // will fire if module loads in 400ms. TODO: reset this timer
+        // for slow module loading
+        require.onResourceLoad(false);
+      }
+    }, 400)
+  }
+};
+
+
+</script>  <div class="alertify ajs-hidden  ajs-movable ajs-pinnable ajs-zoom"><div class="ajs-dimmer"></div><div class="ajs-modal" tabindex="0"><div class="ajs-dialog" tabindex="0"><button class="ajs-reset"></button><div class="ajs-commands"><button class="ajs-pin"></button><button class="ajs-maximize"></button><button class="ajs-close"></button></div><div class="ajs-header">AlertifyJS</div><div class="ajs-body"><div class="ajs-content"></div></div><div class="ajs-footer"><div class="ajs-auxiliary ajs-buttons"></div><div class="ajs-primary ajs-buttons"><button class="ajs-button btn btn-primary">OK</button><button class="ajs-button btn btn-danger">Cancel</button></div></div><div class="ajs-handle"></div><button class="ajs-reset"></button></div></div></div><div class="alertify-notifier ajs-bottom ajs-right"></div></body></html>

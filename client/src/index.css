@@ -1,0 +1,36 @@
+body {
+  margin: 20px;
+  padding: 0px;
+  font-family: sans-serif;
+  /*text-align: center;*/
+}
+
+.conversations {
+  width: 600px;
+  height: 500px;
+  overflow: scroll;
+  border: 1px gray solid;
+}
+
+.translation {
+  color: blue;
+}
+
+.columns {
+   column-count: 2;
+   column-gap: 10px;
+}
+
+.infoColumn {
+  width: 600px;
+  column-count: 6;
+  column-gap: 40px;
+  background-color: black;
+  padding: 20px;
+  /*margin-top: 10px;*/
+  color: white;
+}
+
+.left-col {
+
+}
