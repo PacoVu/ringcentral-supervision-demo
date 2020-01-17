@@ -20,7 +20,6 @@
     "@babel/preset-env": "^7.6.0",
     "@babel/register": "^7.6.0",
     "core-js": "^3.2.1",
-    "standard": "^14.3.0",
-    "yarn-upgrade-all": "^0.5.2"
+    "standard": "^14.3.0"
   }
 }
