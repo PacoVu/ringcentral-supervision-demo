@@ -3,7 +3,7 @@ const WS = require('ws')
 var request = require('request')
 var fs = require('fs')
 var server = require('./index')
-const LanguageTranslatorV3 = require('watson-developer-cloud/language-translator/v3');
+const LanguageTranslatorV3 = require('ibm-watson/language-translator/v3');
 const NaturalLanguageUnderstandingV1 = require("ibm-watson/natural-language-understanding/v1.js")
 
 var language_model = 'en-US_NarrowbandModel'
