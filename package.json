@@ -2,7 +2,7 @@
   "license": "MIT",
   "scripts": {
     "heroku-postbuild": "cd client && npm install && npm run build",
-    "start": "npm start",
+    "start": "npm start"
   },
   "dependencies": {
     "@ringcentral/sdk": "^4.0.0",
