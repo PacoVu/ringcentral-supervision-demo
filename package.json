@@ -1,6 +1,7 @@
 {
   "license": "MIT",
   "scripts": {
+    "server": "node -r dotenv-override-true/config -r @babel/register index.js",
     "heroku-postbuild": "cd client && npm install && npm run build",
     "start": "npm start"
   },
