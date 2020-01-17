@@ -13,7 +13,6 @@
     "node-webrtc-media-devices": "^0.1.4",
     "request": "^2.88.0",
     "ringcentral-softphone": "^0.4.0",
-    "watson-developer-cloud": "^4.0.1",
     "wrtc": "^0.4.2",
     "ws": "^7.1.2"
   },
