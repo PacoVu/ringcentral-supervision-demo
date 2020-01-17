@@ -1,7 +1,7 @@
 {
   "license": "MIT",
   "scripts": {
-    "start": "node index.js",
+    "start": "node -r dotenv-override-true/config -r @babel/register index.js",
     "heroku-postbuild": "cd client && npm install && npm run build && npm start"
   },
   "dependencies": {
@@ -11,7 +11,7 @@
     "ibm-watson": "^4.5.0",
     "node-webrtc-media-devices": "^0.1.4",
     "request": "^2.88.0",
-    "ringcentral-softphone": "^0.4.0",
+    "ringcentral-softphone": "^0.4.1",
     "wrtc": "^0.4.2",
     "ws": "^7.1.2"
   },
