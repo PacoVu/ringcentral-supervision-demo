@@ -1,5 +1,6 @@
 // SoftPhone
-require('dotenv').config()
+if (process.env.PRODUCTION == false)
+  require('dotenv').config()
 
 //const PhoneEngine = require('./supervisor-engine');
 //let supervisor = new PhoneEngine()
