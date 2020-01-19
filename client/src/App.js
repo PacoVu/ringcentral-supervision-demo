@@ -47,8 +47,8 @@ export default class App extends Component {
       }
     };
 
-    this.eventSource = new EventSource('http://localhost:5000/events');
-    //this.eventSource = new EventSource('https://ringcentral-supervision-demo.herokuapp.com/events');
+    //this.eventSource = new EventSource('http://localhost:5000/events');
+    this.eventSource = new EventSource('https://ringcentral-supervision-demo.herokuapp.com/events');
   }
 
   async componentDidMount() {
