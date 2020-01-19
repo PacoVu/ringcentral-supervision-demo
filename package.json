@@ -2,8 +2,7 @@
   "license": "MIT",
   "scripts": {
     "server": "node -r dotenv-override-true/config -r @babel/register index.js",
-    "heroku-postbuild": "cd client && npm install && npm run build",
-    "start": "npm start && cd .. && node index.js"
+    "heroku-postbuild": "cd client && npm install && npm run build && npm start"
   },
   "dependencies": {
     "@ringcentral/sdk": "^4.0.0",
