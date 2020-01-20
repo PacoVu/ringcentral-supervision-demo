@@ -1,7 +1,6 @@
 {
   "license": "MIT",
   "scripts": {
-    "build": "babel . --ignore node_modules,build --out-dir build",
     "start": "node -r dotenv-override-true/config -r @babel/register index.js",
     "start:prod": "node -r dotenv/config -r build/index.js"
   },
