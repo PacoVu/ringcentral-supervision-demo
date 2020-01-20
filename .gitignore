@@ -1,5 +1,6 @@
 node_modules/
 node_modules_old/
+extra/
 .env
 dotenv
 *.raw

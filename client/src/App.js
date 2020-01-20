@@ -46,7 +46,7 @@ export default class App extends Component {
         angerScore: 0
       }
     };
-    this.eventSource = new EventSource('events');
+    this.eventSource = new EventSource('/server/events');
     //this.eventSource = new EventSource('http://localhost:5000/events');
     //this.eventSource = new EventSource('https://ringcentral-supervision-demo.herokuapp.com/events');
   }
@@ -280,7 +280,7 @@ export default class App extends Component {
       }
     }
     const response =
-      await axios.get("/recording",
+      await axios.get("/server/recording",
           { params: {agent: agent, enable: isRecording}}
       )
     console.log(response.data)
@@ -330,7 +330,7 @@ export default class App extends Component {
       }
     }
     const response =
-      await axios.get("/enable_translation",
+      await axios.get("/server/enable_translation",
           { params: {agent: agent, enable: doTranslation}}
       )
     console.log(response.data)
@@ -338,7 +338,7 @@ export default class App extends Component {
 
   async superviseAgents(agent){
     const response =
-      await axios.get("/supervise",
+      await axios.get("/server/supervise",
           { params: {agent: agent}}
       )
     console.log(response.data)

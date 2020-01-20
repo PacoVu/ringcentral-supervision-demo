@@ -1,26 +1,22 @@
 {
+  "name": "crae-simple",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": {},
   "license": "MIT",
-  "scripts": {
-    "start": "cd client && npm start ",
-    "start:prod": "node -r dotenv/config -r build/index.js"
+  "engines": {
+    "node": "8.1.2"
   },
   "dependencies": {
-    "@ringcentral/sdk": "^4.0.0",
-    "dotenv": "^8.1.0",
-    "dotenv-override-true": "^6.2.0",
-    "ibm-watson": "^4.5.0",
-    "node-webrtc-media-devices": "^0.1.4",
-    "request": "^2.88.0",
-    "ringcentral-softphone": "^0.4.1",
-    "wrtc": "^0.4.2",
-    "ws": "^7.1.2",
-    "core-js": "^3.2.1"
+    "concurrently": "^5.0.2",
+    "rimraf": "^3.0.0"
   },
-  "devDependencies": {
-    "@babel/core": "^7.6.0",
-    "@babel/preset-env": "^7.6.0",
-    "@babel/register": "^7.6.0",
-    "standard": "^14.3.0",
-    "yarn-upgrade-all": "^0.5.2"
+  "scripts": {
+    "build": "concurrently \"cd client && npm run build\"",
+    "clean": "concurrently \"rimraf node_modules\" \"cd client && rimraf node_modules build\" \"cd server && rimraf node_modules build\"",
+    "heroku-postbuild": "yarn build",
+    "install": "(cd client && yarn) && (cd server && yarn)",
+    "start": "concurrently \"cd client && npm start\" \"cd server && npm start\"",
+    "start:prod": "cd server && yarn start:prod"
   }
 }
