@@ -96,8 +96,15 @@ http.createServer((request, response) => {
     }else{
       console.log(request.url)
       console.log("unknown path method?")
-      response.writeHead(404);
-      response.end();
+      response.writeHead(200, {
+        'Connection': 'keep-alive',
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Access-Control-Allow-Origin': '*'
+      });
+      eventResponse = response
+      //response.writeHead(404);
+      //response.end();
     }
   }else if (request.method === "POST"){
     console.log("Not in used")
