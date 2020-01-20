@@ -1,7 +1,7 @@
 {
   "license": "MIT",
   "scripts": {
-    "start": "node index.js && cd client && npm start ",
+    "start": "cd client && npm start ",
     "start:prod": "node -r dotenv/config -r build/index.js"
   },
   "dependencies": {
