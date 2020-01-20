@@ -2,8 +2,8 @@
 if (process.env.PRODUCTION == false)
   require('dotenv').config()
 
-//const PhoneEngine = require('./supervisor-engine');
-//let supervisor = new PhoneEngine()
+const PhoneEngine = require('./supervisor-engine');
+
 var supervisorArr = []
 
 const http = require('http');
