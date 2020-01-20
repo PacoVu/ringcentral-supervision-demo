@@ -1,0 +1,20 @@
+{
+  "name": "supervision-demo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": {},
+  "license": "MIT",
+  "engines": {
+    "node": "8.1.2"
+  },
+  "dependencies": {
+    "concurrently": "^5.0.2",
+    "rimraf": "^3.0.0"
+  },
+  "scripts": {
+    "install": "(cd client && npm install) && (cd server && npm install)",
+    "build": "concurrently \"cd client && npm run build\"",
+    "clean": "concurrently \"rimraf node_modules\" \"cd client && rimraf node_modules build\" \"cd server && rimraf node_modules build\"",
+    "start": "concurrently \"cd client && npm start\" \"cd server && npm start\""
+  }
+}
