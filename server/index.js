@@ -51,7 +51,7 @@ http.createServer((request, response) => {
       }
       supervisorArr.push(agent2)
       */
-    }else if (request.url.indexOf("/server/enable_translation") != -1){
+    }else if (request.url.indexOf("/enable_translation") != -1){
       console.log(request.url)
       var queryData = url.parse(request.url, true).query;
       console.log(queryData.enable)
@@ -65,7 +65,7 @@ http.createServer((request, response) => {
       //supervisorArr[0].engine.enableTranslation(queryData.enable)
       response.writeHead(200, { "Content-Type": "text/html" });
       response.end();
-    }else if (request.url.indexOf("/server/recording") !== -1){
+    }else if (request.url.indexOf("/recording") !== -1){
       console.log(request.url)
       var queryData = url.parse(request.url, true).query;
       console.log(queryData.enable)
@@ -79,7 +79,7 @@ http.createServer((request, response) => {
       }
       response.writeHead(200, { "Content-Type": "text/html" });
       response.end();
-    }else if (request.url.indexOf("/server/supervise") !== -1){
+    }else if (request.url.indexOf("/supervise") !== -1){
       console.log(request.url)
       var queryData = url.parse(request.url, true).query;
       console.log(queryData.agent)
