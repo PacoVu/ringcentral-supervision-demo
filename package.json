@@ -1,7 +1,7 @@
 {
   "license": "MIT",
   "scripts": {
-    "start": "node -r dotenv-override-true/config -r @babel/register index.js && cd client && npm start ",
+    "start": "node index.js && cd client && npm start ",
     "start:prod": "node -r dotenv/config -r build/index.js"
   },
   "dependencies": {
