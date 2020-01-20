@@ -94,16 +94,18 @@ http.createServer((request, response) => {
       response.writeHead(200, { "Content-Type": "text/html" });
       response.end();
     }else{
-        console.log("Not GET nor POST method?")
-        response.writeHead(404);
-        response.end();
+      console.log(request.url)
+      console.log("unknown path method?")
+      response.writeHead(404);
+      response.end();
     }
   }else if (request.method === "POST"){
     console.log("Not in used")
   }else{
-      console.log("Not GET nor POST method?")
-      response.writeHead(404);
-      response.end();
+    console.log("Last " + request.url)
+    console.log("Not GET nor POST method?")
+    response.writeHead(404);
+    response.end();
   }
 }).listen(port, () => {
   console.log('Server running at ' + port);
