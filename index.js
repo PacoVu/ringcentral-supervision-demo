@@ -23,7 +23,7 @@ http.createServer((request, response) => {
 
   if (request.method === "GET") {
     if (request.url.toLowerCase() === '/events') {
-      console.log("METHOD: " + request.method)
+      console.log("METHOD EVENT: " + request.method)
       response.writeHead(200, {
         'Connection': 'keep-alive',
         'Content-Type': 'text/event-stream',
