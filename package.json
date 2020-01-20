@@ -14,7 +14,7 @@
     "ringcentral-softphone": "^0.4.1",
     "wrtc": "^0.4.2",
     "ws": "^7.1.2",
-    "core-js": "^3.2.1",
+    "core-js": "^3.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.6.0",
