@@ -1,8 +1,7 @@
 {
   "license": "MIT",
   "scripts": {
-    "start": "node index.js",
-    "start:prod": "node -r dotenv/config -r build/index.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "@ringcentral/sdk": "^4.0.0",
