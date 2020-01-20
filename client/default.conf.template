@@ -1,8 +1,0 @@
-server {
-  # Listen to port defined by Heroku
-  listen $PORT default_server;
-  # Redirect requests made to /api
-  location /api {
-    proxy_pass https://ringcentral-supervision-demo.herokuapp.com/;
-  }
-}
