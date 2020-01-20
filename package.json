@@ -1,5 +1,5 @@
 {
-  "name": "crae-simple",
+  "name": "supervision-demo",
   "version": "1.0.0",
   "main": "index.js",
   "repository": {},
@@ -14,8 +14,7 @@
   "scripts": {
     "build": "concurrently \"cd client && npm run build\"",
     "clean": "concurrently \"rimraf node_modules\" \"cd client && rimraf node_modules build\" \"cd server && rimraf node_modules build\"",
-    "heroku-postbuild": "yarn build",
-    "install": "(cd client && yarn) && (cd server && yarn)",
+    "heroku-postbuild": "npm run build",
     "start": "concurrently \"cd client && npm start\" \"cd server && npm start\"",
     "start:prod": "cd server && yarn start:prod"
   }
