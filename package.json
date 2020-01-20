@@ -4,7 +4,7 @@
     "install": "(cd client && npm install) && (cd server && npm install)",
     "build": "concurrently \"cd client && npm run build\"",
     "clean": "concurrently \"rimraf node_modules\" \"cd client && rimraf node_modules build\" \"cd server && rimraf node_modules build\"",
-    "start": "concurrently \"node index.js\" \"cd client && npm start\""
+    "start": "concurrently \"cd client && npm start\" \"node index.js\""
   },
   "dependencies": {
     "@ringcentral/sdk": "^4.0.0",
