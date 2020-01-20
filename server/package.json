@@ -1,0 +1,26 @@
+{
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js",
+    "start:prod": "node -r dotenv/config -r build/index.js"
+  },
+  "dependencies": {
+    "@ringcentral/sdk": "^4.0.0",
+    "dotenv": "^8.1.0",
+    "dotenv-override-true": "^6.2.0",
+    "ibm-watson": "^4.5.0",
+    "node-webrtc-media-devices": "^0.1.4",
+    "request": "^2.88.0",
+    "ringcentral-softphone": "^0.4.1",
+    "wrtc": "^0.4.2",
+    "ws": "^7.1.2",
+    "core-js": "^3.2.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.0",
+    "@babel/preset-env": "^7.6.0",
+    "@babel/register": "^7.6.0",
+    "standard": "^14.3.0",
+    "yarn-upgrade-all": "^0.5.2"
+  }
+}
