@@ -121,16 +121,28 @@ app.post('/webhookcallback', function(req, res) {
                   console.log("Receive session notification")
                   if (party.direction === "Inbound"){
                     if (party.status.code === "Proceeding"){
+                      var agentExtNumber = ""
+                      for (var agent of agentsList){
+                        if (agent.id == body.parties[0].extensionId){
+                          agentExtNumber = agent.number
+                        }
+                      }
                       var phoneStatus = {
-                        agent: this.agentName,
+                        agent: agentExtNumber,
                         status: 'ringing'
                       }
                       sendPhoneEvent(phoneStatus)
                     }else if (party.status.code === "Answered"){
                       processTelephonySessionNotification(jsonObj.body)
                     }else if (party.status.code === "Disconnected"){
+                      var agentExtNumber = ""
+                      for (var agent of agentsList){
+                        if (agent.id == body.parties[0].extensionId){
+                          agentExtNumber = agent.number
+                        }
+                      }
                       var phoneStatus = {
-                        agent: this.agentName,
+                        agent: agentExtNumber,
                         status: 'idle'
                       }
                       sendPhoneEvent(phoneStatus)
@@ -237,7 +249,7 @@ async function startNotification(){
   }
 
   // just for cleanup all pending/active subscriptions
-  //return deleteAllRegisteredWebHookSubscriptions()
+  deleteAllRegisteredWebHookSubscriptions()
 
   fs.readFile('subscriptionId.txt', 'utf8', function (err, id) {
       if (err) {
