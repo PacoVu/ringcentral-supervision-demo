@@ -1,4 +1,6 @@
 var fs = require('fs');
+const path = require('path')
+
 if (process.env.PRODUCTION == false)
   require('dotenv').config()
 
