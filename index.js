@@ -250,7 +250,7 @@ async function startNotification(){
   }
 
   // just for cleanup all pending/active subscriptions
-  deleteAllRegisteredWebHookSubscriptions()
+  // deleteAllRegisteredWebHookSubscriptions()
 
   fs.readFile('subscriptionId.txt', 'utf8', function (err, id) {
       if (err) {
