@@ -105,6 +105,7 @@ app.get('*', (req, res) => {
 
 app.post('/webhookcallback', function(req, res) {
   console.log("webhookcallback called")
+  console.log(req)
     if(req.headers.hasOwnProperty("validation-token")) {
         res.setHeader('Validation-Token', req.headers['validation-token']);
         res.statusCode = 200;
@@ -382,7 +383,7 @@ async function deleteAllRegisteredWebHookSubscriptions() {
     for (var record of json.records) {
       if (record.deliveryMode.transportType == "WebHook"){
             // Needed for local test as ngrok address might be expired
-          await rc.delete('/restapi/v1.0/subscription/' + record.id)
+          await rcsdk.delete('/restapi/v1.0/subscription/' + record.id)
           console.log("Deleted")
       }
     }
