@@ -32,6 +32,7 @@ http.createServer((request, response) => {
         'Cache-Control': 'no-cache',
         'Access-Control-Allow-Origin': '*'
       });
+      response.end();
       eventResponse = response
       //checkConnectionToRestore(request, response, eventHistory);
       console.log("LOGIN")
