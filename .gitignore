@@ -1,8 +1,11 @@
 node_modules/
 node_modules_old/
+build/
 extra/
 server/
 .env
+.DS_Store
+.
 dotenv
 *.raw
 temp.*
@@ -10,4 +13,5 @@ README.md
 *.txt
 *lock.json
 tyler.js
+index_express.js
 yarn_remove.lock
