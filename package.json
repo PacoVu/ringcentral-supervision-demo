@@ -1,32 +1,31 @@
 {
-  "license": "MIT",
-  "engines": {
-    "node": "10.16.3"
-  },
+  "name": "supervision",
+  "version": "1.0.0",
+  "description": "Calls monitor demo",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "heroku-postbuild": "cd client && npm install && npm run build"
   },
+  "author": "Phong Vu",
+  "license": "MIT",
   "dependencies": {
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "path": "^0.12.7",
+    "request": "^2.88.0",
     "@ringcentral/sdk": "^4.0.0",
     "core-js": "^3.2.1",
     "dotenv": "^8.1.0",
     "dotenv-override-true": "^6.2.0",
     "ibm-watson": "^4.5.0",
     "node-webrtc-media-devices": "^0.1.4",
-    "request": "^2.88.0",
-    "rimraf": "^3.0.0",
     "ringcentral-softphone": "^0.4.1",
     "wrtc": "^0.4.2",
     "ws": "^7.1.2"
   },
-  "devDependencies": {
-    "@babel/core": "^7.6.0",
-    "@babel/preset-env": "^7.6.0",
-    "@babel/register": "^7.6.0",
-    "standard": "^14.3.0",
-    "yarn-upgrade-all": "^0.5.2"
+  "engines": {
+    "node": "10.5.0"
   }
 }

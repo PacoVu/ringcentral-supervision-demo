@@ -1,6 +1,6 @@
 {
-  "short_name": "Call Supervisor",
-  "name": "Call Supervisor Demo using React",
+  "short_name": "React App",
+  "name": "Create React App Sample",
   "icons": [
     {
       "src": "favicon.ico",

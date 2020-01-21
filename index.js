@@ -1,126 +1,162 @@
-var fs = require('fs');
+const express = require('express')
+const cors = require('cors')
 const path = require('path')
 
+const RingCentral = require('@ringcentral/sdk').SDK
+var fs = require('fs')
+
+// Create the server
+const app = express()
+
+// Serve static files from the React frontend app
+app.use(express.static(path.join(__dirname, 'client/build')))
+
+// SoftPhone
 if (process.env.PRODUCTION == false)
   require('dotenv').config()
 
 const PhoneEngine = require('./supervisor-engine');
 
 var supervisorArr = []
-
-const http = require('http');
-var url = require('url');
 var eventResponse = null
+var subscriptionId = ""
 
-var port = process.env.PORT || 5000
-
-http.createServer((request, response) => {
-  console.log(`Request url: ${request.url}`);
-
-  const eventHistory = [];
-
-  request.on('close', () => {
-    closeConnection(response);
+// Serve our api route /cow that returns a custom talking text cow
+app.get('/events', cors(), async (req, res) => {
+  console.log("METHOD EVENTS")
+  res.set({
+    'Connection': 'keep-alive',
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Access-Control-Allow-Origin': '*'
   });
+  res.statusCode = 200;
+  eventResponse = res
+})
 
-  if (request.method === "GET") {
-    if (request.url.toLowerCase() === '/events') {
-      console.log("METHOD EVENT: " + request.method)
-      response.writeHead(200, {
-        'Connection': 'keep-alive',
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Access-Control-Allow-Origin': '*'
-      });
-      response.end();
-      eventResponse = response
-      //checkConnectionToRestore(request, response, eventHistory);
-      console.log("LOGIN")
-      //supervisor.initializePhoneEngine()
-      /*
-      let supervisor1 = new PhoneEngine("120")
-      supervisor1.initializePhoneEngine()
-      var agent1 = {
-          name: "595861017",
-          engine: supervisor1
-      }
-      supervisorArr.push(agent1)
+app.get('/enable_translation', cors(), async (req, res) => {
+  console.log("START NOTIFICATION")
+  startNotification()
+  res.statusCode = 200;
+  res.end();
+  /*
+  console.log("ENABLE TRANSLATION")
+  var queryData = req.query;
+  console.log(queryData.enable)
 
-      let supervisor2 = new PhoneEngine("116")
-      supervisor2.initializePhoneEngine()
-      var agent2 = {
-        name: "590490017",
-        engine: supervisor2
-      }
-      supervisorArr.push(agent2)
-      */
-    }else if (request.url.indexOf("/enable_translation") != -1){
-      console.log(request.url)
-      var queryData = url.parse(request.url, true).query;
-      console.log(queryData.enable)
-      //supervisor.enableTranslation(queryData.enable)
-      for (var supervisor of supervisorArr){
-        if (supervisor.name == queryData.agent){
-          supervisor.engine.enableTranslation(queryData.enable)
-          break
-        }
-      }
-      //supervisorArr[0].engine.enableTranslation(queryData.enable)
-      response.writeHead(200, { "Content-Type": "text/html" });
-      response.end();
-    }else if (request.url.indexOf("/recording") !== -1){
-      console.log(request.url)
-      var queryData = url.parse(request.url, true).query;
-      console.log(queryData.enable)
-      //supervisor.enableRecording(queryData.enable)
-      //supervisorArr[0].engine.enableRecording(queryData.enable)
-      for (var supervisor of supervisorArr){
-        if (supervisor.name == queryData.agent){
-          supervisor.engine.enableRecording(queryData.enable)
-          break
-        }
-      }
-      response.writeHead(200, { "Content-Type": "text/html" });
-      response.end();
-    }else if (request.url.indexOf("/supervise") !== -1){
-      console.log(request.url)
-      var queryData = url.parse(request.url, true).query;
-      console.log(queryData.agent)
-      let supervisor = new PhoneEngine(queryData.agent)
-      supervisor.initializePhoneEngine()
-      var agent = {
+  for (var supervisor of supervisorArr){
+    if (supervisor.name == queryData.agent){
+      supervisor.engine.enableTranslation(queryData.enable)
+      break
+    }
+  }
+
+  res.statusCode = 200;
+  res.end();
+  */
+})
+
+app.get('/supervise', cors(), async (req, res) => {
+    console.log("ENABLE SUPERVISION")
+    var queryData = req.query;
+    console.log(queryData.agent)
+    let supervisor = new PhoneEngine(queryData.agent)
+    supervisor.initializePhoneEngine()
+    var agent = {
           name: queryData.agent,
           engine: supervisor
-      }
-      supervisorArr.push(agent)
-
-      response.writeHead(200, { "Content-Type": "text/html" });
-      response.end();
-    }else{
-      console.log(request.url)
-      //request.sendFile(path.join(__dirname + '/client/build/index.html'))
-      fs.readFile(path.join(__dirname + '/client/build/index.html'), function (error, pgResp) {
-            if (error) {
-                response.writeHead(404);
-                response.write('Contents you are looking are Not Found');
-            } else {
-                response.writeHead(200, { 'Content-Type': 'text/html' });
-                response.write(pgResp);
-            }
-            response.end();
-        });
     }
-  }else if (request.method === "POST"){
-    console.log("Not in used")
-  }else{
-    console.log("Last " + request.url)
-    console.log("Not GET nor POST method?")
-    response.writeHead(404);
-    response.end();
+    supervisorArr.push(agent)
+
+    res.statusCode = 200;
+    res.end();
+})
+
+app.get('/startnotification', cors(), async (req, res) => {
+  console.log("START NOTIFICATION")
+  var queryData = req.query;
+  console.log(queryData.enable)
+
+  startNotification()
+  res.statusCode = 200;
+  res.end();
+})
+
+
+app.get('/recording', cors(), async (req, res) => {
+  console.log("ENABLE RECORDING")
+  var queryData = req.query;
+  console.log(queryData.enable)
+
+  for (var supervisor of supervisorArr){
+    if (supervisor.name == queryData.agent){
+      supervisor.engine.enableRecording(queryData.enable)
+      break
+    }
   }
-}).listen(port, () => {
-  console.log('Server running at ' + port);
-});
+  res.statusCode = 200;
+  res.end();
+})
+
+// Anything that doesn't match the above, send back the index.html file
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/client/build/index.html'))
+})
+
+app.post('/webhookcallback', function(req, res) {
+  console.log("webhookcallback called")
+    if(req.headers.hasOwnProperty("validation-token")) {
+        res.setHeader('Validation-Token', req.headers['validation-token']);
+        res.statusCode = 200;
+        res.end();
+    }else{
+        var body = []
+        req.on('data', function(chunk) {
+            body.push(chunk);
+        }).on('end', function() {
+            body = Buffer.concat(body).toString();
+            var jsonObj = JSON.parse(body)
+            if (jsonObj.subscriptionId == subscriptionId) {
+              for (var party of jsonObj.body.parties){
+                  console.log("Receive session notification")
+                  if (party.direction === "Inbound"){
+                    if (party.status.code === "Proceeding"){
+                      var phoneStatus = {
+                        agent: this.agentName,
+                        status: 'ringing'
+                      }
+                      sendPhoneEvent(phoneStatus)
+                    }else if (party.status.code === "Answered"){
+                      processTelephonySessionNotification(jsonObj.body)
+                    }else if (party.status.code === "Disconnected"){
+                      var phoneStatus = {
+                        agent: this.agentName,
+                        status: 'idle'
+                      }
+                      sendPhoneEvent(phoneStatus)
+                      console.log("HANG UP " + JSON.stringify(jsonObj.body))
+                      //supervisor.hangup()
+                    }else
+                      console.log(JSON.stringify(jsonObj.body))
+                    return
+                  }else
+                    console.log(JSON.stringify(jsonObj.body))
+              }
+            }
+        });
+        //res.statusCode = 200;
+        //res.end();
+    }
+})
+
+
+// Choose the port and start the server
+const PORT = process.env.PORT || 5000
+app.listen(PORT, () => {
+  console.log(`Mixing it up on port ${PORT}`)
+})
+
+
 
 function sendPhoneEvent(phone){
   var res = 'event: phoneEvent\ndata: ' + JSON.stringify(phone) + '\n\n'
@@ -164,3 +200,181 @@ function checkConnectionToRestore(request, response, eventHistory) {
 
 module.exports.sendTranscriptEvents = sendTranscriptEvents;
 module.exports.sendPhoneEvent = sendPhoneEvent;
+
+const rcsdk = new RingCentral({
+  server: process.env.RINGCENTRAL_SERVER_URL,
+  clientId: process.env.RINGCENTRAL_CLIENT_ID,
+  clientSecret: process.env.RINGCENTRAL_CLIENT_SECRET
+})
+
+async function startNotification(){
+  if (fs.existsSync("access_tokens.txt")) {
+      console.log("reuse access tokens")
+      var saved_tokens = fs.readFileSync("access_tokens.txt", 'utf8');
+      var tokensObj = JSON.parse(saved_tokens)
+      await rcsdk.platform().auth().setData(tokensObj)
+      var isLoggedin = await rcsdk.platform().auth().accessTokenValid() //rcsdk.platform().loggedIn()
+      console.log("everything is okay: " + isLoggedin)
+      if (!isLoggedin){
+        console.log("RELOGIN ???")
+        await rcsdk.login({
+          username: process.env.RINGCENTRAL_USERNAME,
+          extension: process.env.RINGCENTRAL_EXTENSION,
+          password: process.env.RINGCENTRAL_PASSWORD
+        })
+      }
+  }else{
+    await rcsdk.login({
+      username: process.env.RINGCENTRAL_USERNAME,
+      extension: process.env.RINGCENTRAL_EXTENSION,
+      password: process.env.RINGCENTRAL_PASSWORD
+    })
+    const data = await rcsdk.platform().auth().data()
+    fs.writeFile("access_tokens.txt", JSON.stringify(data), function(err) {
+      if(err)
+        console.log(err);
+    })
+  }
+
+  // just for cleanup all pending/active subscriptions
+  //return deleteAllRegisteredWebHookSubscriptions()
+
+  fs.readFile('subscriptionId.txt', 'utf8', function (err, id) {
+      if (err) {
+        console.log("call startWebHookSubscription")
+        startWebhookSubscription()
+      }else{
+        console.log("subscription id: " + id)
+        checkRegisteredWebHookSubscription(id)
+      }
+  });
+}
+
+async function processTelephonySessionNotification(body){
+  var isLoggedin = await rcsdk.platform().loggedIn()
+  console.log("still logged in?")
+  if (!isLoggedin){
+    console.log("RELOGIN ???")
+    await rcsdk.login({
+      username: process.env.RINGCENTRAL_USERNAME,
+      extension: process.env.RINGCENTRAL_EXTENSION,
+      password: process.env.RINGCENTRAL_PASSWORD
+    })
+  }
+  var deviceId = fs.readFileSync('deviceId.txt', 'utf8')
+  try{
+      var endpoint = `/restapi/v1.0/account/~/telephony/sessions/${body.telephonySessionId}/supervise`
+      var agentExtNumber = ""
+      for (var agent of agentsList){
+        if (agent.id == body.parties[0].extensionId){
+          agentExtNumber = agent.number
+        }
+      }
+      var params = {
+            mode: 'Listen',
+            supervisorDeviceId: deviceId,
+            agentExtensionNumber: agentExtNumber
+          }
+      console.log(params)
+      var res = await rcsdk.post(endpoint, params)
+  }catch(e) {
+      console.log(e.message)
+      //console.log(e)
+  }
+}
+
+var agentsList = []
+
+async function startWebhookSubscription() {
+    var r = await rcsdk.get('/restapi/v1.0/account/~/extension')
+    var json = await r.json()
+    var eventFilters = []
+    for (var record of json.records){
+      if (record.extensionNumber == "120" || record.extensionNumber == "122"){
+          var paramsEvent = `/restapi/v1.0/account/~/extension/${record.id}/telephony/sessions`
+          eventFilters.push(paramsEvent)
+          var agent = {
+            id: record.id,
+            number: record.extensionNumber
+          }
+          agentsList.push(agent)
+      }
+    }
+    var res = await  rcsdk.post('/restapi/v1.0/subscription',
+            {
+                eventFilters: eventFilters,
+                deliveryMode: {
+                    transportType: 'WebHook',
+                    address: process.env.DELIVERY_MODE_ADDRESS
+                }
+            })
+    var jsonObj = await res.json()
+    console.log("Ready to receive telephonyStatus notification via WebHook.")
+    //console.log(JSON.stringify(jsonObj))
+    //console.log(JSON.stringify(rcsdk.platform().auth().data()))
+    try {
+      fs.writeFile("subscriptionId.txt", jsonObj.id, function(err) {
+          if(err)
+              console.log(err);
+          else {
+              console.log("SubscriptionId " + jsonObj.id + " is saved.");
+              subscriptionId = jsonObj.id
+          }
+      });
+    }catch (e){
+      console.log("WriteFile err")
+    }
+}
+
+async function checkRegisteredWebHookSubscription(subscriptionId) {
+    try {
+      let response = await rcsdk.get('/restapi/v1.0/subscription')
+      let json = await response.json();
+      if (json.records.length > 0){
+        for(var record of json.records) {
+          if (record.id == subscriptionId) {
+            if (record.deliveryMode.transportType == "WebHook"){
+              if (process.env.DELETE_EXISTING_WEBHOOK_SUBSCRIPTION == 1){
+                // Needed for local test as ngrok address might be expired
+                console.log("Subscription exist => delete it then subscribe a new one")
+                await rcsdk.delete('/restapi/v1.0/subscription/' + record.id)
+                startWebhookSubscription()
+              }else{
+                if (record.status != "Active"){
+                  console.log("Subscription is not active => renew it")
+                  await rc.post('/restapi/v1.0/subscription/' + record.id + "/renew")
+                  console.log("Renew: " + record.id)
+                }else {
+                  console.log("Subscription is active => good to go.")
+                  console.log("sub status: " + record.status)
+                }
+              }
+            }
+          }
+        }
+      }else{
+        console.log("No subscription for this service => create one.")
+        startWebhookSubscription()
+      }
+    }catch(e){
+      console.log("checkRegisteredWebHookSubscription ERROR")
+      console.log(e)
+    }
+}
+
+/// Clean up WebHook subscriptions
+async function deleteAllRegisteredWebHookSubscriptions() {
+  let response = await rcsdk.get('/restapi/v1.0/subscription')
+  let json = await response.json();
+  if (json.records.length > 0){
+    for (var record of json.records) {
+      if (record.deliveryMode.transportType == "WebHook"){
+            // Needed for local test as ngrok address might be expired
+          await rc.delete('/restapi/v1.0/subscription/' + record.id)
+          console.log("Deleted")
+      }
+    }
+  }else{
+    console.log("No subscriptions.")
+  }
+}
