@@ -1,10 +1,78 @@
-var fs = require('fs');
+const express = require('express')
+const cors = require('cors')
+const path = require('path')
+
+// Create the server
+const app = express()
+
+// Serve static files from the React frontend app
+app.use(express.static(path.join(__dirname, 'client/build')))
+
+// SoftPhone
 if (process.env.PRODUCTION == false)
   require('dotenv').config()
 
 const PhoneEngine = require('./supervisor-engine');
 
 var supervisorArr = []
+
+
+// Serve our api route /cow that returns a custom talking text cow
+app.get('/events', cors(), async (req, res, next) => {
+  console.log("METHOD EVENTS")
+  res.set({
+    'Connection': 'keep-alive',
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Access-Control-Allow-Origin': '*'
+  });
+  res.statusCode = 200;
+  res.end();
+
+  //eventResponse = response
+})
+
+app.get('/enable_translation', cors(), async (req, res, next) => {
+  console.log("ENABLE TRANSLATION")
+  var queryData = req.query;
+  console.log(queryData.enable)
+
+  for (var supervisor of supervisorArr){
+    if (supervisor.name == queryData.agent){
+      supervisor.engine.enableTranslation(queryData.enable)
+      break
+    }
+  }
+  res.statusCode = 200;
+  res.end();
+})
+
+app.get('/recording', cors(), async (req, res, next) => {
+  console.log("ENABLE RECORDING")
+  var queryData = req.query;
+  console.log(queryData.enable)
+  for (var supervisor of supervisorArr){
+    if (supervisor.name == queryData.agent){
+      supervisor.engine.enableRecording(queryData.enable)
+      break
+    }
+  }
+  res.statusCode = 200;
+  res.end();
+})
+
+// Anything that doesn't match the above, send back the index.html file
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/client/build/index.html'))
+})
+
+// Choose the port and start the server
+const PORT = process.env.PORT || 5000
+app.listen(PORT, () => {
+  console.log(`Mixing it up on port ${PORT}`)
+})
+
+
 
 const http = require('http');
 var url = require('url');
@@ -95,17 +163,16 @@ http.createServer((request, response) => {
       response.end();
     }else{
       console.log(request.url)
-      request.sendFile(path.join(__dirname + '/client/build/index.html'))
-      fs.readFile(path.join(__dirname + '/client/build/index.html'), function (error, pgResp) {
-            if (error) {
-                response.writeHead(404);
-                response.write('Contents you are looking are Not Found');
-            } else {
-                response.writeHead(200, { 'Content-Type': 'text/html' });
-                response.write(pgResp);
-            }
-            response.end();
-        });
+      console.log("unknown path method?")
+      response.writeHead(200, {
+        'Connection': 'keep-alive',
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Access-Control-Allow-Origin': '*'
+      });
+      eventResponse = response
+      //response.writeHead(404);
+      //response.end();
     }
   }else if (request.method === "POST"){
     console.log("Not in used")

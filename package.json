@@ -1,14 +1,16 @@
 {
   "license": "MIT",
+  "engines": {
+    "node": "10.16.3"
+  },
+  "main": "index.js",
   "scripts": {
-    "install": "(cd client && npm install) && (cd server && npm install)",
-    "build": "concurrently \"cd client && npm run build\"",
-    "clean": "concurrently \"rimraf node_modules\" \"cd client && rimraf node_modules build\" \"cd server && rimraf node_modules build\"",
-    "start": "concurrently \"cd client && PORT=3000 npm start\" \"node index.js\""
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "heroku-postbuild": "cd client && npm install && npm run build"
   },
   "dependencies": {
     "@ringcentral/sdk": "^4.0.0",
-    "concurrently": "^5.0.2",
     "core-js": "^3.2.1",
     "dotenv": "^8.1.0",
     "dotenv-override-true": "^6.2.0",
