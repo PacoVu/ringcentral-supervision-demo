@@ -95,7 +95,7 @@ http.createServer((request, response) => {
       response.end();
     }else{
       console.log(request.url)
-      request.sendFile(path.join(__dirname + '/client/build/index.html'))
+      //request.sendFile(path.join(__dirname + '/client/build/index.html'))
       fs.readFile(path.join(__dirname + '/client/build/index.html'), function (error, pgResp) {
             if (error) {
                 response.writeHead(404);
