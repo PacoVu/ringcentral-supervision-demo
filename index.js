@@ -101,10 +101,66 @@ app.get('/recording', cors(), async (req, res) => {
 
 // Anything that doesn't match the above, send back the index.html file
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname + '/client/build/index.html'))
-  console.log("START NOTIFICATION")
-  startNotification()
+  //res.sendFile(path.join(__dirname + '/client/build/index.html'))
+  //console.log("START NOTIFICATION")
+  //startNotification()
+  await rcsdk.login({
+    username: process.env.RINGCENTRAL_USERNAME,
+    extension: process.env.RINGCENTRAL_EXTENSION,
+    password: process.env.RINGCENTRAL_PASSWORD
+  })
+  var authorize_uri = await rcsdk.platform().loginUrl({brandId: ''})
+  res.render(path.join(__dirname + '/client/build/login', {
+        authorize_uri: authorize_uri
+        })
+  });
 })
+
+/* LOGIN
+app.get('/logout', function(req, res) {
+  if (req.session.tokens != undefined){
+      var tokensObj = req.session.tokens
+      var platform = rcsdk.platform()
+      platform.auth().setData(tokensObj)
+      platform.loggedIn().then(function(isLoggedIn) {
+        if (isLoggedIn) {
+          platform.logout()
+            .then(function(resp){
+                console.log("logged out")
+            })
+            .catch(function(e){
+                console.log(e)
+            });
+        }
+        req.session.tokens = null
+        res.redirect("/")
+      });
+      return
+  }
+  res.redirect("/")
+})
+
+app.get('/oauth2callback', function(req, res) {
+  if (req.query.code) {
+      var platform = rcsdk.platform()
+      platform.login({
+          code: req.query.code,
+      })
+      .then(function(response) {
+        return response.json()
+      })
+      .then(function (token) {
+          req.session.tokens = token
+          res.redirect("/test")
+      })
+      .catch(function (e) {
+          res.send('Login error ' + e)
+      });
+  }else {
+      res.send('No Auth code');
+  }
+});
+*/
 
 app.post('/webhookcallback', function(req, res) {
   console.log("webhookcallback called")
