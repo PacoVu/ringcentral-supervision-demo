@@ -25,6 +25,31 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
+    <script>
+    var OAuthCode = function() {
+      var authUri = "https://platform.ringcentral.com/restapi/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fringcentral-supervision-demo.herokuapp.com%2Foauth2callback&client_id=97gJYhYSTNyH7hmukrdbUg&state=&brand_id=1210&display=page&prompt=login%20consent%20sso&scope=&appUrlScheme=https%3A%2F%2Fringcentral-supervision-demo.herokuapp.com%2Foauth2callback";
+      var redirectUri = "https%3A%2F%2Fringcentral-supervision-demo.herokuapp.com%2Foauth2callback"
+      this.loginPopup  = function() {
+        this.loginPopupUri(authUri, redirectUri);
+      }
+        this.loginPopupUri  = function(authUri, redirectUri) {
+          var win         = window.open(authUri, 'windowname1', 'width=800, height=600');
+          var pollOAuth   = window.setInterval(function() {
+            try {
+              if (win.document.URL.indexOf(redirectUri) != -1) {
+                window.clearInterval(pollOAuth);
+                win.close();
+                window.setTimeout(function() {
+                  window.location.href = "loadmainpage"
+                }, 100)
+              }
+            } catch(e) {
+              console.log(e)
+          }
+        }, 100);
+      }
+    }
+    </script>
     <title>Call Supervisor</title>
   </head>
   <body>
@@ -34,7 +59,7 @@
           <span class="title">Call Supervisor Demo</span>
         </span>
         <ul class="nav navbar-nav navbar-left left-align-nav">
-          <li><a target="_blank" href="https://platform.ringcentral.com/restapi/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fringcentral-supervision-demo.herokuapp.com%2Foauth2callback&client_id=97gJYhYSTNyH7hmukrdbUg&state=&brand_id=1210&display=page&prompt=login%20consent%20sso&scope=&appUrlScheme=https%3A%2F%2Fringcentral-supervision-demo.herokuapp.com%2Foauth2callback">Login</a></li>
+          <li><a target="_blank" href="javascript:OAuthCode()">Login</a></li>
           <!--li><a href="https://login.ringcentral.com/?responseType=code&clientId=97gJYhYSTNyH7hmukrdbUg&brandId=1210&state=&localeId=en_US&endpointId=&session=778210621529818640&display=page&prompt=login%20consent%20sso&scope=&appUrlScheme=https%3A%2F%2Fringcentral-supervision-demo.herokuapp.com%2Foauth2callback&ui_options=&code_challenge=&code_challenge_method=&hideNavigationBar=true">Login</a></li-->
         </ul>
         <ul class="nav navbar-nav navbar-right middle-align">
