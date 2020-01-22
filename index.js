@@ -264,25 +264,29 @@ async function processTelephonySessionNotification(body){
       password: process.env.RINGCENTRAL_PASSWORD
     })
   }
-  var deviceId = fs.readFileSync('deviceId.txt', 'utf8')
-  try{
-      var endpoint = `/restapi/v1.0/account/~/telephony/sessions/${body.telephonySessionId}/supervise`
-      var agentExtNumber = ""
-      for (var agent of agentsList){
-        if (agent.id == body.parties[0].extensionId){
-          agentExtNumber = agent.number
-        }
-      }
-      var params = {
-            mode: 'Listen',
-            supervisorDeviceId: deviceId,
-            agentExtensionNumber: agentExtNumber
+  try {
+    var deviceId = fs.readFileSync('deviceId.txt', 'utf8')
+    try{
+        var endpoint = `/restapi/v1.0/account/~/telephony/sessions/${body.telephonySessionId}/supervise`
+        var agentExtNumber = ""
+        for (var agent of agentsList){
+          if (agent.id == body.parties[0].extensionId){
+            agentExtNumber = agent.number
           }
-      console.log(params)
-      var res = await rcsdk.post(endpoint, params)
-  }catch(e) {
-      console.log(e.message)
-      //console.log(e)
+        }
+        var params = {
+              mode: 'Listen',
+              supervisorDeviceId: deviceId,
+              agentExtensionNumber: agentExtNumber
+            }
+        console.log(params)
+        var res = await rcsdk.post(endpoint, params)
+    }catch(e) {
+        console.log(e.message)
+        //console.log(e)
+    }
+  }catch(e){
+    console.log(e.message)
   }
 }
 
