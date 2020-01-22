@@ -103,6 +103,7 @@ app.get('/recording', cors(), async (req, res) => {
 app.get('*', async (req, res) => {
   //res.sendFile(path.join(__dirname + '/client/build/index.html'))
   console.log("LOAD LOGIN")
+
   //startNotification()
   await rcsdk.login({
     username: process.env.RINGCENTRAL_USERNAME,
@@ -113,8 +114,10 @@ app.get('*', async (req, res) => {
   res.set('Content-Type', 'text/html');
   var html = '<h2>Login</h2>'
   html += '<a href="' + authorize_uri + '">Login RingCentral Account</a>'
-  res.send(new Buffer(html));
-  res.end();
+  console.log(html)
+  res.sendFile(path.join(__dirname + '/client/build/login.html'))
+  //res.send(new Buffer(html));
+  //res.end();
 })
 
 /* LOGIN
