@@ -145,10 +145,10 @@ app.post('/webhookcallback', function(req, res) {
                   }else
                     console.log(JSON.stringify(jsonObj.body))
               }
+              res.statusCode = 200;
+              res.end();
             }
         });
-        res.statusCode = 200;
-        res.end();
     }
 })
 
