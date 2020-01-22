@@ -2,9 +2,16 @@ const express = require('express')
 const cors = require('cors')
 const path = require('path')
 const pgdb = require('./db')
+var fs = require('fs')
 
 const RingCentral = require('@ringcentral/sdk').SDK
-var fs = require('fs')
+
+const rcsdk = new RingCentral({
+  server: process.env.RINGCENTRAL_SERVER_URL,
+  clientId: process.env.RINGCENTRAL_CLIENT_ID,
+  clientSecret: process.env.RINGCENTRAL_CLIENT_SECRET,
+  redirectUri: process.env.RINGCENTRAL_REDIRECT_URL
+})
 
 // Create the server
 const app = express()
@@ -148,17 +155,18 @@ app.get('/logout', function(req, res) {
 })
 */
 app.get('/oauth2callback', async function(req, res) {
+  console.log("oauth2callback")
+  console.log(req.query.code)
   if (req.query.code) {
       var platform = rcsdk.platform()
       await platform.login({
           code: req.query.code,
       })
       const data = await rcsdk.platform().auth().data()
+      console.log(JSON.stringify(data));
       fs.writeFile("access_tokens.txt", JSON.stringify(data), function(err) {
         if(err)
           console.log(err);
-        else
-          console.log(JSON.stringify(data));
       })
       res.send("logged in")
   }else {
@@ -285,13 +293,6 @@ function checkConnectionToRestore(request, response, eventHistory) {
 
 module.exports.sendTranscriptEvents = sendTranscriptEvents;
 module.exports.sendPhoneEvent = sendPhoneEvent;
-
-const rcsdk = new RingCentral({
-  server: process.env.RINGCENTRAL_SERVER_URL,
-  clientId: process.env.RINGCENTRAL_CLIENT_ID,
-  clientSecret: process.env.RINGCENTRAL_CLIENT_SECRET,
-  redirectUri: process.env.RINGCENTRAL_REDIRECT_URL
-})
 
 async function startNotification(){
   /*
