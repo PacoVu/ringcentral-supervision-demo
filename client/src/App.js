@@ -46,6 +46,7 @@ export default class App extends Component {
         angerScore: 0
       }
     };
+    this.isLoggedIn = false;
     this.eventSource = new EventSource('/events');
   }
 

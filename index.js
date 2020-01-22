@@ -106,15 +106,24 @@ app.get('/recording', cors(), async (req, res) => {
   res.end();
 })
 
+app.get('/login', cors(), async (req, res) => {
+  console.log("LOGIN")
+  startNotification()
+  res.statusCode = 200;
+  res.end();
+})
+
 // Anything that doesn't match the above, send back the index.html file
 app.get('*', (req, res) => {
   console.log("LOAD INDEX")
   res.sendFile(path.join(__dirname + '/client/build/index.html'))
+  /*
   var authorize_uri = rcsdk.platform().loginUrl({brandId: ''})
   res.set('Content-Type', 'text/html');
   var html = '<h2>Login</h2>'
   html += '<a href="' + authorize_uri + '">Login RingCentral Account</a>'
   console.log(html)
+  */
 /*
   console.log("LOAD LOGIN")
 
@@ -324,17 +333,14 @@ async function startNotification(){
       console.log("everything is okay: " + isLoggedin)
       if (!isLoggedin){
         console.log("FORCE TO RELOGIN !!!")
-        /*
         await rcsdk.login({
           username: process.env.RINGCENTRAL_USERNAME,
           extension: process.env.RINGCENTRAL_EXTENSION,
           password: process.env.RINGCENTRAL_PASSWORD
         })
-        */
       }
   }else{
     console.log("FORCE TO LOGIN !!!")
-    /*
     await rcsdk.login({
       username: process.env.RINGCENTRAL_USERNAME,
       extension: process.env.RINGCENTRAL_EXTENSION,
@@ -345,7 +351,6 @@ async function startNotification(){
       if(err)
         console.log(err);
     })
-    */
   }
 
   // just for cleanup all pending/active subscriptions
