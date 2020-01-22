@@ -110,9 +110,11 @@ app.get('*', async (req, res) => {
     password: process.env.RINGCENTRAL_PASSWORD
   })
   var authorize_uri = await rcsdk.platform().loginUrl({brandId: ''})
-  res.render(path.join(__dirname + '/client/build/login'), {
-      authorize_uri: authorize_uri
-  });
+  res.set('Content-Type', 'text/html');
+  var html = '<h2>Login</h2>'
+  html += '<a href="' + authorize_uri + '">Login RingCentral Account</a>'
+  res.send(new Buffer(html));
+  res.end();
 })
 
 /* LOGIN
