@@ -41,19 +41,24 @@ PhoneEngine.prototype = {
         await this.rcsdk.platform().auth().setData(tokensObj)
         var isLoggedin = await this.rcsdk.platform().loggedIn()
         if (!isLoggedin){
-          console.log("RELOGIN ???")
+          return console.log("ENGINE FORCE TO RELOGIN !!!")
+          /*
           await this.rcsdk.login({
             username: process.env.RINGCENTRAL_USERNAME,
             extension: process.env.RINGCENTRAL_EXTENSION,
             password: process.env.RINGCENTRAL_PASSWORD
           })
+          */
         }
     }else{
+      return console.log("ENGINE FORCE TO LOGIN !!!")
+      /*
       await this.rcsdk.login({
         username: process.env.RINGCENTRAL_USERNAME,
         extension: process.env.RINGCENTRAL_EXTENSION,
         password: process.env.RINGCENTRAL_PASSWORD
       })
+      */
     }
     /*
     await this.rcsdk.login({

@@ -323,14 +323,18 @@ async function startNotification(){
       var isLoggedin = await rcsdk.platform().auth().accessTokenValid()
       console.log("everything is okay: " + isLoggedin)
       if (!isLoggedin){
-        console.log("RELOGIN ???")
+        console.log("FORCE TO RELOGIN !!!")
+        /*
         await rcsdk.login({
           username: process.env.RINGCENTRAL_USERNAME,
           extension: process.env.RINGCENTRAL_EXTENSION,
           password: process.env.RINGCENTRAL_PASSWORD
         })
+        */
       }
   }else{
+    console.log("FORCE TO LOGIN !!!")
+    /*
     await rcsdk.login({
       username: process.env.RINGCENTRAL_USERNAME,
       extension: process.env.RINGCENTRAL_EXTENSION,
@@ -341,6 +345,7 @@ async function startNotification(){
       if(err)
         console.log(err);
     })
+    */
   }
 
   // just for cleanup all pending/active subscriptions
