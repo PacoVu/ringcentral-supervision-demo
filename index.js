@@ -101,7 +101,9 @@ app.get('/recording', cors(), async (req, res) => {
 
 // Anything that doesn't match the above, send back the index.html file
 app.get('*', (req, res) => {
-  //res.sendFile(path.join(__dirname + '/client/build/index.html'))
+  console.log("LOAD INDEX")
+  res.sendFile(path.join(__dirname + '/client/build/index.html'))
+/*
   console.log("LOAD LOGIN")
 
   //startNotification()
@@ -113,6 +115,7 @@ app.get('*', (req, res) => {
   //res.sendFile(path.join(__dirname + '/client/build/login.html'))
   res.send(new Buffer.from(html));
   //res.end();
+*/
 })
 
 /* LOGIN
@@ -138,28 +141,26 @@ app.get('/logout', function(req, res) {
   }
   res.redirect("/")
 })
-
-app.get('/oauth2callback', function(req, res) {
+*/
+app.get('/oauth2callback', async function(req, res) {
   if (req.query.code) {
       var platform = rcsdk.platform()
-      platform.login({
+      await platform.login({
           code: req.query.code,
       })
-      .then(function(response) {
-        return response.json()
+      const data = await rcsdk.platform().auth().data()
+      fs.writeFile("access_tokens.txt", JSON.stringify(data), function(err) {
+        if(err)
+          console.log(err);
+        else
+          console.log(JSON.stringify(data));
       })
-      .then(function (token) {
-          req.session.tokens = token
-          res.redirect("/test")
-      })
-      .catch(function (e) {
-          res.send('Login error ' + e)
-      });
+      res.send("logged in")
   }else {
       res.send('No Auth code');
   }
 });
-*/
+
 
 app.post('/webhookcallback', function(req, res) {
   console.log("webhookcallback called")
@@ -283,7 +284,8 @@ module.exports.sendPhoneEvent = sendPhoneEvent;
 const rcsdk = new RingCentral({
   server: process.env.RINGCENTRAL_SERVER_URL,
   clientId: process.env.RINGCENTRAL_CLIENT_ID,
-  clientSecret: process.env.RINGCENTRAL_CLIENT_SECRET
+  clientSecret: process.env.RINGCENTRAL_CLIENT_SECRET,
+  redirectUri: process.env.RINGCENTRAL_REDIRECT_URL
 })
 
 async function startNotification(){
