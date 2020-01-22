@@ -102,7 +102,7 @@ app.get('/recording', cors(), async (req, res) => {
 // Anything that doesn't match the above, send back the index.html file
 app.get('*', async (req, res) => {
   //res.sendFile(path.join(__dirname + '/client/build/index.html'))
-  //console.log("START NOTIFICATION")
+  console.log("LOAD LOGIN")
   //startNotification()
   await rcsdk.login({
     username: process.env.RINGCENTRAL_USERNAME,
