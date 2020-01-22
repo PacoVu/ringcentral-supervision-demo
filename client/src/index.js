@@ -6,6 +6,6 @@ import AppBar from './AppBar'
 import registerServiceWorker from './registerServiceWorker'
 
 ReactDOM.render(<App />, document.getElementById('root'))
-ReactDOM.render(<AppBar />, document.getElementById('menu_header'))
+ReactDOM.render(<AppBar />, document.getElementById('login'))
 
 registerServiceWorker()
