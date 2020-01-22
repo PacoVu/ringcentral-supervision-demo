@@ -147,8 +147,8 @@ app.post('/webhookcallback', function(req, res) {
               }
             }
         });
-        //res.statusCode = 200;
-        //res.end();
+        res.statusCode = 200;
+        res.end();
     }
 })
 
