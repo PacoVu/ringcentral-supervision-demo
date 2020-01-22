@@ -103,6 +103,11 @@ app.get('/recording', cors(), async (req, res) => {
 app.get('*', (req, res) => {
   console.log("LOAD INDEX")
   res.sendFile(path.join(__dirname + '/client/build/index.html'))
+  var authorize_uri = rcsdk.platform().loginUrl({brandId: ''})
+  res.set('Content-Type', 'text/html');
+  var html = '<h2>Login</h2>'
+  html += '<a href="' + authorize_uri + '">Login RingCentral Account</a>'
+  console.log(html)
 /*
   console.log("LOAD LOGIN")
 
