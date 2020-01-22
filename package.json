@@ -23,7 +23,8 @@
     "node-webrtc-media-devices": "^0.1.4",
     "ringcentral-softphone": "^0.4.1",
     "wrtc": "^0.4.2",
-    "ws": "^7.1.2"
+    "ws": "^7.1.2",
+    "pg": "^7.10.0"
   },
   "engines": {
     "node": "10.5.0"
