@@ -111,7 +111,7 @@ app.get('*', (req, res) => {
   html += '<a href="' + authorize_uri + '">Login RingCentral Account</a>'
   console.log(html)
   //res.sendFile(path.join(__dirname + '/client/build/login.html'))
-  res.send(new Buffer(html));
+  res.send(new Buffer.from(html));
   //res.end();
 })
 
