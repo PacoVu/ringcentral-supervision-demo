@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const path = require('path')
+const pgdb = require('./db')
 
 const RingCentral = require('@ringcentral/sdk').SDK
 var fs = require('fs')
@@ -35,11 +36,12 @@ app.get('/events', cors(), async (req, res) => {
 })
 
 app.get('/enable_translation', cors(), async (req, res) => {
+  /*
   console.log("START NOTIFICATION")
   startNotification()
   res.statusCode = 200;
   res.end();
-  /*
+  */
   console.log("ENABLE TRANSLATION")
   var queryData = req.query;
   console.log(queryData.enable)
@@ -53,7 +55,6 @@ app.get('/enable_translation', cors(), async (req, res) => {
 
   res.statusCode = 200;
   res.end();
-  */
 })
 
 app.get('/supervise', cors(), async (req, res) => {
@@ -71,7 +72,7 @@ app.get('/supervise', cors(), async (req, res) => {
     res.statusCode = 200;
     res.end();
 })
-
+/*
 app.get('/startnotification', cors(), async (req, res) => {
   console.log("START NOTIFICATION")
   var queryData = req.query;
@@ -81,7 +82,7 @@ app.get('/startnotification', cors(), async (req, res) => {
   res.statusCode = 200;
   res.end();
 })
-
+*/
 
 app.get('/recording', cors(), async (req, res) => {
   console.log("ENABLE RECORDING")
@@ -101,6 +102,8 @@ app.get('/recording', cors(), async (req, res) => {
 // Anything that doesn't match the above, send back the index.html file
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname + '/client/build/index.html'))
+  console.log("START NOTIFICATION")
+  startNotification()
 })
 
 app.post('/webhookcallback', function(req, res) {
@@ -122,23 +125,41 @@ app.post('/webhookcallback', function(req, res) {
                   console.log("Receive session notification")
                   if (party.direction === "Inbound"){
                     if (party.status.code === "Proceeding"){
-
+                      console.log("RINGING " + JSON.stringify(jsonObj.body))
+                      var agentExtNumber = ""
+                      for (var agent of agentsList){
+                        if (agent.id == party.extensionId){
+                          agentExtNumber = agent.number
+                        }
+                      }
                       var phoneStatus = {
-                        agent: "120",
+                        agent: agentExtNumber,
                         status: 'ringing'
                       }
                       sendPhoneEvent(phoneStatus)
                     }else if (party.status.code === "Answered"){
                       processTelephonySessionNotification(jsonObj.body)
                     }else if (party.status.code === "Disconnected"){
-
+                      var agentExtNumber = ""
+                      for (var agent of agentsList){
+                        if (agent.id == party.extensionId){
+                          agentExtNumber = agent.number
+                        }
+                      }
                       var phoneStatus = {
-                        agent: "120",
+                        agent: agentExtNumber,
                         status: 'idle'
                       }
                       sendPhoneEvent(phoneStatus)
                       console.log("HANG UP " + JSON.stringify(jsonObj.body))
-                      //supervisor.hangup()
+                      /*
+                      for (var supervisor of supervisorArr){
+                        if (supervisor.name == agentExtNumber){
+                          supervisor.engine.hangup()
+                          break
+                        }
+                      }
+                      */
                     }else
                       console.log(JSON.stringify(jsonObj.body))
                     return
@@ -211,12 +232,32 @@ const rcsdk = new RingCentral({
 })
 
 async function startNotification(){
+  /*
+  createTable("subscriptionids", "subscriptionids", function(err, res){
+      if (err)
+          console.log("create table failed")
+      else{
+        console.log("subscriptionids table created")
+        var query = "SELECT sub_id from vva_users WHERE ext_id=" + extId
+            var thisUser = this
+            pgdb.read(query, (err, result) => {
+                if (!err){
+                  var row = result.rows[0]
+                  if (row['sub_id'] != ""){
+                    console.log("checkRegisteredSubscription")
+                    checkRegisteredSubscription(thisUser, null, row['sub_id'])
+                  }
+                }
+            });
+      }
+  })
+  */
   if (fs.existsSync("access_tokens.txt")) {
       console.log("reuse access tokens")
       var saved_tokens = fs.readFileSync("access_tokens.txt", 'utf8');
       var tokensObj = JSON.parse(saved_tokens)
       await rcsdk.platform().auth().setData(tokensObj)
-      var isLoggedin = await rcsdk.platform().auth().accessTokenValid() //rcsdk.platform().loggedIn()
+      var isLoggedin = await rcsdk.platform().auth().accessTokenValid()
       console.log("everything is okay: " + isLoggedin)
       if (!isLoggedin){
         console.log("RELOGIN ???")
