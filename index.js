@@ -377,7 +377,10 @@ async function deleteAllRegisteredWebHookSubscriptions() {
           console.log("Deleted")
       }
     }
+    console.log("Deleted all")
+    startWebhookSubscription()
   }else{
-    console.log("No subscriptions.")
+    console.log("No subscription for this service => create one.")
+    startWebhookSubscription()
   }
 }

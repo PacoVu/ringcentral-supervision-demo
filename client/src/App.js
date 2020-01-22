@@ -101,14 +101,6 @@ export default class App extends Component {
                 angerScore: data.analysis.angerScore
             }
         }))
-        /*
-        this.setState({agent1.sentimentScore: data.analysis.sentimentScore})
-        this.setState({agent1.sadnessScore: data.analysis.sadnessScore})
-        this.setState({agent1.joyScore: data.analysis.joyScore})
-        this.setState({agent1.fearScore: data.analysis.fearScore})
-        this.setState({agent1.disgustScore: data.analysis.disgustScore})
-        this.setState({agent1.angerScore: data.analysis.angerScore})
-        */
       }
     }else if (data.agent === "122") {
       this.update = false
@@ -155,18 +147,8 @@ export default class App extends Component {
                 angerScore: data.analysis.angerScore
             }
         }))
-        /*
-        this.setState({sentimentScore: data.analysis.sentimentScore})
-        this.setState({sadnessScore: data.analysis.sadnessScore})
-        this.setState({joyScore: data.analysis.joyScore})
-        this.setState({fearScore: data.analysis.fearScore})
-        this.setState({disgustScore: data.analysis.disgustScore})
-        this.setState({angerScore: data.analysis.angerScore})
-        */
       }
-
     }
-
   }
 
   updatePhoneStatus(phoneStatus) {
