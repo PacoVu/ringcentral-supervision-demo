@@ -31,7 +31,7 @@ export default class AppBar extends Component {
 
   render() {
     return (
-      <button onClick={() => this.login()}>Login</button>
+      <a href="#" onClick={() => this.login()}>Login</a>
     );
   }
 }
