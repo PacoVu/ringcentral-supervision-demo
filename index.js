@@ -105,7 +105,7 @@ app.get('*', (req, res) => {
   console.log("LOAD LOGIN")
 
   //startNotification()
-  var authorize_uri = await rcsdk.platform().loginUrl({brandId: ''})
+  var authorize_uri = rcsdk.platform().loginUrl({brandId: ''})
   res.set('Content-Type', 'text/html');
   var html = '<h2>Login</h2>'
   html += '<a href="' + authorize_uri + '">Login RingCentral Account</a>'
