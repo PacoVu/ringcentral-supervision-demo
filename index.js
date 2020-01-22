@@ -100,23 +100,18 @@ app.get('/recording', cors(), async (req, res) => {
 })
 
 // Anything that doesn't match the above, send back the index.html file
-app.get('*', async (req, res) => {
+app.get('*', (req, res) => {
   //res.sendFile(path.join(__dirname + '/client/build/index.html'))
   console.log("LOAD LOGIN")
 
   //startNotification()
-  await rcsdk.login({
-    username: process.env.RINGCENTRAL_USERNAME,
-    extension: process.env.RINGCENTRAL_EXTENSION,
-    password: process.env.RINGCENTRAL_PASSWORD
-  })
   var authorize_uri = await rcsdk.platform().loginUrl({brandId: ''})
   res.set('Content-Type', 'text/html');
   var html = '<h2>Login</h2>'
   html += '<a href="' + authorize_uri + '">Login RingCentral Account</a>'
   console.log(html)
-  res.sendFile(path.join(__dirname + '/client/build/login.html'))
-  //res.send(new Buffer(html));
+  //res.sendFile(path.join(__dirname + '/client/build/login.html'))
+  res.send(new Buffer(html));
   //res.end();
 })
 
