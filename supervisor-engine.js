@@ -1,7 +1,7 @@
 require('dotenv').config()
 const RingCentral = require('@ringcentral/sdk').SDK
-//const Subscriptions = require('@ringcentral/subscriptions').default
 const fs = require('fs')
+const pgdb = require('./db')
 const { RTCAudioSink } = require('wrtc').nonstandard
 const Softphone = require('ringcentral-softphone').default
 
@@ -11,10 +11,11 @@ var server = require('./index')
 // playback recording
 // play -c 1 -r 16000 -e signed -b 16 audio.raw
 
-function PhoneEngine(agentName) {
-  this.agentName = agentName
-  this.watson = new WatsonEngine(agentName)
-  this.speachRegconitionReady = false
+function PhoneEngine() {
+  //this.agentName = agentName
+  this.agents = []
+  this.watson = new WatsonEngine("120")
+  //this.speachRegconitionReady = false
   this.doRecording = false
   this.audioStream = null
   this.softphone = null
@@ -31,45 +32,46 @@ function PhoneEngine(agentName) {
 PhoneEngine.prototype = {
   initializePhoneEngine: async function(){
     console.log("initializePhoneEngine")
-    if (this.softphone)
-      return
 
-    if (fs.existsSync("access_tokens.txt")) {
-        console.log("reuse access tokens")
-        var saved_tokens = fs.readFileSync("access_tokens.txt", 'utf8');
-        var tokensObj = JSON.parse(saved_tokens)
-        await this.rcsdk.platform().auth().setData(tokensObj)
-        var isLoggedin = await this.rcsdk.platform().loggedIn()
-        if (!isLoggedin){
-          return console.log("ENGINE FORCE TO RELOGIN !!!")
-          /*
-          await this.rcsdk.login({
-            username: process.env.RINGCENTRAL_USERNAME,
-            extension: process.env.RINGCENTRAL_EXTENSION,
-            password: process.env.RINGCENTRAL_PASSWORD
-          })
-          */
-        }
-    }else{
-      return console.log("ENGINE FORCE TO LOGIN !!!")
-      /*
-      await this.rcsdk.login({
-        username: process.env.RINGCENTRAL_USERNAME,
-        extension: process.env.RINGCENTRAL_EXTENSION,
-        password: process.env.RINGCENTRAL_PASSWORD
-      })
-      */
+    if (this.softphone){
+      var phoneStatus = {
+        agent: "120",
+        status: 'online'
+      }
+      server.sendPhoneEvent(phoneStatus)
+      return
     }
-    /*
-    await this.rcsdk.login({
-      username: process.env.RINGCENTRAL_USERNAME,
-      extension: process.env.RINGCENTRAL_EXTENSION,
-      password: process.env.RINGCENTRAL_PASSWORD
+
+    var query = "SELECT tokens from supervision_subscriptionids WHERE ext_id=1000012"
+    var thisClass = this
+    pgdb.read(query, async (err, result) => {
+        if (!err){
+            if (result.rows.length){
+                var row = result.rows[0]
+                if (row['tokens'] != ""){
+                  var tokensObj = JSON.parse(row['tokens'])
+                  await thisClass.rcsdk.platform().auth().setData(tokensObj)
+                  var isLoggedin = await thisClass.rcsdk.platform().ensureLoggedIn()
+                  /*
+                  console.log("everything is okay: " + isLoggedin)
+                  if (!isLoggedin){
+                    console.log("FORCE TO RELOGIN !!!")
+                    await thisClass.login()
+                  }
+                  */
+                }else{
+                  await thisClass.login()
+                }
+            }else{
+                console.log("no row => call login")
+                console.log("FORCE TO LOGIN !!!")
+                await thisClass.login("")
+            }
+        }
     })
-    */
-    console.log("THIS IS AGENT " + this.agentName)
+    //console.log("THIS IS AGENT " + this.agentName)
     console.log("initialize")
-    this.softphone = new Softphone(this.rcsdk, this.agentName)
+    this.softphone = new Softphone(this.rcsdk)
     console.log("passed create softphone")
     try {
         await this.softphone.register()
@@ -78,7 +80,7 @@ PhoneEngine.prototype = {
         console.log("Registered deviceId: " + this.deviceId)
         saveDeviceId(this.deviceId)
         var phoneStatus = {
-          agent: this.agentName,
+          agent: "120",
           status: 'online'
         }
         server.sendPhoneEvent(phoneStatus)
@@ -86,11 +88,27 @@ PhoneEngine.prototype = {
 
         this.softphone.on('INVITE', sipMessage => {
           console.log("GOT INVITED")
-          console.log("Headers: " + sipMessage.headers['p-rc-api-ids'])
+          console.log(sipMessage.headers['Call-Id'])
+          var headers = sipMessage.headers['p-rc-api-ids'].split(";")
+          var sessionId = headers[1].split("=")[0]
+          console.log("Party id: " + headers[0])
+          console.log("Session id: " + headers[1])
+          var agentName = ""
+          for (var i=0; i<this.agents.length; i++){
+            var agent = this.agents[i]
+            if (agent.sessionId == sessionId){
+              agentName = agent.name
+              this.agents[i].callId = sipMessage.headers['Call-Id']
+              break
+            }
+          }
+          var localSpeachRegconitionReady = false
+          //this.watson = new WatsonEngine(agentName)
+          //console.log("Headers: " + sipMessage.headers['p-rc-api-ids'])
           var maxFrames = 60
           this.softphone.answer(sipMessage)
           var phoneStatus = {
-            agent: this.agentName,
+            agent: this.agents[0].name,
             status: 'connected'
           }
           server.sendPhoneEvent(phoneStatus)
@@ -105,7 +123,7 @@ PhoneEngine.prototype = {
                 //this.audioStream.write(Buffer.from(data.samples.buffer))
                 this.audioStream.write(buf)
 
-              if (!creatingWatsonSocket && !this.speachRegconitionReady){
+              if (!creatingWatsonSocket && !localSpeachRegconitionReady){
                 creatingWatsonSocket = true
                 // call once for testing
                 console.log("sample rate: " + data.sampleRate)
@@ -115,7 +133,7 @@ PhoneEngine.prototype = {
                 // test end
                 this.watson.createWatsonSocket(data.sampleRate, (err, res) => {
                   if (!err) {
-                    this.speachRegconitionReady = true
+                    localSpeachRegconitionReady = true
                     console.log("WatsonSocket created!")
                   }
                 })
@@ -132,7 +150,7 @@ PhoneEngine.prototype = {
                   //console.log("call transcribe")
                   //console.log("maxFrames: " + maxFrames)
                   //console.log(`live audio data received, sample rate is ${data.sampleRate}`)
-                  if (this.speachRegconitionReady){
+                  if (localSpeachRegconitionReady){
                     //console.log("Agent: " + this.agentName)
                     console.log("call transcribe " + buffer.length)
                     this.watson.transcribe(buffer)
@@ -145,46 +163,105 @@ PhoneEngine.prototype = {
             }
           })
       })
-      this.softphone.on('BYE', () => {
+      this.softphone.on('BYE', sipMessage => {
           console.log("RECEIVE BYE MESSAGE => Hanged up now")
+          console.log(sipMessage.headers['Call-Id'])
+          var agentName = ""
+          for (var i=0; i<this.agents.length; i++){
+            var agent = this.agents[i]
+            if (agent.callId == sipMessage.headers['Call-Id']){
+              agentName = agent.name
+              this.agents[i].sessionId = ""
+              this.agents[i].partyId = ""
+              break
+            }
+          }
+          var phoneStatus = {
+            agent: agentName,
+            status: 'idle'
+          }
+          server.sendPhoneEvent(phoneStatus)
           audioSink.stop()
           if (this.doRecording)
             this.audioStream.end()
           console.log("Close Watson socket.")
           this.watson.closeConnection()
           this.speachRegconitionReady = false
-          var phoneStatus = {
-            agent: this.agentName,
-            status: 'idle'
-          }
-          server.sendPhoneEvent(phoneStatus)
         })
     }catch(e){
         console.log(e)
     }
   },
+  login: async function (){
+    console.log("FORCE TO LOGIN !!!")
+    try{
+      await rcsdk.login({
+        username: process.env.RINGCENTRAL_USERNAME,
+        extension: process.env.RINGCENTRAL_EXTENSION,
+        password: process.env.RINGCENTRAL_PASSWORD
+      })
+      console.log("after login")
+      const data = await rcsdk.platform().auth().data()
+      //console.log(JSON.stringify(data))
+      var query = "UPDATE supervision_subscriptionids SET tokens='" + JSON.stringify(data) + "', WHERE ext_id=1000012"
+      console.log("SUB ID: " + query)
+      pgdb.update(query, (err, result) =>  {
+        if (err){
+          console.error(err.message);
+        }
+        console.log("save tokens")
+      })
+    }catch(e){
+      console.log("LOGIN FAILED")
+    }
+  },
+  setAgent: function (agentName, sessionId){
+    var agent = {
+      name : agentName,
+      doRecording : false,
+      doTranslation: false,
+      sessionId : sessionId,
+      callId: ""
+    }
+    this.agents.push(agent)
+  },
+
   hangup: function(){
 
   },
-  enableRecording: function(recording){
-    if (recording){
-      const audioPath = this.agentName + '.raw'
-      if (fs.existsSync(audioPath)) {
-        fs.unlinkSync(audioPath)
+  enableRecording: function(agentName, recording){
+    for (var i=0; i<this.agents.length; i++){
+      var agent = this.agents[i]
+      if (agent.name == agentName){
+        this.agents[i].doRecording = recording
+        if (recording){
+          const audioPath = agentName + '.raw'
+          if (fs.existsSync(audioPath)) {
+            fs.unlinkSync(audioPath)
+          }
+          this.audioStream = fs.createWriteStream(audioPath, { flags: 'a' })
+        }else{
+          this.doRecording = false
+          this.audioStream.close() // end
+        }
+        break
       }
-      this.audioStream = fs.createWriteStream(audioPath, { flags: 'a' })
-      this.doRecording = true
-    }else{
-      this.doRecording = false
-      this.audioStream.close() // end
     }
   },
+
   handleCallRecording: function (recoringState){
     console.log("recoringState: " + recoringState)
   },
-  enableTranslation: function(flag) {
-    if (this.watson)
-      this.watson.enableTranslation(flag)
+  enableTranslation: function(agentName, flag) {
+    for (var i=0; i<this.agents.length; i++){
+      var agent = this.agents[i]
+      if (agent.name == agentName){
+        this.agents[i].doTranslation = flag
+        if (this.watson)
+          this.watson.enableTranslation(flag)
+        break
+      }
+    }
   }
 }
 module.exports = PhoneEngine;

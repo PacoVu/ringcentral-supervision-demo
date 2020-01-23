@@ -13,20 +13,7 @@ function WatsonEngine(agentName) {
   this.doTranslation = false
   this.ws = null
   this.agentName = agentName
-  /*
-  this.wsURI = 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?watson-token=[TOKEN]&model=en-US_NarrowbandModel&x-watson-learning-opt-out=1';
-  var getTokenForm = {
-    method: 'GET',
-    uri: 'https://'+process.env.WATSON_USERNAME+':'+ process.env.WATSON_PASSWORD+'@stream.watsonplatform.net/authorization/api/v1/token?url=https://stream.watsonplatform.net/speech-to-text/api',
-  };
-  var thisClass = this
 
-  request(getTokenForm, function(error, response, body) {
-    console.log("RESPONSE")
-    thisClass.wsURI = thisClass.wsURI.replace('[TOKEN]', body);
-    console.log(thisClass.wsURI)
-  });
-  */
   var thisClass = this
   this.wsURI = 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?access_token=[TOKEN]&model=en-US_NarrowbandModel';
   request.post("https://iam.cloud.ibm.com/identity/token", {form:

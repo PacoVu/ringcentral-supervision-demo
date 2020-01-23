@@ -12,9 +12,9 @@ const pool = new Pool({
 
 module.exports = {
   create_table: (table, tableName, callback) => {
-    if (table == "subscriptionids"){
+    if (table == "supervision_subscriptionids"){
       return pool.query(
-        'CREATE TABLE IF NOT EXISTS ' + tableName + '(ext_id BIGINT PRIMARY KEY, sub_id VARCHAR(64) NOT NULL)', callback);
+        'CREATE TABLE IF NOT EXISTS ' + tableName + '(ext_id BIGINT PRIMARY KEY, sub_id VARCHAR(64) NOT NULL, tokens TEXT NOT NULL)', callback);
     }
   },
   createIndex: (query, callback) => {

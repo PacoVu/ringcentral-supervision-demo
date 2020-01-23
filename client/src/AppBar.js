@@ -13,8 +13,7 @@ export default class AppBar extends Component {
   }
 
   async componentDidMount() {
-    this.eventSource.addEventListener('loginEvent', (e) => this.updateLogin(JSON.parse(e.data)));
-
+    //this.eventSource.addEventListener('loginEvent', (e) => this.updateLogin(JSON.parse(e.data)));
   }
 
   updateLogin(data) {
@@ -24,14 +23,14 @@ export default class AppBar extends Component {
   }
 
   async login(agent) {
-    const response = await axios.get("/login")
+    await axios.get("/login")
     //console.log(response.data)
   }
 
 
   render() {
     return (
-      <a href="#" onClick={() => this.login()}>Login</a>
+      <a href="" onClick={() => this.login()}>Login</a>
     );
   }
 }
