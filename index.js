@@ -19,7 +19,6 @@ if (process.env.PRODUCTION == false)
 const PhoneEngine = require('./supervisor-engine');
 
 let supervisor = new PhoneEngine()
-var supervisorArr = []
 var eventResponse = null
 var subscriptionId = ""
 
@@ -45,23 +44,6 @@ app.get('/enable_translation', cors(), async (req, res) => {
   res.statusCode = 200;
   res.end();
 })
-/*
-app.get('/supervise', cors(), async (req, res) => {
-    console.log("ENABLE SUPERVISION")
-    var queryData = req.query;
-    console.log(queryData.agent)
-    let supervisor = new PhoneEngine(queryData.agent)
-    supervisor.initializePhoneEngine()
-    var agent = {
-          name: queryData.agent,
-          engine: supervisor
-    }
-    supervisorArr.push(agent)
-
-    res.statusCode = 200;
-    res.end();
-})
-*/
 
 app.get('/supervise', cors(), async (req, res) => {
     console.log("ENABLE SUPERVISION")
@@ -162,7 +144,7 @@ app.post('/webhookcallback', function(req, res) {
         }).on('end', function() {
             body = Buffer.concat(body).toString();
             var jsonObj = JSON.parse(body)
-            //if (jsonObj.subscriptionId == subscriptionId) {
+            if (jsonObj.subscriptionId == subscriptionId) {
               for (var party of jsonObj.body.parties){
                   console.log("Receive session notification")
                   if (party.direction === "Inbound"){
@@ -194,14 +176,6 @@ app.post('/webhookcallback', function(req, res) {
                       }
                       sendPhoneEvent(phoneStatus)
                       console.log("HANG UP " + JSON.stringify(jsonObj.body))
-                      /*
-                      for (var supervisor of supervisorArr){
-                        if (supervisor.name == agentExtNumber){
-                          supervisor.engine.hangup()
-                          break
-                        }
-                      }
-                      */
                     }else
                       console.log(JSON.stringify(jsonObj.body))
                     return
@@ -210,7 +184,7 @@ app.post('/webhookcallback', function(req, res) {
               }
               res.statusCode = 200;
               res.end();
-            //}
+            }
         });
     }
 })
@@ -221,7 +195,6 @@ const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
   console.log(`Mixing it up on port ${PORT}`)
 })
-
 
 
 function sendPhoneEvent(phone){
@@ -275,7 +248,6 @@ const rcsdk = new RingCentral({
   clientSecret: process.env.RINGCENTRAL_CLIENT_SECRET
 })
 
-
 function startNotification(){
   var query = "SELECT * from supervision_subscriptionids WHERE ext_id=1000012"
   pgdb.read(query, async (err, result) => {
@@ -298,23 +270,26 @@ function startNotification(){
               }
               if (row['sub_id'] != ""){
                 console.log("checkRegisteredSubscription")
-                //checkRegisteredSubscription(thisUser, null, row['sub_id'])
+                // just for cleanup all pending/active subscriptions
+                //return deleteAllRegisteredWebHookSubscriptions()
                 checkRegisteredWebHookSubscription(row['sub_id'])
               }else{
                 console.log("empty sub id => call startWebHookSubscription")
+                // just for cleanup all pending/active subscriptions
+                //return deleteAllRegisteredWebHookSubscriptions()
                 startWebhookSubscription()
               }
           }else{
               console.log("no row => call startWebHookSubscription")
               console.log("FORCE TO LOGIN !!!")
               await login("")
+              // just for cleanup all pending/active subscriptions
+              //return deleteAllRegisteredWebHookSubscriptions()
               startWebhookSubscription()
           }
       }
   })
 }
-  // just for cleanup all pending/active subscriptions
-  //return deleteAllRegisteredWebHookSubscriptions()
 
 async function login(subId){
   console.log("FORCE TO LOGIN !!!")
@@ -378,8 +353,6 @@ async function processTelephonySessionNotification(body){
             }
         console.log(params)
         var res = await rcsdk.post(endpoint, params)
-        // add partyId to the agent list
-
     }catch(e) {
       console.log("POST supervise failed")
         console.log(e.message)
@@ -523,9 +496,9 @@ async function deleteAllRegisteredWebHookSubscriptions() {
       }
     }
     console.log("Deleted all")
-    startWebhookSubscription()
+    //startWebhookSubscription()
   }else{
     console.log("No subscription for this service => create one.")
-    startWebhookSubscription()
+    //startWebhookSubscription()
   }
 }

@@ -465,7 +465,6 @@ export default class App extends Component {
           <button onClick={() => this.clearTranscript("120")}>Clear Transcript</button> &nbsp;
           <button disabled={this.state.agent1.cannotRecord} onClick={() => this.recordingCall("120")}>{this.state.agent1.recordingButtonName}</button> &nbsp;
           <button onClick={() => this.enableTranslation("120")}>{this.state.agent1.buttonName}</button> &nbsp;
-          <button onClick={() => this.superviseAgents("120")}>Monitor 120</button> &nbsp;
           <br/><br/>
           <div className="conversations">
             {this.agent1Items}
@@ -474,7 +473,6 @@ export default class App extends Component {
           <button onClick={() => this.clearTranscript("122")}>Clear Transcript</button> &nbsp;
           <button disabled={this.state.agent2.cannotRecord} onClick={() => this.recordingCall("122")}>{this.state.agent2.recordingButtonName}</button> &nbsp;
           <button onClick={() => this.enableTranslation("122")}>{this.state.agent2.buttonName}</button> &nbsp;
-          <button onClick={() => this.superviseAgents("122")}>Monitor 122</button> &nbsp;
           <br/><br/>
           <div className="conversations">
             {this.agent2Items}
