@@ -20,11 +20,13 @@ function PhoneEngine() {
   this.audioStream = null
   this.softphone = null
   this.deviceId = ""
+  /*
   this.rcsdk = new RingCentral({
     server: process.env.RINGCENTRAL_SERVER_URL,
     clientId: process.env.RINGCENTRAL_CLIENT_ID,
     clientSecret: process.env.RINGCENTRAL_CLIENT_SECRET
   })
+  */
   console.log("constructor")
   return this
 }
@@ -68,7 +70,7 @@ PhoneEngine.prototype = {
     //console.log("THIS IS AGENT " + this.agentName)
     console.log("initialize")
     //this.rcsdk = await server.getRCSDK()
-    console.log("too soon?")
+    //console.log("too soon?")
     this.softphone = new Softphone(rcsdk)
     console.log("passed create softphone")
     try {
