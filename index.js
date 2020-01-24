@@ -20,7 +20,7 @@ const PhoneEngine = require('./supervisor-engine');
 
 let supervisor = new PhoneEngine()
 var eventResponse = null
-var subscriptionId = ""
+var g_subscriptionId = ""
 
 // Serve our api route /cow that returns a custom talking text cow
 app.get('/events', cors(), async (req, res) => {
@@ -70,6 +70,13 @@ app.get('/recording', cors(), async (req, res) => {
 app.get('/login', cors(), (req, res) => {
   console.log("LOGIN")
   startNotification()
+  res.statusCode = 200;
+  res.end();
+})
+
+app.get('/logout', cors(), async (req, res) => {
+  console.log("LOGOUT")
+  await logout()
   res.statusCode = 200;
   res.end();
 })
@@ -144,7 +151,7 @@ app.post('/webhookcallback', function(req, res) {
         }).on('end', function() {
             body = Buffer.concat(body).toString();
             var jsonObj = JSON.parse(body)
-            if (jsonObj.subscriptionId == subscriptionId) {
+            if (jsonObj.subscriptionId == g_subscriptionId) {
               for (var party of jsonObj.body.parties){
                   console.log("Receive session notification")
                   if (party.direction === "Inbound"){
@@ -313,6 +320,29 @@ async function login(subId){
   }
 }
 
+async function logout(){
+  var query = "SELECT tokens from supervision_subscriptionids WHERE ext_id=1000012"
+  pgdb.read(query, async (err, result) => {
+      if (!err){
+          if (result.rows.length){
+              var row = result.rows[0]
+              if (row['tokens'] != ""){
+                var tokensObj = JSON.parse(row['tokens'])
+                await rcsdk.platform().auth().setData(tokensObj)
+                await rcsdk.platform().logout()
+              }
+          }
+      }
+      query = "UPDATE supervision_subscriptionids SET tokens='' WHERE ext_id=1000012"
+      pgdb.update(query, (err, result) =>  {
+        if (err){
+          console.error(err.message);
+        }
+        console.log("reset tokens")
+      })
+  })
+}
+
 function createTable(callback){
   pgdb.create_table("supervision_subscriptionids", "supervision_subscriptionids", (err, res) => {
       if (err) {
@@ -397,22 +427,8 @@ async function startWebhookSubscription() {
     console.log("Ready to receive telephonyStatus notification via WebHook.")
     //console.log(JSON.stringify(jsonObj))
     //console.log(JSON.stringify(rcsdk.platform().auth().data()))
-    subscriptionId = jsonObj.id
+    g_subscriptionId = jsonObj.id
     storeSubscriptionId(jsonObj.id)
-    /*
-    try {
-      fs.writeFile("subscriptionId.txt", jsonObj.id, function(err) {
-          if(err)
-              console.log(err);
-          else {
-              console.log("SubscriptionId " + jsonObj.id + " is saved.");
-              subscriptionId = jsonObj.id
-          }
-      });
-    }catch (e){
-      console.log("WriteFile err")
-    }
-    */
 }
 
 function storeTokens(subId, tokens, callback){
@@ -447,11 +463,13 @@ function storeSubscriptionId(subId){
 }
 
 async function checkRegisteredWebHookSubscription(subscriptionId) {
+  console.log("subId: " + subscriptionId)
     try {
       let response = await rcsdk.get('/restapi/v1.0/subscription')
       let json = await response.json();
       if (json.records.length > 0){
         for(var record of json.records) {
+          console.log("found id: " + record.id)
           if (record.id == subscriptionId) {
             if (record.deliveryMode.transportType == "WebHook"){
               if (process.env.DELETE_EXISTING_WEBHOOK_SUBSCRIPTION == 1){

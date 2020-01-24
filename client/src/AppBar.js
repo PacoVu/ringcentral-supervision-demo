@@ -22,15 +22,22 @@ export default class AppBar extends Component {
         }))
   }
 
-  async login(agent) {
+  async login() {
     await axios.get("/login")
     //console.log(response.data)
   }
 
+  async logout() {
+    await axios.get("/logout")
+    //console.log(response.data)
+  }
 
   render() {
     return (
-      <a href="" onClick={() => this.login()}>Login</a>
+      <div>
+        <a onClick={() => this.login()}>Login</a> &nbsp; &nbsp;
+        <a onClick={() => this.logout()}>Logout</a>
+      </div>
     );
   }
 }
