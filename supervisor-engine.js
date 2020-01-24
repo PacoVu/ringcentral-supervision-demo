@@ -30,18 +30,20 @@ function PhoneEngine() {
 }
 
 PhoneEngine.prototype = {
-  initializePhoneEngine: async function(){
+  initializePhoneEngine: async function(rcsdk){
     console.log("initializePhoneEngine")
 
     if (this.softphone){
-      var phoneStatus = {
-        agent: "120",
-        status: 'online'
+      for (var agent of this.agents){
+        var phoneStatus = {
+          agent: agent.name,
+          status: 'ready'
+        }
+        server.sendPhoneEvent(phoneStatus)
       }
-      server.sendPhoneEvent(phoneStatus)
       return
     }
-
+/*
     var query = "SELECT tokens from supervision_subscriptionids WHERE ext_id=1000012"
     var thisClass = this
     pgdb.read(query, async (err, result) => {
@@ -52,13 +54,6 @@ PhoneEngine.prototype = {
                   var tokensObj = JSON.parse(row['tokens'])
                   await thisClass.rcsdk.platform().auth().setData(tokensObj)
                   var isLoggedin = await thisClass.rcsdk.platform().ensureLoggedIn()
-                  /*
-                  console.log("everything is okay: " + isLoggedin)
-                  if (!isLoggedin){
-                    console.log("FORCE TO RELOGIN !!!")
-                    await thisClass.login()
-                  }
-                  */
                 }else{
                   await thisClass.login()
                 }
@@ -69,9 +64,12 @@ PhoneEngine.prototype = {
             }
         }
     })
+    */
     //console.log("THIS IS AGENT " + this.agentName)
     console.log("initialize")
-    this.softphone = new Softphone(this.rcsdk)
+    //this.rcsdk = await server.getRCSDK()
+    console.log("too soon?")
+    this.softphone = new Softphone(rcsdk)
     console.log("passed create softphone")
     try {
         await this.softphone.register()

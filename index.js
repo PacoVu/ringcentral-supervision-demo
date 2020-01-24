@@ -31,7 +31,16 @@ app.get('/events', cors(), async (req, res) => {
     'Cache-Control': 'no-cache',
     'Access-Control-Allow-Origin': '*'
   });
-  supervisor.initializePhoneEngine()
+  loadSavedTokens(1000012, async function(err, res){
+    if (err){
+      console.log("FORCE TO LOGIN !!!")
+      await login("")
+      supervisor.initializePhoneEngine(rcsdk)
+    }else{
+      supervisor.initializePhoneEngine(rcsdk)
+    }
+  })
+  //supervisor.initializePhoneEngine()
   res.statusCode = 200;
   eventResponse = res
 })
@@ -257,7 +266,79 @@ const rcsdk = new RingCentral({
   clientSecret: process.env.RINGCENTRAL_CLIENT_SECRET
 })
 
+async function getRCSDK(){
+  loadSavedTokens(1000012, async function(err, res){
+    if (err){
+      console.log("no row => call startWebHookSubscription")
+      console.log("FORCE TO LOGIN !!!")
+      await login("")
+      // just for cleanup all pending/active subscriptions
+      //return deleteAllRegisteredWebHookSubscriptions()
+      return rcsdk
+    }else{
+      console.log("sdk is good")
+      return rcsdk
+    }
+  })
+}
+
+module.exports.getRCSDK = getRCSDK;
+
+function loadSavedTokens(extId, callback){
+  var query = "SELECT * from supervision_subscriptionids WHERE ext_id=" + extId
+  pgdb.read(query, async (err, result) => {
+      if (!err){
+          if (result.rows.length){
+              var row = result.rows[0]
+              if (row['tokens'] != ""){
+                var tokensObj = JSON.parse(row['tokens'])
+                console.log("before set data")
+                await rcsdk.platform().auth().setData(tokensObj)
+                console.log("after set data")
+                rcsdk.ensureLoggedIn()
+                .then(function(res){
+                  console.log(res)
+                  callback(null, row['sub_id'])
+                })
+                .catch(function(e){
+                  console.log(e.message)
+                  callback(e, "")
+                });
+              }else{
+                callback("err", "")
+              }
+          }else{
+              console.log("no row => call startWebHookSubscription")
+              callback("err", "")
+          }
+      }
+  })
+}
+
 function startNotification(){
+  loadSavedTokens(1000012, async function(err, res){
+    if (err){
+      console.log("no row => call startWebHookSubscription")
+      console.log("FORCE TO LOGIN !!!")
+      await login("")
+      // just for cleanup all pending/active subscriptions
+      //return deleteAllRegisteredWebHookSubscriptions()
+      startWebhookSubscription()
+    }else{
+      if (res != ""){
+        console.log("checkRegisteredSubscription")
+        // just for cleanup all pending/active subscriptions
+        //return deleteAllRegisteredWebHookSubscriptions()
+        checkRegisteredWebHookSubscription(res)
+      }else{
+        console.log("empty sub id => call startWebHookSubscription")
+        // just for cleanup all pending/active subscriptions
+        //return deleteAllRegisteredWebHookSubscriptions()
+        startWebhookSubscription()
+      }
+    }
+  })
+  /*
   var query = "SELECT * from supervision_subscriptionids WHERE ext_id=1000012"
   pgdb.read(query, async (err, result) => {
       if (!err){
@@ -266,14 +347,14 @@ function startNotification(){
               if (row['tokens'] != ""){
                 var tokensObj = JSON.parse(row['tokens'])
                 await rcsdk.platform().auth().setData(tokensObj)
-                var isLoggedin = await rcsdk.platform().ensureLoggedIn()
-                /*
-                console.log("everything is okay: " + isLoggedin)
-                if (!isLoggedin){
-                  console.log("FORCE TO RELOGIN !!!")
-                  await login(row['sub_id'])
-                }
-                */
+                rcsdk.ensureLoggedIn()
+                .then(function(res){
+                  console.log(res)
+                })
+                .catch(function(e){
+                  console.log(e.message)
+                });
+                //var isLoggedin = await rcsdk.platform().ensureLoggedIn()
               }else{
                 await login(row['sub_id'])
               }
@@ -298,7 +379,28 @@ function startNotification(){
           }
       }
   })
+  */
 }
+
+var platform = rcsdk.platform();
+
+platform.on(platform.events.refreshError, function(e){
+    console.log("Refresh token failed")
+});
+
+platform.on(platform.events.refreshSuccess, async function(res){
+    console.log("Refresh token success")
+    console.log(res)
+    const data = await rcsdk.platform().auth().data()
+    //console.log(JSON.stringify(data))
+    storeTokens(subId, JSON.stringify(data), (err, result) => {
+      if(err)
+        console.log(err);
+      else
+        console.log("refreshSuccess ok")
+    })
+});
+
 
 async function login(subId){
   console.log("FORCE TO LOGIN !!!")
@@ -357,6 +459,13 @@ function createTable(callback){
 }
 
 async function processTelephonySessionNotification(body){
+  rcsdk.ensureLoggedIn()
+  .then(function(res){
+    console.log(res)
+  })
+  .catch(function(e){
+    console.log(e.message)
+  });
   var isLoggedin = await rcsdk.platform().loggedIn()
   console.log("still logged in?")
   if (!isLoggedin){
@@ -435,6 +544,7 @@ async function startWebhookSubscription() {
 
 function storeTokens(subId, tokens, callback){
   console.log("storeTokens")
+  if (subId != ""){
     var query = "INSERT INTO supervision_subscriptionids (ext_id, sub_id, tokens)"
     query += " VALUES ($1, $2, $3)"
     var values = ["1000012", subId, tokens]
@@ -448,6 +558,15 @@ function storeTokens(subId, tokens, callback){
       console.log("save tokens")
       callback(null, "done")
     })
+  }else{
+    query = "UPDATE supervision_subscriptionids SET tokens='" + tokens + "' WHERE ext_id=1000012"
+    pgdb.update(query, (err, result) =>  {
+      if (err){
+        console.error(err.message);
+      }
+      console.log("save tokens")
+    })
+  }
 }
 
 function storeSubscriptionId(subId){
@@ -501,6 +620,7 @@ async function checkRegisteredWebHookSubscription(subscriptionId) {
     }catch(e){
       console.log("checkRegisteredWebHookSubscription ERROR")
       console.log(e)
+      login("")
     }
 }
 
