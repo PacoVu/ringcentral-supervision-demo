@@ -151,6 +151,8 @@ app.post('/webhookcallback', function(req, res) {
         }).on('end', function() {
             body = Buffer.concat(body).toString();
             var jsonObj = JSON.parse(body)
+            console.log("g_sub: " + g_subscriptionId)
+            console.log("not sub: " + jsonObj.subscriptionId)
             if (jsonObj.subscriptionId == g_subscriptionId) {
               for (var party of jsonObj.body.parties){
                   console.log("Receive session notification")
@@ -479,6 +481,7 @@ async function checkRegisteredWebHookSubscription(subscriptionId) {
                 startWebhookSubscription()
               }else{
                 await readExtensions()
+                g_subscriptionId = subscriptionId
                 if (record.status != "Active"){
                   console.log("Subscription is not active => renew it")
                   await rc.post('/restapi/v1.0/subscription/' + record.id + "/renew")
