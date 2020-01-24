@@ -99,6 +99,12 @@ PhoneEngine.prototype = {
             if (agent.sessionId == sessionId){
               agentName = agent.name
               this.agents[i].callId = sipMessage.headers['Call-Id']
+              this.softphone.answer(sipMessage)
+              var phoneStatus = {
+                agent: agent.name,
+                status: 'connected'
+              }
+              server.sendPhoneEvent(phoneStatus)
               break
             }
           }
@@ -106,12 +112,7 @@ PhoneEngine.prototype = {
           //this.watson = new WatsonEngine(agentName)
           //console.log("Headers: " + sipMessage.headers['p-rc-api-ids'])
           var maxFrames = 60
-          this.softphone.answer(sipMessage)
-          var phoneStatus = {
-            agent: this.agents[0].name,
-            status: 'connected'
-          }
-          server.sendPhoneEvent(phoneStatus)
+
           this.softphone.once('track', e => {
             audioSink = new RTCAudioSink(e.track)
             var frames = 0
@@ -173,46 +174,24 @@ PhoneEngine.prototype = {
               agentName = agent.name
               this.agents[i].sessionId = ""
               this.agents[i].partyId = ""
+              var phoneStatus = {
+                agent: agentName,
+                status: 'idle'
+              }
+              server.sendPhoneEvent(phoneStatus)
+              audioSink.stop()
+              if (agent.doRecording)
+                this.audioStream.end()
+              console.log("Close Watson socket.")
+              this.watson.closeConnection()
+              this.speachRegconitionReady = false
               break
             }
           }
-          var phoneStatus = {
-            agent: agentName,
-            status: 'idle'
-          }
-          server.sendPhoneEvent(phoneStatus)
-          audioSink.stop()
-          if (this.doRecording)
-            this.audioStream.end()
-          console.log("Close Watson socket.")
-          this.watson.closeConnection()
-          this.speachRegconitionReady = false
+
         })
     }catch(e){
         console.log(e)
-    }
-  },
-  login: async function (){
-    console.log("FORCE TO LOGIN !!!")
-    try{
-      await rcsdk.login({
-        username: process.env.RINGCENTRAL_USERNAME,
-        extension: process.env.RINGCENTRAL_EXTENSION,
-        password: process.env.RINGCENTRAL_PASSWORD
-      })
-      console.log("after login")
-      const data = await rcsdk.platform().auth().data()
-      //console.log(JSON.stringify(data))
-      var query = "UPDATE supervision_subscriptionids SET tokens='" + JSON.stringify(data) + "', WHERE ext_id=1000012"
-      console.log("SUB ID: " + query)
-      pgdb.update(query, (err, result) =>  {
-        if (err){
-          console.error(err.message);
-        }
-        console.log("save tokens")
-      })
-    }catch(e){
-      console.log("LOGIN FAILED")
     }
   },
   setAgent: function (agentName, sessionId){
