@@ -8,13 +8,25 @@ const NaturalLanguageUnderstandingV1 = require("ibm-watson/natural-language-unde
 
 var language_model = 'en-US_NarrowbandModel'
 
+var wsURI = 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?access_token=[TOKEN]&model=en-US_NarrowbandModel';
+request.post("https://iam.cloud.ibm.com/identity/token", {form:
+    { grant_type:'urn:ibm:params:oauth:grant-type:apikey',
+      apikey: process.env.WATSON_SPEECH_TO_TEXT_API_KEY
+    }}, function(error, response, body) {
+      var jsonObj = JSON.parse(body)
+      //console.log(jsonObj.access_token)
+      wsURI = wsURI.replace('[TOKEN]', jsonObj.access_token);
+      //console.log(thisClass.wsURI)
+});
+
 //
 function WatsonEngine(agentName) {
   this.doTranslation = false
-  this.ws = null
+  this.wss = [null]
   this.agentName = agentName
 
   var thisClass = this
+  /*
   this.wsURI = 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?access_token=[TOKEN]&model=en-US_NarrowbandModel';
   request.post("https://iam.cloud.ibm.com/identity/token", {form:
       { grant_type:'urn:ibm:params:oauth:grant-type:apikey',
@@ -25,7 +37,7 @@ function WatsonEngine(agentName) {
         thisClass.wsURI = thisClass.wsURI.replace('[TOKEN]', jsonObj.access_token);
         //console.log(thisClass.wsURI)
   });
-
+  */
   this.naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
     version: '2019-07-12',
     iam_apikey: process.env.WATSON_NATURAL_LANGUAGE_UNDERSTANDING_API_KEY,
@@ -76,7 +88,7 @@ function WatsonEngine(agentName) {
 WatsonEngine.prototype = {
   createWatsonSocket: function(sampleRate, callback){
     console.log("createWatsonSocket")
-    this.ws = new WS(this.wsURI);
+    this.ws = new WS(wsURI);
     var message = {
       'action': 'start',
       'content-type': 'audio/l16;rate='+ sampleRate +';channels=1',

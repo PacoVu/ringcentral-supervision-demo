@@ -22,6 +22,15 @@ let supervisor = new PhoneEngine()
 var eventResponse = null
 var g_subscriptionId = ""
 
+createTable((err, res) => {
+    console.log(res)
+    if (err) {
+        console.log(err, res)
+    }else{
+        console.log("DONE => login")
+    }
+});
+
 // Serve our api route /cow that returns a custom talking text cow
 app.get('/events', cors(), async (req, res) => {
   console.log("METHOD EVENTS")
@@ -31,7 +40,7 @@ app.get('/events', cors(), async (req, res) => {
     'Cache-Control': 'no-cache',
     'Access-Control-Allow-Origin': '*'
   });
-
+/*
   loadSavedTokens(supervisorExtensionId, async function(err, res){
     if (err){
       console.log("FORCE TO LOGIN !!!")
@@ -41,7 +50,7 @@ app.get('/events', cors(), async (req, res) => {
       supervisor.initializePhoneEngine(rcsdk)
     }
   })
-
+*/
   //supervisor.initializePhoneEngine()
   res.statusCode = 200;
   eventResponse = res
@@ -81,6 +90,7 @@ app.get('/recording', cors(), async (req, res) => {
 app.get('/login', cors(), (req, res) => {
   console.log("LOGIN")
   startNotification()
+  //login()
   res.statusCode = 200;
   res.end();
 })
@@ -96,6 +106,8 @@ app.get('/logout', cors(), async (req, res) => {
 app.get('*', (req, res) => {
   console.log("LOAD INDEX")
   res.sendFile(path.join(__dirname + '/client/build/index.html'))
+  login()
+  /*
   createTable((err, res) => {
       console.log(res)
       if (err) {
@@ -105,7 +117,7 @@ app.get('*', (req, res) => {
           login()
       }
   });
-
+  */
   //startNotification()
   /*
   var authorize_uri = rcsdk.platform().loginUrl({brandId: ''})
@@ -164,14 +176,14 @@ app.post('/webhookcallback', function(req, res) {
         }).on('end', function() {
             body = Buffer.concat(body).toString();
             var jsonObj = JSON.parse(body)
-            console.log("g_sub: " + g_subscriptionId)
-            console.log("not sub: " + jsonObj.subscriptionId)
+            //console.log("g_sub: " + g_subscriptionId)
+            //console.log("not sub: " + jsonObj.subscriptionId)
             if (jsonObj.subscriptionId == g_subscriptionId) {
               for (var party of jsonObj.body.parties){
                   console.log("Receive session notification")
                   if (party.direction === "Inbound"){
                     if (party.status.code === "Proceeding"){
-                      console.log("RINGING " + JSON.stringify(jsonObj.body))
+                      console.log("RINGING")
                       var agentExtNumber = ""
                       for (var agent of agentsList){
                         if (agent.id == party.extensionId){
@@ -184,6 +196,7 @@ app.post('/webhookcallback', function(req, res) {
                       }
                       sendPhoneEvent(phoneStatus)
                     }else if (party.status.code === "Answered"){
+                      //console.log("don't post supervise")
                       processTelephonySessionNotification(jsonObj.body)
                     }else if (party.status.code === "Disconnected"){
                       var agentExtNumber = ""
@@ -197,15 +210,15 @@ app.post('/webhookcallback', function(req, res) {
                         status: 'idle'
                       }
                       sendPhoneEvent(phoneStatus)
-                      console.log("HANG UP " + JSON.stringify(jsonObj.body))
+                      console.log("HANG UP " + party.status.code)
                     }else
-                      console.log(JSON.stringify(jsonObj.body))
+                      console.log(party.status.code)
                     return
                   }else
                     console.log(JSON.stringify(jsonObj.body))
               }
-              res.statusCode = 200;
-              res.end();
+              //res.statusCode = 200;
+              //res.end();
             }
         });
     }
@@ -339,31 +352,34 @@ async function loadSavedSubscriptionId(extId, callback){
 }
 
 function startNotification(){
+  console.log("startNotification")
+  //return deleteAllRegisteredWebHookSubscriptions()
   console.log(supervisorExtensionId)
-  loadSavedTokens(supervisorExtensionId, async function(err, res){
-    if (err){
-      console.log("no row => call startWebHookSubscription")
-      console.log("FORCE TO LOGIN !!!")
-      await login()
-      // just for cleanup all pending/active subscriptions
-      //return deleteAllRegisteredWebHookSubscriptions()
-      //startWebhookSubscription()
-    }else{
-      loadSavedSubscriptionId(supervisorExtensionId, async function(err, res){
-        if (err){
+  loadSavedSubscriptionId(supervisorExtensionId, async function(err, res){
+      if (err){
           startWebhookSubscription()
-        }else{
+      }else{
           console.log("saved subId: " + res)
-          // just for cleanup all pending/active subscriptions
+        // just for cleanup all pending/active subscriptions
           //return deleteAllRegisteredWebHookSubscriptions()
           checkRegisteredWebHookSubscription(res)
-        }
-      })
-    }
+      }
   })
 }
 
 var platform = rcsdk.platform();
+
+platform.on(platform.events.loginSuccess, async function(e){
+  console.log("Login success")
+  const data = await rcsdk.platform().auth().data()
+  console.log(JSON.stringify(data))
+  supervisor.initializePhoneEngine(rcsdk)
+  /*
+  storeTokens(supervisorExtensionId, JSON.stringify(data), (err, result) => {
+    console.log(result)
+  })
+  */
+});
 
 platform.on(platform.events.refreshError, function(e){
     console.log("Refresh token failed")
@@ -371,15 +387,8 @@ platform.on(platform.events.refreshError, function(e){
 
 platform.on(platform.events.refreshSuccess, async function(res){
     console.log("Refresh token success")
-    console.log(res)
     const data = await rcsdk.platform().auth().data()
-    //console.log(JSON.stringify(data))
-    storeTokens(supervisorExtensionId, JSON.stringify(data), (err, result) => {
-      if(err)
-        console.log(err);
-      else
-        console.log("refreshSuccess ok")
-    })
+    console.log(JSON.stringify(data))
 });
 
 
@@ -393,32 +402,36 @@ async function login(){
     })
     console.log("after login")
     readExtensions()
+    //startNotification()
   }catch(e){
     console.log("LOGIN FAILED")
   }
 }
 
 async function logout(){
-  var query = "SELECT tokens from supervision_subscriptionids WHERE ext_id=" + supervisorExtensionId
-  pgdb.read(query, async (err, result) => {
+  if (supervisorExtensionId != ""){
+    var query = "SELECT sub_id from supervision_subscriptionids WHERE ext_id=" + supervisorExtensionId
+    pgdb.read(query, async (err, result) => {
       if (!err){
           if (result.rows.length){
               var row = result.rows[0]
-              if (row['tokens'] != ""){
-                var tokensObj = JSON.parse(row['tokens'])
-                await rcsdk.platform().auth().setData(tokensObj)
-                await rcsdk.platform().logout()
+              if (row['sub_id'] != ""){
+                deleteRegisteredWebHookSubscriptions(row['sub_id'], async function(err, res){
+                  await rcsdk.platform().logout()
+                  query = "UPDATE supervision_subscriptionids SET tokens='', sub_id='' WHERE ext_id=" + supervisorExtensionId
+                  pgdb.update(query, (err, result) =>  {
+                    if (err){
+                      console.error(err.message);
+                    }
+                    console.log("reset tokens and subscription")
+                  })
+                  return
+                })
               }
           }
       }
-      query = "UPDATE supervision_subscriptionids SET tokens='' WHERE ext_id=" + supervisorExtensionId
-      pgdb.update(query, (err, result) =>  {
-        if (err){
-          console.error(err.message);
-        }
-        console.log("reset tokens")
-      })
-  })
+    })
+  }
 }
 
 function createTable(callback){
@@ -433,23 +446,6 @@ function createTable(callback){
 }
 
 async function processTelephonySessionNotification(body){
-  rcsdk.ensureLoggedIn()
-  .then(function(res){
-    console.log(res)
-  })
-  .catch(function(e){
-    console.log(e.message)
-  });
-  var isLoggedin = await rcsdk.platform().loggedIn()
-  console.log("still logged in?")
-  if (!isLoggedin){
-    console.log("RELOGIN ???")
-    await rcsdk.login({
-      username: process.env.RINGCENTRAL_USERNAME,
-      extension: process.env.RINGCENTRAL_EXTENSION,
-      password: process.env.RINGCENTRAL_PASSWORD
-    })
-  }
   try {
     var deviceId = fs.readFileSync('deviceId.txt', 'utf8')
     try{
@@ -468,10 +464,11 @@ async function processTelephonySessionNotification(body){
             }
         console.log(params)
         var res = await rcsdk.post(endpoint, params)
+        console.log(res)
     }catch(e) {
       console.log("POST supervise failed")
         console.log(e.message)
-        console.log(e)
+        console.log(e.response)
     }
   }catch(e){
     console.log(e.message)
@@ -500,10 +497,6 @@ async function readExtensions() {
           supervisorExtensionId = record.id
       }
     }
-    const data = await rcsdk.platform().auth().data()
-    storeTokens(supervisorExtensionId, JSON.stringify(data), (err, result) => {
-      console.log(result)
-    })
 }
 
 function createNotificationFilters(){
@@ -605,6 +598,25 @@ async function checkRegisteredWebHookSubscription(subscriptionId) {
 }
 
 /// Clean up WebHook subscriptions
+async function deleteRegisteredWebHookSubscriptions(subscriptionId, callback) {
+  let response = await rcsdk.get('/restapi/v1.0/subscription')
+  let json = await response.json();
+  if (json.records.length > 0){
+    for (var record of json.records) {
+      if (record.deliveryMode.transportType == "WebHook"){
+        if (subscriptionId == record.id){
+          await rcsdk.delete('/restapi/v1.0/subscription/' + record.id)
+          console.log("Deleted")
+          return callback(null, "deleted")
+        }
+      }
+    }
+    return callback(null, "no subscription")
+  }else{
+    return callback(null, "no subscription")
+  }
+}
+
 async function deleteAllRegisteredWebHookSubscriptions() {
   let response = await rcsdk.get('/restapi/v1.0/subscription')
   let json = await response.json();
