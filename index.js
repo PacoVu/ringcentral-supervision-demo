@@ -40,20 +40,14 @@ app.get('/events', cors(), async (req, res) => {
     'Cache-Control': 'no-cache',
     'Access-Control-Allow-Origin': '*'
   });
-/*
-  loadSavedTokens(supervisorExtensionId, async function(err, res){
-    if (err){
-      console.log("FORCE TO LOGIN !!!")
-      await login()
-      supervisor.initializePhoneEngine(rcsdk)
-    }else{
-      supervisor.initializePhoneEngine(rcsdk)
-    }
-  })
-*/
-  //supervisor.initializePhoneEngine()
+
   res.statusCode = 200;
   eventResponse = res
+  var phoneStatus = {
+    agent: "120",
+    status: 'ready'
+  }
+  sendPhoneEvent(phoneStatus)
 })
 
 app.get('/enable_translation', cors(), async (req, res) => {
@@ -103,29 +97,16 @@ app.get('/logout', cors(), async (req, res) => {
 })
 
 // Anything that doesn't match the above, send back the index.html file
-app.get('*', (req, res) => {
+app.get('*', cors(), (req, res) => {
   console.log("LOAD INDEX")
+  res.set({
+    'Connection': 'keep-alive',
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Access-Control-Allow-Origin': '*'
+  });
   res.sendFile(path.join(__dirname + '/client/build/index.html'))
   login()
-  /*
-  createTable((err, res) => {
-      console.log(res)
-      if (err) {
-          console.log(err, res)
-      }else{
-          console.log("DONE => login")
-          login()
-      }
-  });
-  */
-  //startNotification()
-  /*
-  var authorize_uri = rcsdk.platform().loginUrl({brandId: ''})
-  res.set('Content-Type', 'text/html');
-  var html = '<h2>Login</h2>'
-  html += '<a href="' + authorize_uri + '">Login RingCentral Account</a>'
-  console.log(html)
-  */
 /*
   console.log("LOAD LOGIN")
 
@@ -176,14 +157,12 @@ app.post('/webhookcallback', function(req, res) {
         }).on('end', function() {
             body = Buffer.concat(body).toString();
             var jsonObj = JSON.parse(body)
-            //console.log("g_sub: " + g_subscriptionId)
-            //console.log("not sub: " + jsonObj.subscriptionId)
             if (jsonObj.subscriptionId == g_subscriptionId) {
               for (var party of jsonObj.body.parties){
                   console.log("Receive session notification")
                   if (party.direction === "Inbound"){
                     if (party.status.code === "Proceeding"){
-                      console.log("RINGING")
+                      console.log("RINGING ...")
                       var agentExtNumber = ""
                       for (var agent of agentsList){
                         if (agent.id == party.extensionId){
@@ -196,8 +175,7 @@ app.post('/webhookcallback', function(req, res) {
                       }
                       sendPhoneEvent(phoneStatus)
                     }else if (party.status.code === "Answered"){
-                      //console.log("don't post supervise")
-                      processTelephonySessionNotification(jsonObj.body)
+                      processTelephonySessionNotification(jsonObj)
                     }else if (party.status.code === "Disconnected"){
                       var agentExtNumber = ""
                       for (var agent of agentsList){
@@ -215,7 +193,7 @@ app.post('/webhookcallback', function(req, res) {
                       console.log(party.status.code)
                     return
                   }else
-                    console.log(JSON.stringify(jsonObj.body))
+                    ;//console.log(JSON.stringify(jsonObj.body))
               }
               //res.statusCode = 200;
               //res.end();
@@ -234,11 +212,14 @@ app.listen(PORT, () => {
 
 function sendPhoneEvent(phone){
   var res = 'event: phoneEvent\ndata: ' + JSON.stringify(phone) + '\n\n'
-  console.log("sendPhoneEvent: " + res)
-  if (!eventResponse.finished) {
-      eventResponse.write(res);
+  if (eventResponse != null){
+    if (!eventResponse.finished) {
+        eventResponse.write(res);
+    }else{
+      console.log("eventResponse is finished")
+    }
   }else{
-    console.log("eventResponse is finished")
+    console.log("eventResponse is null")
   }
   //if (phone.status == "connected")
   //  eventHistory = []
@@ -246,10 +227,16 @@ function sendPhoneEvent(phone){
 
 function sendTranscriptEvents(transcript) {
   var t = JSON.stringify(transcript)
-  console.log(t)
+  //console.log(t)
   var res = 'event: transcriptUpdate\ndata: ' + t + '\n\n'
-  if (!eventResponse.finished) {
-      eventResponse.write(res);
+  if (eventResponse != null){
+    if (!eventResponse.finished) {
+        eventResponse.write(res);
+    }else{
+      console.log("eventResponse is finished")
+    }
+  }else{
+    console.log("eventResponse is null")
   }
   //if (transcript.status)
   //  eventHistory.push(transcript);
@@ -283,49 +270,24 @@ const rcsdk = new RingCentral({
   clientSecret: process.env.RINGCENTRAL_CLIENT_SECRET
 })
 
-async function getRCSDK(){
-  await loadSavedTokens(supervisorExtensionId, async function(err, res){
-    if (err){
-      console.log("no row => call startWebHookSubscription")
-      console.log("FORCE TO LOGIN !!!")
-      await login()
-      // just for cleanup all pending/active subscriptions
-      //return deleteAllRegisteredWebHookSubscriptions()
-      return rcsdk
-    }else{
-      console.log("sdk is good")
-      return rcsdk
-    }
-  })
-}
-module.exports.getRCSDK = getRCSDK;
 
-
-async function loadSavedTokens(extId, callback){
-  var query = "SELECT tokens from supervision_subscriptionids WHERE ext_id=" + extId
+async function readDeviceId(extId, callback){
+  var query = "SELECT device_id from supervision_subscriptionids WHERE ext_id=" + extId
   pgdb.read(query, async (err, result) => {
       if (!err){
           if (result.rows.length){
               var row = result.rows[0]
-              if (row['tokens'] != ""){
-                var tokensObj = JSON.parse(row['tokens'])
-                await rcsdk.platform().auth().setData(tokensObj)
-                rcsdk.ensureLoggedIn()
-                .then(function(res){
-                  console.log(res)
-                  callback(null, "ok")
-                })
-                .catch(function(e){
-                  console.log(e.message)
-                  callback(e, "")
-                });
+              if (row['device_id'] != ""){
+                callback(null, row['device_id'])
               }else{
                 callback("err", "")
               }
           }else{
-              console.log("no row => call startWebHookSubscription")
+              console.log("no subId => call startWebHookSubscription")
               callback("err", "")
           }
+      }else{
+        callback("err", "")
       }
   })
 }
@@ -371,9 +333,10 @@ var platform = rcsdk.platform();
 
 platform.on(platform.events.loginSuccess, async function(e){
   console.log("Login success")
-  const data = await rcsdk.platform().auth().data()
-  console.log(JSON.stringify(data))
-  supervisor.initializePhoneEngine(rcsdk)
+  startNotification()
+  //const data = await rcsdk.platform().auth().data()
+  //console.log(JSON.stringify(data))
+  //supervisor.initializePhoneEngine(rcsdk, supervisorExtensionId)
   /*
   storeTokens(supervisorExtensionId, JSON.stringify(data), (err, result) => {
     console.log(result)
@@ -401,7 +364,8 @@ async function login(){
       password: process.env.RINGCENTRAL_PASSWORD
     })
     console.log("after login")
-    readExtensions()
+    await readExtensions()
+    supervisor.initializePhoneEngine(rcsdk, supervisorExtensionId)
     //startNotification()
   }catch(e){
     console.log("LOGIN FAILED")
@@ -445,34 +409,33 @@ function createTable(callback){
   })
 }
 
-async function processTelephonySessionNotification(body){
-  try {
-    var deviceId = fs.readFileSync('deviceId.txt', 'utf8')
-    try{
-        var endpoint = `/restapi/v1.0/account/~/telephony/sessions/${body.telephonySessionId}/supervise`
-        var agentExtNumber = ""
-        for (var agent of agentsList){
-          if (agent.id == body.parties[0].extensionId){
-            agentExtNumber = agent.number
-          }
-        }
-        supervisor.setAgent(agentExtNumber, body.telephonySessionId)
-        var params = {
-              mode: 'Listen',
-              supervisorDeviceId: deviceId,
-              agentExtensionNumber: agentExtNumber
+async function processTelephonySessionNotification(payload){
+  readDeviceId(payload.ownerId, async function (err, deviceId){
+    if (!err){
+      try{
+          var body = payload.body
+          var endpoint = `/restapi/v1.0/account/~/telephony/sessions/${body.telephonySessionId}/supervise`
+          var agentExtNumber = ""
+          for (var agent of agentsList){
+            if (agent.id == body.parties[0].extensionId){
+              agentExtNumber = agent.number
             }
-        console.log(params)
-        var res = await rcsdk.post(endpoint, params)
-        console.log(res)
-    }catch(e) {
-      console.log("POST supervise failed")
-        console.log(e.message)
-        console.log(e.response)
+          }
+          supervisor.setAgent(agentExtNumber, body.telephonySessionId)
+          var params = {
+                mode: 'Listen',
+                supervisorDeviceId: deviceId,
+                agentExtensionNumber: agentExtNumber
+              }
+          console.log(params)
+          var res = await rcsdk.post(endpoint, params)
+      }catch(e) {
+        console.log("POST supervise failed")
+          console.log(e.message)
+          //console.log(e.response)
+      }
     }
-  }catch(e){
-    console.log(e.message)
-  }
+  })
 }
 
 var agentsList = []

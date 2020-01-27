@@ -7,7 +7,7 @@ const Softphone = require('ringcentral-softphone').default
 
 const WatsonEngine = require('./watson.js');
 var server = require('./index')
-
+const MAXBUFFERSIZE = 32000
 // playback recording
 // play -c 1 -r 16000 -e signed -b 16 audio.raw
 
@@ -19,7 +19,7 @@ function PhoneEngine() {
   //this.doRecording = false
   //this.audioStream = null
   this.softphone = null
-  this.deviceId = ""
+  //this.deviceId = ""
   /*
   this.rcsdk = new RingCentral({
     server: process.env.RINGCENTRAL_SERVER_URL,
@@ -32,13 +32,12 @@ function PhoneEngine() {
 }
 
 PhoneEngine.prototype = {
-  initializePhoneEngine: async function(rcsdk){
+  initializePhoneEngine: async function(rcsdk, extensionId){
     console.log("initializePhoneEngine")
 
     if (this.softphone){
       return
     }
-
     //console.log("THIS IS AGENT " + this.agentName)
     console.log("initialize")
     //this.rcsdk = await server.getRCSDK()
@@ -48,9 +47,10 @@ PhoneEngine.prototype = {
     try {
         await this.softphone.register()
         console.log("passed registered softphone")
-        this.deviceId = this.softphone.device.id
-        console.log("Registered deviceId: " + this.deviceId)
-        saveDeviceId(this.deviceId)
+        //this.deviceId = this.softphone.device.id
+        console.log("Registered deviceId: " + this.softphone.device.id)
+        //saveDeviceId(this.deviceId)
+        this.storeDeviceId(extensionId, this.softphone.device.id)
         for (var agent of this.agents){
           var phoneStatus = {
             agent: agent.name,
@@ -59,26 +59,25 @@ PhoneEngine.prototype = {
           server.sendPhoneEvent(phoneStatus)
         }
 
-        //let audioSink
-
         this.softphone.on('INVITE', sipMessage => {
           console.log("GOT INVITED")
-          console.log(sipMessage.headers['Call-Id'])
           var headers = sipMessage.headers['p-rc-api-ids'].split(";")
           var sessionId = headers[1].split("=")[1]
-          console.log("Party id: " + headers[0])
-          console.log("Session id: " + headers[1])
+          //console.log("Party id: " + headers[0])
+          //console.log("Session id: " + headers[1])
           var agentName = ""
-          var agent = null
-          for (var i=0; i<this.agents.length; i++){
-            agent = this.agents[i]
-            console.log(agent.sessionId + " === " + sessionId)
-            if (agent.sessionId == sessionId){
-              agentName = agent.name
-              this.agents[i].callId = sipMessage.headers['Call-Id']
+          //var agent = null
+          var agentIndex = 0
+          for (agentIndex=0; agentIndex<this.agents.length; agentIndex++){
+            //agent = this.agents[agentIndex]
+            console.log(this.agents[agentIndex].sessionId + " === " + sessionId)
+            if (this.agents[agentIndex].sessionId == sessionId){
+              agentName = this.agents[agentIndex].name
+              this.agents[agentIndex].callId = sipMessage.headers['Call-Id']
+              this.agents[agentIndex].watson = new WatsonEngine(agentName)
               this.softphone.answer(sipMessage)
               var phoneStatus = {
-                agent: agent.name,
+                agent: this.agents[agentIndex].name,
                 status: 'connected'
               }
               server.sendPhoneEvent(phoneStatus)
@@ -86,67 +85,57 @@ PhoneEngine.prototype = {
             }
           }
           var localSpeachRegconitionReady = false
-          var watson = new WatsonEngine(agentName)
-          agent.watson = watson
-          let audioSink
-
-          var maxFrames = 60
+          //let audioSink
+          //var maxFrames = 60
 
           this.softphone.once('track', e => {
-            audioSink = new RTCAudioSink(e.track)
-            agent.audioSink = audioSink
-            var frames = 0
+            this.agents[agentIndex].audioSink = new RTCAudioSink(e.track)
+            //this.agents[agentIndex].audioSink = audioSink
             var buffer = null
             var creatingWatsonSocket = false
-            audioSink.ondata = data => {
+            var dumpingFiveFrames = 3
+            this.agents[agentIndex].audioSink.ondata = data => {
               var buf = Buffer.from(data.samples.buffer)
-              if (agent.doRecording)
-                //this.audioStream.write(Buffer.from(data.samples.buffer))
-                agent.audioStream.write(buf)
-
+              if (this.agents[agentIndex].doRecording)
+                this.agents[agentIndex].audioStream.write(buf)
               if (!creatingWatsonSocket && !localSpeachRegconitionReady){
-                creatingWatsonSocket = true
-                // call once for testing
-                console.log("sample rate: " + data.sampleRate)
-                console.log("packet len: " + buf.length)
-                maxFrames = Math.round(32000 / buf.length)
-                console.log("Max frames: " + maxFrames)
-                // test end
-                watson.createWatsonSocket(data.sampleRate, (err, res) => {
-                  if (!err) {
-                    localSpeachRegconitionReady = true
-                    console.log("WatsonSocket created!")
-                  }
-                })
+                dumpingFiveFrames--
+                console.log("first 3 frame sample rate: " + data.sampleRate)
+                if (dumpingFiveFrames <= 0){
+                  creatingWatsonSocket = true
+                  // call once for testing
+                  console.log("third frame sample rate: " + data.sampleRate)
+                  console.log("packet len: " + buf.length)
+                  //maxFrames = Math.round(32000 / buf.length)
+                  //console.log("Max frames: " + maxFrames)
+                  this.agents[agentIndex].watson.createWatsonSocket(data.sampleRate, (err, res) => {
+                    if (!err) {
+                      localSpeachRegconitionReady = true
+                      console.log("WatsonSocket created!")
+                    }
+                  })
+                }
               }
-
+              //console.log("sample rate: " + data.sampleRate)
               if (buffer != null){
                   buffer = Buffer.concat([buffer, buf])
-                  //console.log("concated buffer length: " + buffer.length)
               }else
                   buffer = buf
-              //frames++
-              //if (frames >= maxFrames){
-              if (buffer.length > 32000){
-                  //console.log("call transcribe")
-                  //console.log("maxFrames: " + maxFrames)
-                  //console.log(`live audio data received, sample rate is ${data.sampleRate}`)
+              if (buffer.length > MAXBUFFERSIZE){
                   if (localSpeachRegconitionReady){
                     //console.log("Agent: " + this.agentName)
                     console.log("call transcribe " + buffer.length)
-                    watson.transcribe(buffer)
+                    this.agents[agentIndex].watson.transcribe(buffer)
                   }else{
                     console.log("Dumping data")
                   }
                   buffer = Buffer.from('')
-                  frames=0
               }
             }
           })
       })
       this.softphone.on('BYE', sipMessage => {
           console.log("RECEIVE BYE MESSAGE => Hanged up now")
-          console.log(sipMessage.headers['Call-Id'])
           var agentName = ""
           for (var i=0; i<this.agents.length; i++){
             var agent = this.agents[i]
@@ -159,12 +148,16 @@ PhoneEngine.prototype = {
                 status: 'idle'
               }
               server.sendPhoneEvent(phoneStatus)
+              console.log("STOP AUDIO SINK FOR " + agentName)
               this.agents[i].audioSink.stop()
-              if (agent.doRecording)
+              this.agents[i].audioSink = null
+              if (agent.doRecording){
                 this.agents[i].audioStream.end()
-              console.log("Close Watson socket.")
+                this.agents[i].audioStream = null
+              }
+              console.log("Close Watson socket for " + agentName)
               this.agents[i].watson.closeConnection()
-              //this.speachRegconitionReady = false
+              this.agents[i].watson = null
               break
             }
           }
@@ -173,6 +166,16 @@ PhoneEngine.prototype = {
     }catch(e){
         console.log(e)
     }
+  },
+  storeDeviceId: function (extensionId, deviceId){
+      var query = "UPDATE supervision_subscriptionids SET device_id='" + deviceId + "' WHERE ext_id=" + extensionId
+      console.log(query)
+      pgdb.update(query, (err, result) =>  {
+        if (err){
+          console.error(err.message);
+        }
+        console.log("save device_id")
+      })
   },
   setAgent: function (agentName, sessionId){
     var agent = {
@@ -188,7 +191,6 @@ PhoneEngine.prototype = {
     this.agents.push(agent)
     console.log(JSON.stringify(this.agents))
   },
-
   hangup: function(){
 
   },
@@ -198,46 +200,28 @@ PhoneEngine.prototype = {
       if (agent.name == agentName){
         this.agents[i].doRecording = recording
         if (recording){
-          const audioPath = agentName + '.raw'
+          const audioPath = agentName + this.agents[i].sessionId + '.raw'
           if (fs.existsSync(audioPath)) {
             fs.unlinkSync(audioPath)
           }
           this.agents[i].audioStream = fs.createWriteStream(audioPath, { flags: 'a' })
         }else{
-          //this.agents[i].doRecording = false
           this.agents[i].audioStream.close() // end
         }
         break
       }
     }
   },
-
-  handleCallRecording: function (recoringState){
-    console.log("recoringState: " + recoringState)
-  },
   enableTranslation: function(agentName, flag) {
     for (var i=0; i<this.agents.length; i++){
       var agent = this.agents[i]
       if (agent.name == agentName){
         this.agents[i].doTranslation = flag
-        if (this.watson)
-          this.watson.enableTranslation(flag)
+        if (this.agents[i].watson)
+          this.agents[i].watson.enableTranslation(flag)
         break
       }
     }
   }
 }
 module.exports = PhoneEngine;
-
-function saveDeviceId(deviceId){
-  try {
-    fs.writeFile("deviceId.txt", deviceId, function(err) {
-        if(err)
-            console.log(err);
-        else
-            console.log("deviceId " + deviceId + " is saved.");
-    });
-  }catch (e){
-    console.log("WriteFile err")
-  }
-}

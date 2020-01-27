@@ -1,7 +1,7 @@
 {
   "name": "client",
   "version": "0.1.0",
-  "private": true,
+  "proxy": "http://localhost:5000/",
   "dependencies": {
     "@progress/kendo-drawing": "^1.5.12",
     "@progress/kendo-react-gauges": "^3.4.0",
@@ -17,6 +17,5 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  },
-  "proxy": "http://localhost:5000"
+  }
 }

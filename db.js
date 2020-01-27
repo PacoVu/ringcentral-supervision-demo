@@ -14,7 +14,7 @@ module.exports = {
   create_table: (table, tableName, callback) => {
     if (table == "supervision_subscriptionids"){
       return pool.query(
-        'CREATE TABLE IF NOT EXISTS ' + tableName + '(ext_id BIGINT PRIMARY KEY, sub_id VARCHAR(64) NOT NULL, tokens TEXT NOT NULL)', callback);
+        'CREATE TABLE IF NOT EXISTS ' + tableName + '(ext_id BIGINT PRIMARY KEY, sub_id VARCHAR(64) NOT NULL, tokens TEXT NOT NULL, device_id VARCHAR(32) NOT NULL)', callback);
     }
   },
   createIndex: (query, callback) => {

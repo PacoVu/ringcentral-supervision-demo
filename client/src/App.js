@@ -47,6 +47,7 @@ export default class App extends Component {
       }
     };
     this.isLoggedIn = false;
+    //this.eventSource = new EventSource('http://localhost:5000/events');
     this.eventSource = new EventSource('/events');
   }
 
