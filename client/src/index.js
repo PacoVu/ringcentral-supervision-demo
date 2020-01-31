@@ -7,5 +7,4 @@ import registerServiceWorker from './registerServiceWorker'
 
 ReactDOM.render(<App />, document.getElementById('root'))
 //ReactDOM.render(<AppBar />, document.getElementById('login'))
-
 registerServiceWorker()

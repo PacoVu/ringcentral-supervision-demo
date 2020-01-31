@@ -6,7 +6,7 @@ body {
 }
 
 .conversations {
-  width: 600px;
+  width: 700px;
   height: 500px;
   overflow: scroll;
   border: 1px gray solid;
@@ -22,10 +22,25 @@ body {
 }
 
 .infoColumn {
-  width: 600px;
+  width: 700px;
   column-count: 6;
-  column-gap: 40px;
-  background-color: black;
+  column-gap: 10px;
+  /*background-color: black;*/
   padding: 20px;
-  color: white;
+  /*color: white;*/
+  border: 1px dashed gray;
+}
+
+ .reportHeader {
+   font-size: 1.3em;
+   padding-top: 10px;
+ }
+
+.positive {
+  color: #1F8605;
+  display: inline;
+}
+.negative {
+  color: #DC2504;
+  display: inline;
 }

@@ -10,6 +10,8 @@ import {
 
 import axios from "axios";
 
+//import mylib from "myscript";
+
 export default class App extends Component {
 
   constructor(props) {
@@ -23,12 +25,27 @@ export default class App extends Component {
         doTranslation:  false,
         dialogue: [],
         phoneStatus: "idle",
-        sentimentScore: 0,
-        sadnessScore: 0,
-        joyScore: 0,
-        fearScore: 0,
-        disgustScore: 0,
-        angerScore: 0
+        id: 0,
+        customer : {
+          sentenceSentimentScore: 0,
+          wordCount: 0,
+          sentimentScore: 0,
+          sadnessScore: 0,
+          joyScore: 0,
+          fearScore: 0,
+          disgustScore: 0,
+          angerScore: 0
+        },
+        agent: {
+          sentenceSentimentScore: 0,
+          wordCount: 0,
+          sentimentScore: 0,
+          sadnessScore: 0,
+          joyScore: 0,
+          fearScore: 0,
+          disgustScore: 0,
+          angerScore: 0
+        }
       },
       agent2: {
         cannotRecord: true,
@@ -38,17 +55,32 @@ export default class App extends Component {
         doTranslation:  false,
         dialogue: [],
         phoneStatus: "idle",
-        sentimentScore: 0,
-        sadnessScore: 0,
-        joyScore: 0,
-        fearScore: 0,
-        disgustScore: 0,
-        angerScore: 0
+        id: 0,
+        customer : {
+          sentenceSentimentScore: 0,
+          wordCount: 0,
+          sentimentScore: 0,
+          sadnessScore: 0,
+          joyScore: 0,
+          fearScore: 0,
+          disgustScore: 0,
+          angerScore: 0
+        },
+        agent: {
+          sentenceSentimentScore: 0,
+          wordCount: 0,
+          sentimentScore: 0,
+          sadnessScore: 0,
+          joyScore: 0,
+          fearScore: 0,
+          disgustScore: 0,
+          angerScore: 0
+        }
       }
     };
     this.isLoggedIn = false;
-    //this.eventSource = new EventSource('http://localhost:5000/events');
-    this.eventSource = new EventSource('/events');
+    this.eventSource = new EventSource('http://localhost:5000/events');
+    //this.eventSource = new EventSource('/events');
   }
 
   async componentDidMount() {
@@ -60,52 +92,74 @@ export default class App extends Component {
   updateTranscript(data) {
     // identify agents
     if (data.agent === "120"){
-      this.update = false
+      this.update = true
+      // this is for just updating interim results from watson
       for (let i = 0; i < this.state.agent1.dialogue.length; i++) {
         if (this.state.agent1.dialogue[i].index === data.index){
           let items = [...this.state.agent1.dialogue];
           let item = {...items[i]};
-          //console.log("before: " + item.text)
           item.text = data.text;
           item.translation = data.translation;
+          item.sentiment = data.sentenceSentimentScore;
           items[i] = item;
 
-          //this.setState(Object.assign({}, {dialogue: items}));
           this.setState(prevState => ({
               agent1: {                   // object that we want to update
                   ...prevState.agent1,    // keep all other key-value pairs
-                  dialogue: items       // update the value of specific key
+                  dialogue: items,         // update the value of specific key
+                  id: data.id
               }
           }))
-          this.update = true
+          this.update = false
           break
         }
       }
-      if (!this.update){
+      // if the data is a new sentence, add to the dialog array
+      if (this.update){
         this.state.agent1.dialogue.unshift(data)
-        //this.setState(Object.assign({}, {dialogue: this.state.agent1.dialogue}));
         this.setState(prevState => ({
             agent1: {                   // object that we want to update
                 ...prevState.agent1,    // keep all other key-value pairs
-                dialogue: this.state.agent1.dialogue       // update the value of specific key
+                dialogue: this.state.agent1.dialogue,       // update the value of specific key
+                id: data.id
             }
         }))
       }
-      if (data.status && data.analysis.hasOwnProperty("sentimentScore")){
-        this.setState(prevState => ({
-            agent1: {                   // object that we want to update
-                ...prevState.agent1,    // keep all other key-value pairs
-                sentimentScore: data.analysis.sentimentScore,
-                sadnessScore: data.analysis.sadnessScore,
-                joyScore: data.analysis.joyScore,
-                fearScore: data.analysis.fearScore,
-                disgustScore: data.analysis.disgustScore,
-                angerScore: data.analysis.angerScore
-            }
-        }))
+      if (data.final /*&& data.analysis.hasOwnProperty("sentimentScore")*/){
+        if (data.id == 0){
+          this.setState(prevState => ({
+              agent1: {                   // object that we want to update
+                  ...prevState.agent1,    // keep all other key-value pairs
+                  customer : {
+                    wordCount: data.wordCount,
+                    sentimentScore: data.analysis.sentimentScore,
+                    sadnessScore: data.analysis.sadnessScore,
+                    joyScore: data.analysis.joyScore,
+                    fearScore: data.analysis.fearScore,
+                    disgustScore: data.analysis.disgustScore,
+                    angerScore: data.analysis.angerScore
+                  }
+              }
+          }))
+        }else{
+          this.setState(prevState => ({
+              agent1: {                   // object that we want to update
+                  ...prevState.agent1,    // keep all other key-value pairs
+                  agent : {
+                    wordCount: data.wordCount,
+                    sentimentScore: data.analysis.sentimentScore,
+                    sadnessScore: data.analysis.sadnessScore,
+                    joyScore: data.analysis.joyScore,
+                    fearScore: data.analysis.fearScore,
+                    disgustScore: data.analysis.disgustScore,
+                    angerScore: data.analysis.angerScore
+                  }
+              }
+          }))
+        }
       }
     }else if (data.agent === "122") {
-      this.update = false
+      this.update = true
       for (let i = 0; i < this.state.agent2.dialogue.length; i++) {
         if (this.state.agent2.dialogue[i].index === data.index){
           let items = [...this.state.agent2.dialogue];
@@ -113,42 +167,65 @@ export default class App extends Component {
           //console.log("before: " + item.text)
           item.text = data.text;
           item.translation = data.translation;
+          //item.sentenceSentimentScore = data.sentenceSentimentScore
           items[i] = item;
 
           //this.setState(Object.assign({}, {dialogue: items}));
           this.setState(prevState => ({
               agent2: {                   // object that we want to update
                   ...prevState.agent2,    // keep all other key-value pairs
-                  dialogue: items       // update the value of specific key
+                  dialogue: items,       // update the value of specific key
+                  id: data.id
               }
           }))
-          this.update = true
+          this.update = false
           break
         }
       }
-      if (!this.update){
+      if (this.update){
         this.state.agent2.dialogue.unshift(data)
         //this.setState(Object.assign({}, {dialogue: this.state.agent2.dialogue}));
         this.setState(prevState => ({
             agent2: {                   // object that we want to update
                 ...prevState.agent2,    // keep all other key-value pairs
-                dialogue: this.state.agent2.dialogue       // update the value of specific key
+                dialogue: this.state.agent2.dialogue,       // update the value of specific key
+                id: data.id
             }
         }))
       }
 
-      if (data.status && data.analysis.hasOwnProperty("sentimentScore")){
-        this.setState(prevState => ({
-            agent2: {                   // object that we want to update
-                ...prevState.agent2,    // keep all other key-value pairs
-                sentimentScore: data.analysis.sentimentScore,
-                sadnessScore: data.analysis.sadnessScore,
-                joyScore: data.analysis.joyScore,
-                fearScore: data.analysis.fearScore,
-                disgustScore: data.analysis.disgustScore,
-                angerScore: data.analysis.angerScore
-            }
-        }))
+      if (data.final /*&& data.analysis.hasOwnProperty("sentimentScore")*/){
+        if (data.id == 0){
+          this.setState(prevState => ({
+              agent2: {                   // object that we want to update
+                  ...prevState.agent2,    // keep all other key-value pairs
+                  customer : {
+                    wordCount: data.wordCount,
+                    sentimentScore: data.analysis.sentimentScore,
+                    sadnessScore: data.analysis.sadnessScore,
+                    joyScore: data.analysis.joyScore,
+                    fearScore: data.analysis.fearScore,
+                    disgustScore: data.analysis.disgustScore,
+                    angerScore: data.analysis.angerScore
+                  }
+              }
+          }))
+        }else{
+          this.setState(prevState => ({
+              agent2: {                   // object that we want to update
+                  ...prevState.agent2,    // keep all other key-value pairs
+                  agent : {
+                    wordCount: data.wordCount,
+                    sentimentScore: data.analysis.sentimentScore,
+                    sadnessScore: data.analysis.sadnessScore,
+                    joyScore: data.analysis.joyScore,
+                    fearScore: data.analysis.fearScore,
+                    disgustScore: data.analysis.disgustScore,
+                    angerScore: data.analysis.angerScore
+                  }
+              }
+          }))
+        }
       }
     }
   }
@@ -194,12 +271,25 @@ export default class App extends Component {
           agent1: {
               ...prevState.agent1,
               dialogue: [],
-              sentimentScore: 0,
-              sadnessScore: 0,
-              joyScore: 0,
-              fearScore: 0,
-              disgustScore: 0,
-              angerScore: 0
+              id:0,
+              customer: {
+                wordCount: 0,
+                sentimentScore: 0,
+                sadnessScore: 0,
+                joyScore: 0,
+                fearScore: 0,
+                disgustScore: 0,
+                angerScore: 0
+              },
+              agent : {
+                wordCount: 0,
+                sentimentScore: 0,
+                sadnessScore: 0,
+                joyScore: 0,
+                fearScore: 0,
+                disgustScore: 0,
+                angerScore: 0
+              }
           }
       }))
     }else{
@@ -207,12 +297,25 @@ export default class App extends Component {
           agent2: {
               ...prevState.agent2,
               dialogue: [],
-              sentimentScore: 0,
-              sadnessScore: 0,
-              joyScore: 0,
-              fearScore: 0,
-              disgustScore: 0,
-              angerScore: 0
+              id: 0,
+              customer: {
+                wordCount: 0,
+                sentimentScore: 0,
+                sadnessScore: 0,
+                joyScore: 0,
+                fearScore: 0,
+                disgustScore: 0,
+                angerScore: 0
+              },
+              agent : {
+                wordCount: 0,
+                sentimentScore: 0,
+                sadnessScore: 0,
+                joyScore: 0,
+                fearScore: 0,
+                disgustScore: 0,
+                angerScore: 0
+              }
           }
       }))
     }
@@ -338,126 +441,60 @@ export default class App extends Component {
   }
 
   render() {
-    if (this.doTranslation){
-      this.agent1Items = this.state.agent1.dialogue.map((item, key) =>
-        <div key={item.index} >
-          <div> Speaker {item.speaker}: {item.text} </div>
-          <div className="translation"> Translated: {item.translation} </div>
-        </div>
+    if (this.state.agent1.doTranslation){
+      this.agent1Items = this.state.agent1.dialogue.map(item =>
+        {
+        if (item.sentiment > 0.4)
+          return <div><div className="positive">{item.index}. {item.name}: {item.text}</div><div className="translation">{item.index}. Translated: {item.translation}</div></div>
+        else if (item.sentiment < -0.4)
+          return <div><div className="negative">{item.index}. {item.name}: {item.text}</div><div className="translation">{item.index}. Translated: {item.translation}</div></div>
+        else
+          return <div><div>{item.index}. {item.name}: {item.text}</div><div className="translation">{item.index}. Translated: {item.translation}</div></div>
+        }
       );
     }else{
-      this.agent1Items = this.state.agent1.dialogue.map((item, key) =>
-        <div key={item.index} >
-          <div> Speaker {item.speaker}: {item.text} </div>
-        </div>
+      this.agent1Items = this.state.agent1.dialogue.map(item =>
+        {
+        if (item.sentiment > 0.4)
+          return <div><div className="positive">{item.index}. {item.name}: {item.text}</div></div>
+        else if (item.sentiment < -0.4)
+          return <div><div className="negative">{item.index}. {item.name}: {item.text}</div></div>
+        else
+          return <div><div>{item.index}. {item.name}: {item.text}</div></div>
+        }
       );
     }
-    if (this.doTranslation){
-      this.agent2Items = this.state.agent2.dialogue.map((item, key) =>
-        <div key={item.index} >
-          <div> Speaker {item.speaker}: {item.text} </div>
-          <div className="translation"> Translated: {item.translation} </div>
-        </div>
+    if (this.state.agent2.doTranslation){
+      this.agent2Items = this.state.agent2.dialogue.map(item =>
+        {
+        if (item.sentiment > 0.4)
+          return <div><div className="positive">{item.index}. {item.name}: {item.text}</div><div className="translation">{item.index}. Translated: {item.translation}</div></div>
+        else if (item.sentiment < -0.4)
+          return <div><div className="negative">{item.index}. {item.name}: {item.text}</div><div className="translation">{item.index}. Translated: {item.translation}</div></div>
+        else
+          return <div><div>{item.index}. {item.name}: {item.text}</div><div className="translation">{item.index}. Translated: {item.translation}</div></div>
+        }
       );
     }else{
-      this.agent2Items = this.state.agent2.dialogue.map((item, key) =>
-        <div key={item.index} >
-          <div> Speaker {item.speaker}: {item.text} </div>
-        </div>
+      this.agent2Items = this.state.agent2.dialogue.map(item =>
+        {
+        if (item.sentiment > 0.4)
+          return <div><div className="positive">{item.index}. {item.name}: {item.text}</div></div>
+        else if (item.sentiment < -0.4)
+          return <div><div className="negative">{item.index}. {item.name}: {item.text}</div></div>
+        else
+          return <div><div>{item.index}. {item.name}: {item.text}</div></div>
+        }
       );
     }
-    const colors = [
-                { from: 0, to: 50, color: 'red' },
-                { from: 50, to: 100, color: 'lime' }
-            ];
+    // calculate speaking %
+    const a1TotalWord = this.state.agent1.customer.wordCount + this.state.agent1.agent.wordCount
+    this.a1Customer = (this.state.agent1.customer.wordCount / a1TotalWord) * 100
+    this.a1Agent = (this.state.agent1.agent.wordCount / a1TotalWord) * 100
 
-    const a1_sentimentOptions = {value: this.state.agent1.sentimentScore, colors};
-    const a2_sentimentOptions = {value: this.state.agent2.sentimentScore, colors};
-
-    const arcCenterRenderer = (value, color) => {
-        return (<h3 style={{ color: color }}>{value}%</h3>);
-    };
-
-    const a1_sadnessOptions = {
-        value: this.state.agent1.sadnessScore,
-        colors: [
-                    { from: 0, to: 50, color: 'lime' },
-                    { from: 50, to: 100, color: 'red' }
-                ]
-    };
-    const a2_sadnessOptions = {
-        value: this.state.agent2.sadnessScore,
-        colors: [
-                    { from: 0, to: 50, color: 'lime' },
-                    { from: 50, to: 100, color: 'red' }
-                ]
-    };
-
-    const a1_joyOptions = {
-            value: this.state.agent1.joyScore,
-            colors: [
-                        { from: 0, to: 30, color: 'red' },
-                        { from: 30, to: 100, color: 'lime' }
-                    ]
-    };
-    const a2_joyOptions = {
-            value: this.state.agent2.joyScore,
-            colors: [
-                        { from: 0, to: 30, color: 'red' },
-                        { from: 30, to: 100, color: 'lime' }
-                    ]
-    };
-
-    const a1_fearOptions = {
-            value: this.state.agent1.fearScore,
-            colors: [
-                        { from: 0, to: 30, color: 'yellow' },
-                        { from: 30, to: 60, color: 'orange' },
-                        { from: 60, to: 100, color: 'red' }
-                    ]
-    };
-    const a2_fearOptions = {
-            value: this.state.agent2.fearScore,
-            colors: [
-                        { from: 0, to: 30, color: 'yellow' },
-                        { from: 30, to: 60, color: 'orange' },
-                        { from: 60, to: 100, color: 'red' }
-                    ]
-    };
-
-    const a1_disgustOptions = {
-            value: this.state.agent1.disgustScore,
-            colors: [
-                        { from: 0, to: 30, color: 'yellow' },
-                        { from: 30, to: 60, color: 'orange' },
-                        { from: 60, to: 100, color: 'red' }
-                    ]
-    };
-    const a2_disgustOptions = {
-            value: this.state.agent2.disgustScore,
-            colors: [
-                        { from: 0, to: 30, color: 'yellow' },
-                        { from: 30, to: 60, color: 'orange' },
-                        { from: 60, to: 100, color: 'red' }
-                    ]
-    };
-
-    const a1_angerOptions = {
-            value: this.state.agent1.angerScore,
-            colors: [
-                        { from: 0, to: 30, color: 'yellow' },
-                        { from: 30, to: 60, color: 'orange' },
-                        { from: 60, to: 100, color: 'red' }
-                    ]
-    };
-    const a2_angerOptions = {
-            value: this.state.agent2.angerScore,
-            colors: [
-                        { from: 0, to: 30, color: 'yellow' },
-                        { from: 30, to: 60, color: 'orange' },
-                        { from: 60, to: 100, color: 'red' }
-                    ]
-    };
+    const a2TotalWord = this.state.agent2.customer.wordCount + this.state.agent2.agent.wordCount
+    this.a2Customer = (this.state.agent2.customer.wordCount / a2TotalWord) * 100
+    this.a2Agent = (this.state.agent2.agent.wordCount / a2TotalWord) * 100
 
     return (
       <div className="App">
@@ -480,57 +517,49 @@ export default class App extends Component {
           </div>
         </div>
         <div className="columns">
-          <div className="infoColumn">
-              <div>
-              <ArcGauge {...a1_sentimentOptions} arcCenterRender={arcCenterRenderer} />
-              Sentiment
+          <div>
+            <div><span className="reportHeader"> Customer: (Speaking chance => {this.a1Customer.toFixed(1)}% - Spoken => {this.state.agent1.customer.wordCount} words)</span>
+              <div className="infoColumn">
+                  <div>Sentiment: {this.state.agent1.customer.sentimentScore}</div>
+                  <div>Sadness: {this.state.agent1.customer.sadnessScore}</div>
+                  <div>Joy: {this.state.agent1.customer.joyScore}</div>
+                  <div>Fear: {this.state.agent1.customer.fearScore}</div>
+                  <div>Disgust: {this.state.agent1.customer.disgustScore}</div>
+                  <div>Anger: {this.state.agent1.customer.angerScore}</div>
               </div>
-              <div>
-              <ArcGauge {...a1_sadnessOptions} arcCenterRender={arcCenterRenderer} />
-              Sadness
+            </div>
+            <div><span className="reportHeader"> Agent: (Speaking chance => {this.a1Agent.toFixed(1)}% - Spoken => {this.state.agent1.agent.wordCount} words)</span>
+              <div className="infoColumn">
+                  <div>Sentiment: {this.state.agent1.agent.sentimentScore}</div>
+                  <div>Sadness: {this.state.agent1.agent.sadnessScore}</div>
+                  <div>Joy: {this.state.agent1.agent.joyScore}</div>
+                  <div>Fear: {this.state.agent1.agent.fearScore}</div>
+                  <div>Disgust: {this.state.agent1.agent.disgustScore}</div>
+                  <div>Anger: {this.state.agent1.agent.angerScore}</div>
               </div>
-              <div>
-              <ArcGauge {...a1_joyOptions} arcCenterRender={arcCenterRenderer} />
-              Joy
-              </div>
-              <div>
-              <ArcGauge {...a1_fearOptions} arcCenterRender={arcCenterRenderer} />
-              Fear
-              </div>
-              <div>
-                <ArcGauge {...a1_disgustOptions} arcCenterRender={arcCenterRenderer} />
-              Disgust
-              </div>
-              <div>
-                <ArcGauge {...a1_angerOptions} arcCenterRender={arcCenterRenderer} />
-              Anger
-              </div>
+            </div>
           </div>
-          <div className="infoColumn">
-              <div>
-              <ArcGauge {...a2_sentimentOptions} arcCenterRender={arcCenterRenderer} />
-              Sentiment
+          <div>
+            <div><span className="reportHeader"> Customer: (Speaking chance => {this.a2Customer.toFixed(1)}% - Spoken => {this.state.agent2.customer.wordCount} words)</span>
+              <div className="infoColumn">
+                  <div>Sentiment: {this.state.agent2.customer.sentimentScore} </div>
+                  <div>Sadness: {this.state.agent2.customer.sadnessScore} </div>
+                  <div>Joy: {this.state.agent2.customer.joyScore} </div>
+                  <div>Fear: {this.state.agent2.customer.fearScore} </div>
+                  <div>Disgust: {this.state.agent2.customer.disgustScore} </div>
+                  <div>Anger: {this.state.agent2.customer.angerScore} </div>
               </div>
-              <div>
-              <ArcGauge {...a2_sadnessOptions} arcCenterRender={arcCenterRenderer} />
-              Sadness
+            </div>
+            <div><span className="reportHeader"> Agent: (Speaking chance => {this.a2Agent.toFixed(1)}% - Spoken => {this.state.agent2.agent.wordCount} words)</span>
+              <div className="infoColumn">
+                  <div>Sentiment: {this.state.agent2.customer.sentimentScore} </div>
+                  <div>Sadness: {this.state.agent2.customer.sadnessScore} </div>
+                  <div>Joy: {this.state.agent2.customer.joyScore} </div>
+                  <div>Fear: {this.state.agent2.customer.fearScore} </div>
+                  <div>Disgust: {this.state.agent2.customer.disgustScore} </div>
+                  <div>Anger: {this.state.agent2.customer.angerScore} </div>
               </div>
-              <div>
-              <ArcGauge {...a2_joyOptions} arcCenterRender={arcCenterRenderer} />
-              Joy
-              </div>
-              <div>
-              <ArcGauge {...a2_fearOptions} arcCenterRender={arcCenterRenderer} />
-              Fear
-              </div>
-              <div>
-                <ArcGauge {...a2_disgustOptions} arcCenterRender={arcCenterRenderer} />
-              Disgust
-              </div>
-              <div>
-                <ArcGauge {...a2_angerOptions} arcCenterRender={arcCenterRenderer} />
-              Anger
-              </div>
+            </div>
           </div>
         </div>
       </div>
