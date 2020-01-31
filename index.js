@@ -394,7 +394,7 @@ async function loadSavedSubscriptionId(extId, callback){
 
 function startNotification(){
   console.log("startNotification function")
-  //return deleteAllRegisteredWebHookSubscriptions()
+  return deleteAllRegisteredWebHookSubscriptions()
   console.log(supervisorExtensionId)
   loadSavedSubscriptionId(supervisorExtensionId, async function(err, res){
       if (err){
