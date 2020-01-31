@@ -7,7 +7,7 @@ const Softphone = require('ringcentral-softphone').default
 
 const WatsonEngine = require('./watson.js');
 var server = require('./index')
-const MAXBUFFERSIZE = 32000
+const MAXBUFFERSIZE = 64000
 // playback recording
 // play -c 1 -r 16000 -e signed -b 16 audio.raw
 
@@ -45,13 +45,13 @@ PhoneEngine.prototype = {
           //var sessionId = headers[1].split("=")[1]
           //console.log("Session id: " + sessionId)
           var partyId = headers[0].split("=")[1]
-          console.log("Party id: " + partyId)
+          //console.log("Party id: " + partyId)
 
           var agentExtNumber = ""
           var agentIndex = 0
           for (agentIndex=0; agentIndex<this.agents.length; agentIndex++){
             //console.log(this.agents[agentIndex].sessionId + " === " + sessionId)
-            console.log(this.agents[agentIndex].partyId + " === " + partyId)
+            //console.log(this.agents[agentIndex].partyId + " === " + partyId)
             if (this.agents[agentIndex].partyId == partyId){
               agentExtNumber = this.agents[agentIndex].agentExtNumber
               this.agents[agentIndex].callId = sipMessage.headers['Call-Id']
@@ -68,7 +68,7 @@ PhoneEngine.prototype = {
           var localSpeachRegconitionReady = false
 
           this.softphone.once('track', e => {
-            console.log("CALL ONCE OR TWICE")
+            console.log("GET TRACK")
             //console.log(e)
             this.agents[agentIndex].audioSink = new RTCAudioSink(e.track)
             var buffer = null

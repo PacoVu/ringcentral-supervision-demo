@@ -229,7 +229,7 @@ app.post('/webhookcallback', function(req, res) {
                       console.log(party.status.code)
                     return
                   }else if (party.direction === "Outbound"){
-                    console.log("OUTBOUND NOT => SUPERVISOR")
+                    //console.log("OUTBOUND NOT => SUPERVISOR")
                     //console.log(JSON.stringify(jsonObj))
                   }
               }
@@ -495,7 +495,7 @@ async function getCallSessionInfo(agentExtNumber, payload){
   var endpoint = `/restapi/v1.0/account/~/telephony/sessions/${body.telephonySessionId}`
   var res = await rcsdk.get(endpoint)
   var json = await res.json()
-  console.log(JSON.stringify(json));
+  //console.log(JSON.stringify(json));
   // reset previous conversations
   var agentIndex = 0
   for (agentIndex; agentIndex<agentsList.length; agentIndex++){
@@ -540,7 +540,7 @@ async function getCallSessionInfo(agentExtNumber, payload){
         callback(null, "")
       },
       function(err){
-        console.log("error - done")
+        console.log("done")
       }
     );
 }
@@ -566,7 +566,7 @@ async function processTelephonySessionNotification(inputParams){
                 supervisorDeviceId: deviceId
               }
           params['agentExtensionId'] = inputParams.extensionId
-          console.log(params)
+          //console.log(params)
           var res = await rcsdk.post(endpoint, params)
       }catch(e) {
         console.log("POST supervise failed")
