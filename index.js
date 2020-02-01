@@ -155,8 +155,6 @@ app.get('/oauth2callback', async function(req, res) {
 
 
 app.post('/webhookcallback', function(req, res) {
-  console.log("webhookcallback called")
-  //console.log(req)
     if(req.headers.hasOwnProperty("validation-token")) {
         res.setHeader('Validation-Token', req.headers['validation-token']);
         res.statusCode = 200;
@@ -680,7 +678,7 @@ async function checkRegisteredWebHookSubscription(subscriptionId) {
                 g_subscriptionId = subscriptionId
                 if (record.status != "Active"){
                   console.log("Subscription is not active => renew it")
-                  await rc.post('/restapi/v1.0/subscription/' + record.id + "/renew")
+                  await rcsdk.post('/restapi/v1.0/subscription/' + record.id + "/renew")
                   console.log("Renew: " + record.id)
                 }else {
                   console.log("Subscription is active => good to go.")
