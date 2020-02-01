@@ -102,7 +102,8 @@ PhoneEngine.prototype = {
                   buffer = buf
               if (buffer.length > MAXBUFFERSIZE){
                   if (localSpeachRegconitionReady){
-                    this.agents[agentIndex].watson.transcribe(buffer)
+                    //this.agents[agentIndex].watson.transcribe(buffer)
+                    console.log("Buffer is filled but not sending")
                   }else{
                     console.log("Dumping data")
                   }
