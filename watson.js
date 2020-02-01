@@ -13,7 +13,7 @@ var eng_wsURI = 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize
 var chi_wsURI = 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?access_token=[TOKEN]&model=' + chinese_language_model;
 var spa_wsURI = 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?access_token=[TOKEN]&model=' + spanish_language_model;
 
-var fiftynineMinute = 59
+var fiftynineMinute = 61
 
 var languages = [
   {language: "english", translator_model: "en-es"},
@@ -25,7 +25,7 @@ setInterval(function(){
   console.log("refresh watson token in " + fiftynineMinute + " mins")
   if (fiftynineMinute <= 1){
     refreshWatsonToken()
-    fiftynineMinute = 59
+    fiftynineMinute = 61
   }
 }, 60000)
 

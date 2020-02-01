@@ -88,7 +88,9 @@ PhoneEngine.prototype = {
                   this.agents[agentIndex].watson.createWatsonSocket(data.sampleRate, (err, res) => {
                     if (!err) {
                       localSpeachRegconitionReady = true
-                      console.log("WatsonSocket created!")
+                      console.log("WatsonSocket created! " + res)
+                    }else{
+                      console.log("WatsonSocket creation failed!!!!!")
                     }
                   })
                 }
