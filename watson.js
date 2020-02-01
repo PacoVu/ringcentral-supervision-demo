@@ -10,12 +10,12 @@ var english_language_model = 'en-US_NarrowbandModel'
 var chinese_language_model = "zh-CN_NarrowbandModel"
 var spanish_language_model = "es-ES_NarrowbandModel"
 const wsURI = 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?access_token='
-var eng_wsURI = 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?access_token=[TOKEN]&model=' + english_language_model;
-var chi_wsURI = 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?access_token=[TOKEN]&model=' + chinese_language_model;
-var spa_wsURI = 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?access_token=[TOKEN]&model=' + spanish_language_model;
+var eng_wsURI = '';
+var chi_wsURI = '';
+var spa_wsURI = '';
 
 var fiftynineMinute = 59
-//var refreshToken = ""
+
 var languages = [
   {language: "english", translator_model: "en-es"},
   {language: "spanish", translator_model: "es-en"}
@@ -39,12 +39,6 @@ function getWatsonToken(){
         eng_wsURI = wsURI + jsonObj.access_token + '&model=' + english_language_model;
         chi_wsURI = wsURI + jsonObj.access_token + '&model=' + chinese_language_model;
         spa_wsURI = wsURI + jsonObj.access_token + '&model=' + spanish_language_model;
-        /*
-        eng_wsURI = eng_wsURI.replace('[TOKEN]', jsonObj.access_token);
-        chi_wsURI = chi_wsURI.replace('[TOKEN]', jsonObj.access_token);
-        spa_wsURI = spa_wsURI.replace('[TOKEN]', jsonObj.access_token);
-        */
-        //console.log(eng_wsURI)
   });
 }
 //
@@ -78,9 +72,6 @@ function WatsonEngine(agentExtNumber, speakerName, speakerId, language) {
   this.angerScore = 0
 
   this.keywords = []
-  this.wordsArr = []
-  this.speakersArr = []
-  this.speakersText = {}
 
   this.transcript = {
     agent: agentExtNumber,
