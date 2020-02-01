@@ -54,11 +54,13 @@ app.get('/events', cors(), async (req, res) => {
 
   res.statusCode = 200;
   eventResponse = res
+  /*
   var phoneStatus = {
     agent: "120",
     status: 'ready'
   }
   sendPhoneEvent(phoneStatus)
+  */
 })
 
 app.get('/enable_translation', cors(), async (req, res) => {
@@ -225,14 +227,14 @@ app.post('/webhookcallback', function(req, res) {
                       console.log("HANG UP " + party.status.code)
                     }else
                       console.log(party.status.code)
-                    return
+                    //return
                   }else if (party.direction === "Outbound"){
                     //console.log("OUTBOUND NOT => SUPERVISOR")
                     //console.log(JSON.stringify(jsonObj))
                   }
               }
-              //res.statusCode = 200;
-              //res.end();
+              res.statusCode = 200;
+              res.end();
             }
         });
     }

@@ -130,7 +130,7 @@ WatsonEngine.prototype = {
     };
 
     this.ws.onclose = function(data) {
-      console.log("Watson Socket closed")
+      console.log("Watson Socket closed. Need to notify supervisor engine")
       //console.log(data)
     };
 
