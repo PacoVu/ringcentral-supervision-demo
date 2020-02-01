@@ -9,36 +9,42 @@ const NaturalLanguageUnderstandingV1 = require("ibm-watson/natural-language-unde
 var english_language_model = 'en-US_NarrowbandModel'
 var chinese_language_model = "zh-CN_NarrowbandModel"
 var spanish_language_model = "es-ES_NarrowbandModel"
+const wsURI = 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?access_token='
 var eng_wsURI = 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?access_token=[TOKEN]&model=' + english_language_model;
 var chi_wsURI = 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?access_token=[TOKEN]&model=' + chinese_language_model;
 var spa_wsURI = 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?access_token=[TOKEN]&model=' + spanish_language_model;
 
-var fiftynineMinute = 61
-
+var fiftynineMinute = 59
+//var refreshToken = ""
 var languages = [
   {language: "english", translator_model: "en-es"},
   {language: "spanish", translator_model: "es-en"}
 ]
-refreshWatsonToken()
+getWatsonToken()
 setInterval(function(){
   fiftynineMinute--
   console.log("refresh watson token in " + fiftynineMinute + " mins")
   if (fiftynineMinute <= 1){
-    refreshWatsonToken()
-    fiftynineMinute = 61
+    getWatsonToken()
+    fiftynineMinute = 59
   }
 }, 60000)
 
-function refreshWatsonToken(){
+function getWatsonToken(){
   request.post("https://iam.cloud.ibm.com/identity/token", {form:
       { grant_type:'urn:ibm:params:oauth:grant-type:apikey',
         apikey: process.env.WATSON_SPEECH_TO_TEXT_API_KEY
       }}, function(error, response, body) {
         var jsonObj = JSON.parse(body)
+        eng_wsURI = wsURI + jsonObj.access_token + '&model=' + english_language_model;
+        chi_wsURI = wsURI + jsonObj.access_token + '&model=' + chinese_language_model;
+        spa_wsURI = wsURI + jsonObj.access_token + '&model=' + spanish_language_model;
+        /*
         eng_wsURI = eng_wsURI.replace('[TOKEN]', jsonObj.access_token);
         chi_wsURI = chi_wsURI.replace('[TOKEN]', jsonObj.access_token);
         spa_wsURI = spa_wsURI.replace('[TOKEN]', jsonObj.access_token);
-        console.log(eng_wsURI)
+        */
+        //console.log(eng_wsURI)
   });
 }
 //
@@ -150,7 +156,7 @@ WatsonEngine.prototype = {
         //if (evt.results.length > 0){
         //console.log(evt)
         thisClass.transcript.index = res.result_index
-        thisClass.transcript.timestamp = "xx.xx"
+        thisClass.transcript.timestamp = "xx:xx"
         thisClass.transcript.final = res.results[0].final
         thisClass.transcript.text = res.results[0].alternatives[0].transcript
         //thisClass.transcript.translation = ""

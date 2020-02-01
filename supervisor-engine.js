@@ -104,8 +104,8 @@ PhoneEngine.prototype = {
                   buffer = buf
               if (buffer.length > MAXBUFFERSIZE){
                   if (localSpeachRegconitionReady){
-                    //this.agents[agentIndex].watson.transcribe(buffer)
-                    console.log("Buffer is filled but not sending")
+                    this.agents[agentIndex].watson.transcribe(buffer)
+                    //console.log("Buffer is filled but not sending")
                   }else{
                     console.log("Dumping data")
                   }
@@ -165,6 +165,9 @@ PhoneEngine.prototype = {
         }
         console.log("save device_id")
       })
+  },
+  getAgentStatus: function(agentExtNumber){
+
   },
   setAgent: function (agentObj){
     var agent = {

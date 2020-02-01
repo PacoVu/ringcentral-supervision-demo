@@ -425,31 +425,38 @@ platform.on(platform.events.loginSuccess, async function(e){
 
 platform.on(platform.events.refreshError, function(e){
     console.log("Refresh token failed")
-    login()
+    //login()
 });
 
 platform.on(platform.events.refreshSuccess, async function(res){
     console.log("Refresh token success")
-    const data = await rcsdk.platform().auth().data()
-    console.log(JSON.stringify(data))
+    //const data = await rcsdk.platform().auth().data()
+    //console.log(JSON.stringify(data))
 });
 
 async function login(){
-  console.log("FORCE TO LOGIN !!!")
-  try{
-    await rcsdk.login({
-      username: process.env.RINGCENTRAL_USERNAME,
-      extension: process.env.RINGCENTRAL_EXTENSION,
-      password: process.env.RINGCENTRAL_PASSWORD
-    })
-    console.log("after login")
-    await readExtensions()
-    console.log("after read extension")
-    supervisor.initializePhoneEngine(rcsdk, supervisorExtensionId)
-    startNotification()
-  }catch(e){
-    console.log("LOGIN FAILED")
+  var loggedIn = await rcsdk.platform().loggedIn()
+  if (!loggedIn){
+    console.log("FORCE TO LOGIN !!!")
+    try{
+      await rcsdk.login({
+        username: process.env.RINGCENTRAL_USERNAME,
+        extension: process.env.RINGCENTRAL_EXTENSION,
+        password: process.env.RINGCENTRAL_PASSWORD
+      })
+      console.log("New login")
+    }catch(e){
+      console.log("LOGIN FAILED")
+      return
+    }
+  }else{
+    console.log("Still logged in => good to call APIs")
   }
+
+  await readExtensions()
+  console.log("after read extension")
+  supervisor.initializePhoneEngine(rcsdk, supervisorExtensionId)
+  startNotification()
 }
 
 async function logout(){
