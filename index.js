@@ -534,7 +534,7 @@ async function getCallSessionInfo(agentExtNumber, payload){
             params['speakerName'] = (party.to.name) ? party.to.name : "Agent"
             params['speakerId'] = 1 // an agent
             params['language'] = "english"
-            processTelephonySessionNotification(params)
+            //processTelephonySessionNotification(params)
           }
         }
         callback(null, "")
