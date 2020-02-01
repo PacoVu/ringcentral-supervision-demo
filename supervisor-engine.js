@@ -55,7 +55,7 @@ PhoneEngine.prototype = {
             if (this.agents[agentIndex].partyId == partyId){
               agentExtNumber = this.agents[agentIndex].agentExtNumber
               this.agents[agentIndex].callId = sipMessage.headers['Call-Id']
-              //this.agents[agentIndex].watson = new WatsonEngine(agentExtNumber, this.agents[agentIndex].speakerName, this.agents[agentIndex].speakerId, this.agents[agentIndex].language)
+              this.agents[agentIndex].watson = new WatsonEngine(agentExtNumber, this.agents[agentIndex].speakerName, this.agents[agentIndex].speakerId, this.agents[agentIndex].language)
               this.softphone.answer(sipMessage)
               var phoneStatus = {
                 agent: this.agents[agentIndex].agentExtNumber,
@@ -78,7 +78,6 @@ PhoneEngine.prototype = {
               var buf = Buffer.from(data.samples.buffer)
               if (this.agents[agentIndex].doRecording)
                 this.agents[agentIndex].audioStream.write(buf)
-                /*
               if (!creatingWatsonSocket && !localSpeachRegconitionReady){
                 dumpingFiveFrames--
                 if (dumpingFiveFrames <= 0){
@@ -98,7 +97,7 @@ PhoneEngine.prototype = {
                   })
                 }
               }
-              */
+
               if (buffer != null){
                   buffer = Buffer.concat([buffer, buf])
               }else
@@ -141,7 +140,7 @@ PhoneEngine.prototype = {
                   thisClass.agents[i].audioStream.end()
                   thisClass.agents[i].audioStream = null
                 }
-/*
+
                 setTimeout(function () {
                   console.log("Index " + i)
                   console.log("After delays. Close Watson socket for " + speakerName)
@@ -149,7 +148,6 @@ PhoneEngine.prototype = {
                   thisClass.agents[i].watson = null
                   //console.log("CHECK agents len: " + thisClass.agents.length)
                 }, 15000, i, speakerName)
-*/
                 break
               }
           }
