@@ -54,13 +54,13 @@ app.get('/events', cors(), async (req, res) => {
 
   res.statusCode = 200;
   eventResponse = res
-  /*
+
   var phoneStatus = {
     agent: "120",
     status: 'ready'
   }
   sendPhoneEvent(phoneStatus)
-  */
+
 })
 
 app.get('/enable_translation', cors(), async (req, res) => {
@@ -101,14 +101,14 @@ app.get('/login', cors(), (req, res) => {
   res.statusCode = 200;
   res.end();
 })
-
+*/
 app.get('/logout', cors(), async (req, res) => {
-  console.log("LOGOUT")
-  await logout()
+  console.log("DELETE ALL SUBs")
+  deleteAllRegisteredWebHookSubscriptions()
   res.statusCode = 200;
   res.end();
 })
-*/
+
 // Anything that doesn't match the above, send back the index.html file
 app.get('*', cors(), (req, res) => {
   console.log("LOAD INDEX")
@@ -383,14 +383,12 @@ async function loadSavedSubscriptionId(extId, callback){
 function startNotification(){
   console.log("startNotification function")
   //return deleteAllRegisteredWebHookSubscriptions()
-  //console.log(supervisorExtensionId)
+  console.log(supervisorExtensionId)
   loadSavedSubscriptionId(supervisorExtensionId, async function(err, res){
       if (err){
           startWebhookSubscription()
       }else{
           console.log("saved subId: " + res)
-        // just for cleanup all pending/active subscriptions
-          //return deleteAllRegisteredWebHookSubscriptions()
           checkRegisteredWebHookSubscription(res)
       }
   })

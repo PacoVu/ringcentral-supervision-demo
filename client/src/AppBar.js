@@ -35,8 +35,7 @@ export default class AppBar extends Component {
   render() {
     return (
       <div>
-        <a onClick={() => this.login()}>Login</a> &nbsp; &nbsp;
-        <a onClick={() => this.logout()}>Logout</a>
+        <a onClick={() => this.logout()}>Delete all notifications</a>
       </div>
     );
   }
