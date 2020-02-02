@@ -120,21 +120,9 @@ app.get('*', cors(), (req, res) => {
   });
   res.sendFile(path.join(__dirname + '/client/build/index.html'))
   login()
-/*
-  console.log("LOAD LOGIN")
-
-  //startNotification()
-  var authorize_uri = rcsdk.platform().loginUrl({brandId: ''})
-  res.set('Content-Type', 'text/html');
-  var html = '<h2>Login</h2>'
-  html += '<a href="' + authorize_uri + '">Login RingCentral Account</a>'
-  console.log(html)
-  //res.sendFile(path.join(__dirname + '/client/build/login.html'))
-  res.send(new Buffer.from(html));
-  //res.end();
-*/
 })
 
+/* NOT USED
 app.get('/oauth2callback', async function(req, res) {
   console.log("oauth2callback")
   console.log(req.query.code)
@@ -154,8 +142,8 @@ app.get('/oauth2callback', async function(req, res) {
       res.send('No Auth code');
   }
 });
-
-
+*/
+// Receiving RingCentral webhooks notifications
 app.post('/webhookcallback', function(req, res) {
     if(req.headers.hasOwnProperty("validation-token")) {
         res.setHeader('Validation-Token', req.headers['validation-token']);
