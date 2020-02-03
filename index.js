@@ -54,7 +54,7 @@ app.get('/events', cors(), async (req, res) => {
 
   res.statusCode = 200;
   eventResponse = res
-  /*
+
   for (var agent of agentsList){
     var phoneStatus = {
       agent: agent.number,
@@ -62,7 +62,7 @@ app.get('/events', cors(), async (req, res) => {
     }
     sendPhoneEvent(phoneStatus)
   }
-  */
+  
 })
 
 app.get('/enable_translation', cors(), async (req, res) => {

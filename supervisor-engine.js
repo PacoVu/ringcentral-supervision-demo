@@ -75,7 +75,7 @@ PhoneEngine.prototype = {
             var creatingWatsonSocket = false
             var dumpingFiveFrames = 3
             this.agents[agentIndex].audioSink.ondata = data => {
-              var buf = Buffer.from(data.samples.buffer)
+              /*var buf = Buffer.from(data.samples.buffer)*/
               if (this.agents[agentIndex].doRecording)
                 this.agents[agentIndex].audioStream.write(buf)
               if (!creatingWatsonSocket && !localSpeachRegconitionReady){
@@ -84,7 +84,7 @@ PhoneEngine.prototype = {
                   creatingWatsonSocket = true
                   // call once for testing
                   console.log("third frame sample rate: " + data.sampleRate)
-                  console.log("packet len: " + buf.length)
+                  /*console.log("packet len: " + buf.length)*/
                   //if (data.sampleRate < 16000)
                     MAXBUFFERSIZE = 32000
                   /*
@@ -99,7 +99,7 @@ PhoneEngine.prototype = {
                   */
                 }
               }
-
+              /*
               if (buffer != null){
                   buffer = Buffer.concat([buffer, buf])
               }else
@@ -114,6 +114,8 @@ PhoneEngine.prototype = {
                   }
                   buffer = Buffer.from("")
               }
+              */
+              console.log("Ignore data")
             }
           })
       })
