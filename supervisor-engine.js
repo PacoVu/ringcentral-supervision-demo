@@ -75,9 +75,9 @@ PhoneEngine.prototype = {
             var creatingWatsonSocket = false
             var dumpingFiveFrames = 3
             this.agents[agentIndex].audioSink.ondata = data => {
-              //var buf = Buffer.from(data.samples.buffer)
+              var buf = Buffer.from(data.samples.buffer)
               if (this.agents[agentIndex].doRecording)
-                this.agents[agentIndex].audioStream.write(Buffer.from(data.samples.buffer))
+                this.agents[agentIndex].audioStream.write(buf))
               if (!creatingWatsonSocket && !localSpeachRegconitionReady){
                 dumpingFiveFrames--
                 if (dumpingFiveFrames <= 0){
@@ -101,12 +101,12 @@ PhoneEngine.prototype = {
               }
 
               if (buffer != null){
-                  buffer = Buffer.concat([buffer, Buffer.from(data.samples.buffer)])
+                  buffer = Buffer.concat([buffer, buf])
               }else
-                  buffer = Buffer.from(data.samples.buffer)
+                  buffer = buf //Buffer.from(data.samples.buffer)
               if (buffer.length > MAXBUFFERSIZE){
                   if (localSpeachRegconitionReady){
-                    console.log("Buffer length " + buffer.length)
+                    //console.log("Buffer length " + buffer.length)
                     this.agents[agentIndex].watson.transcribe(buffer)
                     //console.log("Buffer is filled but not sending")
                   }else{
