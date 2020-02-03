@@ -77,7 +77,7 @@ PhoneEngine.prototype = {
             this.agents[agentIndex].audioSink.ondata = data => {
               var buf = Buffer.from(data.samples.buffer)
               if (this.agents[agentIndex].doRecording)
-                this.agents[agentIndex].audioStream.write(buf))
+                this.agents[agentIndex].audioStream.write(buf)
               if (!creatingWatsonSocket && !localSpeachRegconitionReady){
                 dumpingFiveFrames--
                 if (dumpingFiveFrames <= 0){
