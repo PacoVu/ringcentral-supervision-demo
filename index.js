@@ -54,13 +54,15 @@ app.get('/events', cors(), async (req, res) => {
 
   res.statusCode = 200;
   eventResponse = res
-
-  var phoneStatus = {
-    agent: "120",
-    status: 'ready'
+  /*
+  for (var agent of agentsList){
+    var phoneStatus = {
+      agent: agent.number,
+      status: 'ready'
+    }
+    sendPhoneEvent(phoneStatus)
   }
-  sendPhoneEvent(phoneStatus)
-
+  */
 })
 
 app.get('/enable_translation', cors(), async (req, res) => {
@@ -293,7 +295,7 @@ function mergingChannels(speakerId, transcript){
 
 function sendTranscriptEvents(transcript) {
   var t = JSON.stringify(transcript)
-  //console.log(t)
+  console.log(t)
   var res = 'event: transcriptUpdate\ndata: ' + t + '\n\n'
   if (eventResponse != null){
     if (!eventResponse.finished) {

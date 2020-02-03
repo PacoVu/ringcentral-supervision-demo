@@ -55,7 +55,7 @@ PhoneEngine.prototype = {
             if (this.agents[agentIndex].partyId == partyId){
               agentExtNumber = this.agents[agentIndex].agentExtNumber
               this.agents[agentIndex].callId = sipMessage.headers['Call-Id']
-              this.agents[agentIndex].watson = new WatsonEngine(agentExtNumber, this.agents[agentIndex].speakerName, this.agents[agentIndex].speakerId, this.agents[agentIndex].language)
+              //this.agents[agentIndex].watson = new WatsonEngine(agentExtNumber, this.agents[agentIndex].speakerName, this.agents[agentIndex].speakerId, this.agents[agentIndex].language)
               this.softphone.answer(sipMessage)
               var phoneStatus = {
                 agent: this.agents[agentIndex].agentExtNumber,
@@ -85,8 +85,9 @@ PhoneEngine.prototype = {
                   // call once for testing
                   console.log("third frame sample rate: " + data.sampleRate)
                   console.log("packet len: " + buf.length)
-                  if (data.sampleRate < 16000)
+                  //if (data.sampleRate < 16000)
                     MAXBUFFERSIZE = 32000
+                  /*
                   this.agents[agentIndex].watson.createWatsonSocket(data.sampleRate, (err, res) => {
                     if (!err) {
                       localSpeachRegconitionReady = true
@@ -95,6 +96,7 @@ PhoneEngine.prototype = {
                       console.log("WatsonSocket creation failed!!!!!")
                     }
                   })
+                  */
                 }
               }
 
@@ -104,12 +106,13 @@ PhoneEngine.prototype = {
                   buffer = buf
               if (buffer.length > MAXBUFFERSIZE){
                   if (localSpeachRegconitionReady){
-                    this.agents[agentIndex].watson.transcribe(buffer)
+                    console.log("Buffer length " + buffer.length)
+                    //this.agents[agentIndex].watson.transcribe(buffer)
                     //console.log("Buffer is filled but not sending")
                   }else{
                     console.log("Dumping data")
                   }
-                  buffer = Buffer.from('')
+                  buffer = Buffer.from("")
               }
             }
           })
@@ -144,7 +147,7 @@ PhoneEngine.prototype = {
                 setTimeout(function () {
                   console.log("Index " + i)
                   console.log("After delays. Close Watson socket for " + speakerName)
-                  thisClass.agents[i].watson.closeConnection()
+                  //thisClass.agents[i].watson.closeConnection()
                   thisClass.agents[i].watson = null
                   //console.log("CHECK agents len: " + thisClass.agents.length)
                 }, 15000, i, speakerName)
