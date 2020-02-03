@@ -86,7 +86,7 @@ PhoneEngine.prototype = {
                   console.log("third frame sample rate: " + data.sampleRate)
                   /*console.log("packet len: " + buf.length)*/
                   //if (data.sampleRate < 16000)
-                    MAXBUFFERSIZE = 32000
+                    MAXBUFFERSIZE = 16000
 
                   this.agents[agentIndex].watson.createWatsonSocket(data.sampleRate, (err, res) => {
                     if (!err) {
