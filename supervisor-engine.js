@@ -103,7 +103,7 @@ PhoneEngine.prototype = {
               if (buffer != null){
                   buffer = Buffer.concat([buffer, Buffer.from(data.samples.buffer)])
               }else
-                  buffer = data.samples.buffer
+                  buffer = Buffer.from(data.samples.buffer)
               if (buffer.length > MAXBUFFERSIZE){
                   if (localSpeachRegconitionReady){
                     console.log("Buffer length " + buffer.length)
