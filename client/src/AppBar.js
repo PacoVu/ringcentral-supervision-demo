@@ -27,15 +27,15 @@ export default class AppBar extends Component {
     //console.log(response.data)
   }
 
-  async logout() {
-    await axios.get("/logout")
+  async deleteSubscriptions() {
+    await axios.get("/delete_subscriptions")
     //console.log(response.data)
   }
 
   render() {
     return (
       <div>
-        <a onClick={() => this.logout()}>Delete all notifications</a>
+        <a onClick={() => this.deleteSubscriptions()}>Delete all notifications</a>
       </div>
     );
   }

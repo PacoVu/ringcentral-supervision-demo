@@ -104,7 +104,7 @@ app.get('/login', cors(), (req, res) => {
   res.end();
 })
 */
-app.get('/logout', cors(), async (req, res) => {
+app.get('/delete_subscriptions', cors(), async (req, res) => {
   console.log("DELETE ALL SUBs")
   deleteAllRegisteredWebHookSubscriptions()
   res.statusCode = 200;
@@ -455,14 +455,14 @@ async function logout(){
           if (result.rows.length){
               var row = result.rows[0]
               if (row['sub_id'] != ""){
-                deleteRegisteredWebHookSubscriptions(row['sub_id'], async function(err, res){
+                deleteRegisteredWebHookSubscription(row['sub_id'], async function(err, res){
                   await rcsdk.platform().logout()
                   query = "UPDATE supervision_subscriptionids SET tokens='', sub_id='' WHERE ext_id=" + supervisorExtensionId
                   pgdb.update(query, (err, result) =>  {
                     if (err){
                       console.error(err.message);
                     }
-                    console.log("reset tokens and subscription")
+                    console.log("reset subscription")
                   })
                   return
                 })
@@ -651,18 +651,18 @@ function storeSubscriptionId(subId){
       if (err){
         console.error(err.message);
       }
-      console.log("save sub_id")
+      //console.log("save sub_id")
     })
 }
 
 async function checkRegisteredWebHookSubscription(subscriptionId) {
-  console.log("subId: " + subscriptionId)
+    //console.log("subId: " + subscriptionId)
     try {
       let response = await rcsdk.get('/restapi/v1.0/subscription')
       let json = await response.json();
       if (json.records.length > 0){
         for(var record of json.records) {
-          console.log("found id: " + record.id)
+          //console.log("found id: " + record.id)
           if (record.id == subscriptionId) {
             if (record.deliveryMode.transportType == "WebHook"){
               if (process.env.DELETE_EXISTING_WEBHOOK_SUBSCRIPTION == 1){
@@ -697,7 +697,7 @@ async function checkRegisteredWebHookSubscription(subscriptionId) {
 }
 
 /// Clean up WebHook subscriptions
-async function deleteRegisteredWebHookSubscriptions(subscriptionId, callback) {
+async function deleteRegisteredWebHookSubscription(subscriptionId, callback) {
   let response = await rcsdk.get('/restapi/v1.0/subscription')
   let json = await response.json();
   if (json.records.length > 0){

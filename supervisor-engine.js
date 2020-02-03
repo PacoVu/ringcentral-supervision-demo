@@ -135,7 +135,7 @@ PhoneEngine.prototype = {
                 this.agents[i].partyId = ""
                 var phoneStatus = {
                   agent: agentExtNumber,
-                  status: 'idle'
+                  status: 'ready'
                 }
                 server.sendPhoneEvent(phoneStatus)
                 console.log("STOP AUDIO SINK FOR " + speakerName)
@@ -147,8 +147,7 @@ PhoneEngine.prototype = {
                 }
 
                 setTimeout(function () {
-                  console.log("Index " + i)
-                  console.log("After delays. Close Watson socket for " + speakerName)
+                  //console.log("After delays. Close Watson socket for " + speakerName)
                   thisClass.agents[i].watson.closeConnection()
                   thisClass.agents[i].watson = null
                   //console.log("CHECK agents len: " + thisClass.agents.length)
@@ -168,7 +167,7 @@ PhoneEngine.prototype = {
         if (err){
           console.error(err.message);
         }
-        console.log("save device_id")
+        //console.log("save device_id")
       })
   },
   getAgentStatus: function(agentExtNumber){
