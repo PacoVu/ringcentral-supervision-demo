@@ -310,6 +310,23 @@ function sendTranscriptEvents(transcript) {
   //  eventHistory.push(transcript);
 }
 
+function sendAnalyticsEvents(analytics) {
+  var a = JSON.stringify(analytics)
+  //console.log(a)
+  var res = 'event: analyticsEvent\ndata: ' + t + '\n\n'
+  if (eventResponse != null){
+    if (!eventResponse.finished) {
+        eventResponse.write(res);
+    }else{
+      console.log("eventResponse is finished")
+    }
+  }else{
+    console.log("eventResponse is null")
+  }
+  //if (transcript.status)
+  //  eventHistory.push(transcript);
+}
+
 function closeConnection(response) {
   if (!response.finished) {
     response.end();
@@ -330,7 +347,7 @@ function checkConnectionToRestore(request, response, eventHistory) {
 }
 
 module.exports.mergingChannels = mergingChannels;
-//module.exports.sendTranscriptEvents = sendTranscriptEvents;
+module.exports.sendAnalyticsEvents = sendAnalyticsEvents;
 module.exports.sendPhoneEvent = sendPhoneEvent;
 
 const rcsdk = new RingCentral({

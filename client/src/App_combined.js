@@ -1,6 +1,14 @@
 import React, { Component } from 'react';
-
-import ReactStoreIndicator from 'react-score-indicator'
+//import { StyleSheet, Text, View, FlatList } from 'react-flatlist';
+//import { getInitialCallTranscript } from './DataProvider';
+//import 'react-table/react-table.css';
+//import ajax from './service/FetchData';
+// , LinearGauge, RadialGauge
+/*
+import {
+    ArcGauge
+} from '@progress/kendo-react-gauges';
+*/
 import axios from "axios";
 
 //import mylib from "myscript";
@@ -71,10 +79,9 @@ export default class App extends Component {
         }
       }
     };
-    this.negativestepsColors = ['#3da940','#3da940','#3da940','#53b83a','#84c42b','#f1bc00','#ed8d00','#d12000']
     this.isLoggedIn = false;
-    //this.eventSource = new EventSource('http://localhost:5000/events');
-    this.eventSource = new EventSource('/events');
+    this.eventSource = new EventSource('http://localhost:5000/events');
+    //this.eventSource = new EventSource('/events');
   }
 
   async componentDidMount() {
@@ -119,8 +126,7 @@ export default class App extends Component {
             }
         }))
       }
-      // closed this to split => move to data analytics
-      if (data.final){
+      if (data.final /*&& data.analysis.hasOwnProperty("sentimentScore")*/){
         if (data.id == 0){
           this.setState(prevState => ({
               agent1: {                   // object that we want to update
@@ -153,7 +159,6 @@ export default class App extends Component {
           }))
         }
       }
-      //
     }else if (data.agent === "122") {
       this.update = true
       for (let i = 0; i < this.state.agent2.dialogue.length; i++) {
@@ -189,8 +194,8 @@ export default class App extends Component {
             }
         }))
       }
-      // closed this => move to data analytics
-      if (data.final){
+
+      if (data.final /*&& data.analysis.hasOwnProperty("sentimentScore")*/){
         if (data.id == 0){
           this.setState(prevState => ({
               agent2: {                   // object that we want to update
@@ -223,7 +228,6 @@ export default class App extends Component {
           }))
         }
       }
-      //
     }
   }
 
@@ -442,20 +446,20 @@ export default class App extends Component {
       this.agent1Items = this.state.agent1.dialogue.map(item =>
         {
         if (item.sentiment > 0.4)
-          return <div>{item.index}. {item.name}: <div className="positive">{item.text}</div><div className="translation">{item.index}. Translated: {item.translation}</div></div>
+          return <div><div className="positive">{item.index}. {item.name}: {item.text}</div><div className="translation">{item.index}. Translated: {item.translation}</div></div>
         else if (item.sentiment < -0.4)
-          return <div>{item.index}. {item.name}: <div className="negative">{item.text}</div><div className="translation">{item.index}. Translated: {item.translation}</div></div>
+          return <div><div className="negative">{item.index}. {item.name}: {item.text}</div><div className="translation">{item.index}. Translated: {item.translation}</div></div>
         else
-          return <div>{item.index}. {item.name}: <div>{item.text}</div><div className="translation">{item.index}. Translated: {item.translation}</div></div>
+          return <div><div>{item.index}. {item.name}: {item.text}</div><div className="translation">{item.index}. Translated: {item.translation}</div></div>
         }
       );
     }else{
       this.agent1Items = this.state.agent1.dialogue.map(item =>
         {
         if (item.sentiment > 0.4)
-          return <div>{item.index}. {item.name}: <div className="positive">{item.text}</div></div>
+          return <div><div className="positive">{item.index}. {item.name}: {item.text}</div></div>
         else if (item.sentiment < -0.4)
-          return <div>{item.index}. {item.name}: <div className="negative">{item.text}</div></div>
+          return <div><div className="negative">{item.index}. {item.name}: {item.text}</div></div>
         else
           return <div><div>{item.index}. {item.name}: {item.text}</div></div>
         }
@@ -476,9 +480,9 @@ export default class App extends Component {
       this.agent2Items = this.state.agent2.dialogue.map(item =>
         {
         if (item.sentiment > 0.4)
-          return <div>{item.index}. {item.name}: <div className="positive">{item.text}</div></div>
+          return <div><div className="positive">{item.index}. {item.name}: {item.text}</div></div>
         else if (item.sentiment < -0.4)
-          return <div>{item.index}. {item.name}: <div className="negative">{item.text}</div></div>
+          return <div><div className="negative">{item.index}. {item.name}: {item.text}</div></div>
         else
           return <div><div>{item.index}. {item.name}: {item.text}</div></div>
         }
@@ -514,196 +518,48 @@ export default class App extends Component {
           </div>
         </div>
         <div className="columns">
-          <div><span className="reportHeader"> Customer: (Speaking chance => {this.a1Customer.toFixed(1)}% - Spoken => {this.state.agent1.customer.wordCount} words)</span></div>
-          <div className="analysisBlock">
-            <div className="infoColumn">
-            <ReactStoreIndicator
-              value={this.state.agent1.customer.sentimentScore}
-              maxValue={100}
-              width={90}
-              lineWidth={10}
-            />
-            <ReactStoreIndicator
-              value={this.state.agent1.customer.joyScore}
-              maxValue={100}
-              width={90}
-            />
-            <ReactStoreIndicator
-              value={this.state.agent1.customer.sadnessScore}
-              maxValue={100}
-              stepsColors={this.negativestepsColors}
-              width={90}
-            />
-            <ReactStoreIndicator
-              value={this.state.agent1.customer.fearScore}
-              maxValue={100}
-              stepsColors={this.negativestepsColors}
-              width={90}
-            />
-            <ReactStoreIndicator
-              value={this.state.agent1.customer.disgustScore}
-              maxValue={100}
-              stepsColors={this.negativestepsColors}
-              width={90}
-            />
-            <ReactStoreIndicator
-              value={this.state.agent1.customer.angerScore}
-              maxValue={100}
-              stepsColors={this.negativestepsColors}
-              width={90}
-            />
+          <div>
+            <div><span className="reportHeader"> Customer: (Speaking chance => {this.a1Customer.toFixed(1)}% - Spoken => {this.state.agent1.customer.wordCount} words)</span>
+              <div className="infoColumn">
+                  <div>Sentiment: {this.state.agent1.customer.sentimentScore}</div>
+                  <div>Sadness: {this.state.agent1.customer.sadnessScore}</div>
+                  <div>Joy: {this.state.agent1.customer.joyScore}</div>
+                  <div>Fear: {this.state.agent1.customer.fearScore}</div>
+                  <div>Disgust: {this.state.agent1.customer.disgustScore}</div>
+                  <div>Anger: {this.state.agent1.customer.angerScore}</div>
+              </div>
             </div>
-            <div className="textColumn">
-              <div>Sentiment</div>
-              <div>Joy</div>
-              <div>Sadness</div>
-              <div>Fear</div>
-              <div>Disgust</div>
-              <div>Anger</div>
+            <div><span className="reportHeader"> Agent: (Speaking chance => {this.a1Agent.toFixed(1)}% - Spoken => {this.state.agent1.agent.wordCount} words)</span>
+              <div className="infoColumn">
+                  <div>Sentiment: {this.state.agent1.agent.sentimentScore}</div>
+                  <div>Sadness: {this.state.agent1.agent.sadnessScore}</div>
+                  <div>Joy: {this.state.agent1.agent.joyScore}</div>
+                  <div>Fear: {this.state.agent1.agent.fearScore}</div>
+                  <div>Disgust: {this.state.agent1.agent.disgustScore}</div>
+                  <div>Anger: {this.state.agent1.agent.angerScore}</div>
+              </div>
             </div>
           </div>
-          <div><span className="reportHeader"> Agent: (Speaking chance => {this.a1Agent.toFixed(1)}% - Spoken => {this.state.agent1.agent.wordCount} words)</span></div>
-          <div className="analysisBlock">
-            <div className="infoColumn">
-            <ReactStoreIndicator
-              value={this.state.agent1.agent.sentimentScore}
-              maxValue={100}
-              width={90}
-              lineWidth={10}
-            />
-            <ReactStoreIndicator
-              value={this.state.agent1.agent.joyScore}
-              maxValue={100}
-              width={90}
-            />
-            <ReactStoreIndicator
-              value={this.state.agent1.agent.sadnessScore}
-              maxValue={100}
-              stepsColors={this.negativestepsColors}
-              width={90}
-            />
-            <ReactStoreIndicator
-              value={this.state.agent1.agent.fearScore}
-              maxValue={100}
-              stepsColors={this.negativestepsColors}
-              width={90}
-            />
-            <ReactStoreIndicator
-              value={this.state.agent1.agent.disgustScore}
-              maxValue={100}
-              stepsColors={this.negativestepsColors}
-              width={90}
-            />
-            <ReactStoreIndicator
-              value={this.state.agent1.agent.angerScore}
-              maxValue={100}
-              stepsColors={this.negativestepsColors}
-              width={90}
-            />
+          <div>
+            <div><span className="reportHeader"> Customer: (Speaking chance => {this.a2Customer.toFixed(1)}% - Spoken => {this.state.agent2.customer.wordCount} words)</span>
+              <div className="infoColumn">
+                  <div>Sentiment: {this.state.agent2.customer.sentimentScore} </div>
+                  <div>Sadness: {this.state.agent2.customer.sadnessScore} </div>
+                  <div>Joy: {this.state.agent2.customer.joyScore} </div>
+                  <div>Fear: {this.state.agent2.customer.fearScore} </div>
+                  <div>Disgust: {this.state.agent2.customer.disgustScore} </div>
+                  <div>Anger: {this.state.agent2.customer.angerScore} </div>
+              </div>
             </div>
-            <div className="textColumn">
-              <div>Sentiment</div>
-              <div>Joy</div>
-              <div>Sadness</div>
-              <div>Fear</div>
-              <div>Disgust</div>
-              <div>Anger</div>
-            </div>
-          </div>
-          <div><span className="reportHeader"> Customer: (Speaking chance => {this.a2Customer.toFixed(1)}% - Spoken => {this.state.agent2.customer.wordCount} words)</span></div>
-          <div className="analysisBlock">
-            <div className="infoColumn">
-            <ReactStoreIndicator
-              value={this.state.agent2.customer.sentimentScore}
-              maxValue={100}
-              width={90}
-              lineWidth={10}
-            />
-            <ReactStoreIndicator
-              value={this.state.agent2.customer.joyScore}
-              maxValue={100}
-              width={90}
-            />
-            <ReactStoreIndicator
-              value={this.state.agent2.customer.sadnessScore}
-              maxValue={100}
-              stepsColors={this.negativestepsColors}
-              width={90}
-            />
-            <ReactStoreIndicator
-              value={this.state.agent2.customer.fearScore}
-              maxValue={100}
-              stepsColors={this.negativestepsColors}
-              width={90}
-            />
-            <ReactStoreIndicator
-              value={this.state.agent2.customer.disgustScore}
-              maxValue={100}
-              stepsColors={this.negativestepsColors}
-              width={90}
-            />
-            <ReactStoreIndicator
-              value={this.state.agent2.customer.angerScore}
-              maxValue={100}
-              stepsColors={this.negativestepsColors}
-              width={90}
-            />
-            </div>
-            <div className="textColumn">
-              <div>Sentiment</div>
-              <div>Joy</div>
-              <div>Sadness</div>
-              <div>Fear</div>
-              <div>Disgust</div>
-              <div>Anger</div>
-            </div>
-          </div>
-          <div><span className="reportHeader"> Agent: (Speaking chance => {this.a2Agent.toFixed(1)}% - Spoken => {this.state.agent2.agent.wordCount} words)</span></div>
-          <div className="analysisBlock">
-            <div className="infoColumn">
-            <ReactStoreIndicator
-              value={this.state.agent2.agent.sentimentScore}
-              maxValue={100}
-              width={90}
-              lineWidth={10}
-            />
-            <ReactStoreIndicator
-              value={this.state.agent2.agent.joyScore}
-              maxValue={100}
-              width={90}
-            />
-            <ReactStoreIndicator
-              value={this.state.agent2.agent.sadnessScore}
-              maxValue={100}
-              stepsColors={this.negativestepsColors}
-              width={90}
-            />
-            <ReactStoreIndicator
-              value={this.state.agent2.agent.fearScore}
-              maxValue={100}
-              stepsColors={this.negativestepsColors}
-              width={90}
-            />
-            <ReactStoreIndicator
-              value={this.state.agent2.agent.disgustScore}
-              maxValue={100}
-              stepsColors={this.negativestepsColors}
-              width={90}
-            />
-            <ReactStoreIndicator
-              value={this.state.agent2.agent.angerScore}
-              maxValue={100}
-              stepsColors={this.negativestepsColors}
-              width={90}
-            />
-            </div>
-            <div className="textColumn">
-              <div>Sentiment</div>
-              <div>Joy</div>
-              <div>Sadness</div>
-              <div>Fear</div>
-              <div>Disgust</div>
-              <div>Anger</div>
+            <div><span className="reportHeader"> Agent: (Speaking chance => {this.a2Agent.toFixed(1)}% - Spoken => {this.state.agent2.agent.wordCount} words)</span>
+              <div className="infoColumn">
+                  <div>Sentiment: {this.state.agent2.customer.sentimentScore} </div>
+                  <div>Sadness: {this.state.agent2.customer.sadnessScore} </div>
+                  <div>Joy: {this.state.agent2.customer.joyScore} </div>
+                  <div>Fear: {this.state.agent2.customer.fearScore} </div>
+                  <div>Disgust: {this.state.agent2.customer.disgustScore} </div>
+                  <div>Anger: {this.state.agent2.customer.angerScore} </div>
+              </div>
             </div>
           </div>
         </div>

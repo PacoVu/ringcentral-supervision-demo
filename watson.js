@@ -127,7 +127,7 @@ WatsonEngine.prototype = {
     };
 
     this.ws.onclose = function(data) {
-      console.log("Watson Socket closed. Need to notify supervisor engine")
+      console.log("Watson Socket closed. NEED TO NOTIFY SUPERVISION ENGINE!")
       //console.log(data)
     };
 
@@ -170,6 +170,7 @@ WatsonEngine.prototype = {
                     analyzingText = translatedText
                   thisClass.analyze(analyzingText, (err, data) => {
                     server.mergingChannels(thisClass.speakerId, thisClass.transcript)
+                    //server.sendAnalyticsEvents(thisClass.speakerId, thisClass.transcript.analysis)
                   })
                 }else{
                   server.mergingChannels(thisClass.speakerId, thisClass.transcript)
@@ -254,15 +255,15 @@ WatsonEngine.prototype = {
               if (keyword.hasOwnProperty("sentiment")){
                 thisClass.transcript.sentenceSentimentScore = keyword.sentiment.score
                 thisClass.sentimentScore += keyword.sentiment.score
-                thisClass.transcript.analysis.sentimentScore = Math.floor((thisClass.sentimentScore / thisClass.sentimentCount) * 100)
-                /*
+                //thisClass.transcript.analysis.sentimentScore = Math.floor((thisClass.sentimentScore / thisClass.sentimentCount) * 100)
+
                 var scaled = Math.floor((thisClass.sentimentScore / thisClass.sentimentCount) * 100)
                 if (scaled > 0){
                   thisClass.transcript.analysis.sentimentScore = Math.ceil((scaled / 2) + 50)
                 }else{
                   thisClass.transcript.analysis.sentimentScore = Math.ceil(scaled / 2) * -1
                 }
-                */
+
                 thisClass.sentimentCount++
               }
               if (keyword.hasOwnProperty('emotion')){
