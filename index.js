@@ -9,7 +9,7 @@ const RingCentral = require('@ringcentral/sdk').SDK
 
 // Test params
 var agentsList = []
-var testAgent = ["120","122"]
+//var testAgent = ["120","122"]
 var testCustomerLanguage = [
   { number: "+16505130930", language: "english" },
   { number: "+16504306662", language: "chinese" },
@@ -457,8 +457,8 @@ async function login(){
   }else{
     console.log("Still logged in => good to call APIs")
   }
-
-  await readExtensions()
+  await readCallMonitoringGroup()
+  //await readExtensions()
   console.log("after read extension")
   supervisor.initializePhoneEngine(rcsdk, supervisorExtensionId)
   startNotification()
@@ -672,6 +672,35 @@ function storeSubscriptionId(subId){
     })
 }
 
+async function readCallMonitoringGroup(){
+  var r = await rcsdk.get('/restapi/v1.0/account/~/call-monitoring-groups')
+  var json = await r.json()
+  agentsList = []
+  for (var record of json.records){
+    if (record.id == "19165016"){
+      var res = await rcsdk.get('/restapi/v1.0/account/~/call-monitoring-groups/' + record.id + "/members")
+      var json1 = await res.json()
+      for (var rec of json1.records){
+        console.log(rec)
+        console.log("=====")
+        if (rec.permissions[0] == "Monitored"){
+          var agent = {
+            id: rec.id,
+            number: rec.extensionNumber,
+            mergedTranscription: {
+              index: -1,
+              customer: [],
+              agent: []
+            }
+          }
+          agentsList.push(agent)
+        }else if (rec.permissions[0] == "Monitoring"){
+          supervisorExtensionId = rec.id
+        }
+      }
+    }
+  }
+}
 async function checkRegisteredWebHookSubscription(subscriptionId) {
     //console.log("subId: " + subscriptionId)
     try {
@@ -688,7 +717,8 @@ async function checkRegisteredWebHookSubscription(subscriptionId) {
                 await rcsdk.delete('/restapi/v1.0/subscription/' + record.id)
                 startWebhookSubscription()
               }else{
-                await readExtensions()
+                await readCallMonitoringGroup()
+                // await readExtensions()
                 g_subscriptionId = subscriptionId
                 if (record.status != "Active"){
                   console.log("Subscription is not active => renew it")
