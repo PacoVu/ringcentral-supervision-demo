@@ -1,5 +1,4 @@
-if (process.env.PRODUCTION == false)
-  require('dotenv').load()
+require('dotenv').config()
 
 const { Pool, Client } = require('pg')
 const pool = new Pool({

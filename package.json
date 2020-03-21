@@ -11,20 +11,20 @@
   "author": "Phong Vu",
   "license": "MIT",
   "dependencies": {
-    "cors": "^2.8.4",
-    "express": "^4.16.3",
-    "path": "^0.12.7",
-    "request": "^2.88.0",
     "@ringcentral/sdk": "^4.0.0",
     "core-js": "^3.2.1",
+    "cors": "^2.8.4",
     "dotenv": "^8.1.0",
     "dotenv-override-true": "^6.2.0",
+    "express": "^4.16.3",
     "ibm-watson": "^4.5.0",
     "node-webrtc-media-devices": "^0.1.4",
+    "path": "^0.12.7",
+    "pg": "^7.18.2",
+    "request": "^2.88.0",
     "ringcentral-softphone": "^0.4.1",
     "wrtc": "^0.4.2",
-    "ws": "^7.1.2",
-    "pg": "^7.10.0"
+    "ws": "^7.1.2"
   },
   "engines": {
     "node": "10.5.0"

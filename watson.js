@@ -1,18 +1,11 @@
-const WS = require('ws')
-//var watson = require('watson-developer-cloud');
-var request = require('request')
 var fs = require('fs')
 var server = require('./index')
+
+const WS = require('ws')
+const request = require('request')
 const LanguageTranslatorV3 = require('ibm-watson/language-translator/v3');
 const NaturalLanguageUnderstandingV1 = require("ibm-watson/natural-language-understanding/v1.js")
 
-var english_language_model = 'en-US_NarrowbandModel'
-var chinese_language_model = "zh-CN_NarrowbandModel"
-var spanish_language_model = "es-ES_NarrowbandModel"
-const wsURI = 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?access_token='
-var eng_wsURI = '';
-var chi_wsURI = '';
-var spa_wsURI = '';
 
 var fiftynineMinute = 59
 
@@ -30,7 +23,16 @@ setInterval(function(){
   }
 }, 60000)
 
+var english_language_model = 'en-US_NarrowbandModel'
+var chinese_language_model = "zh-CN_NarrowbandModel"
+var spanish_language_model = "es-ES_NarrowbandModel"
+
+var eng_wsURI = '';
+var chi_wsURI = '';
+var spa_wsURI = '';
+
 function getWatsonToken(){
+  const wsURI = 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?access_token='
   request.post("https://iam.cloud.ibm.com/identity/token", {form:
       { grant_type:'urn:ibm:params:oauth:grant-type:apikey',
         apikey: process.env.WATSON_SPEECH_TO_TEXT_API_KEY
@@ -41,6 +43,7 @@ function getWatsonToken(){
         spa_wsURI = wsURI + jsonObj.access_token + '&model=' + spanish_language_model;
   });
 }
+
 //
 function WatsonEngine(agentExtNumber, speakerName, speakerId, language) {
   this.doTranslation = false
@@ -144,8 +147,6 @@ WatsonEngine.prototype = {
     this.ws.on('message', function(evt) {
       var res = JSON.parse(evt)
       if (res.hasOwnProperty('results')){
-        //if (evt.results.length > 0){
-        //console.log(evt)
         thisClass.transcript.index = res.result_index
         thisClass.transcript.timestamp = "xx:xx"
         thisClass.transcript.final = res.results[0].final
@@ -170,7 +171,6 @@ WatsonEngine.prototype = {
                     analyzingText = translatedText
                   thisClass.analyze(analyzingText, (err, data) => {
                     server.mergingChannels(thisClass.speakerId, thisClass.transcript)
-                    //server.sendAnalyticsEvents(thisClass.speakerId, thisClass.transcript.analysis)
                   })
                 }else{
                   server.mergingChannels(thisClass.speakerId, thisClass.transcript)
@@ -208,7 +208,6 @@ WatsonEngine.prototype = {
       binary: true,
       mask: true,
     });
-    //console.log("called")
   },
   translate: function(text, callback){
     if (this.translate_language_model == "")
@@ -244,26 +243,20 @@ WatsonEngine.prototype = {
         //},
       }
     }
-    //console.log("Analyze: " + text)
     var thisClass = this
     this.naturalLanguageUnderstanding.analyze(parameters)
       .then(analysisResults => {
-          //console.log("Analyse: " + JSON.stringify(analysisResults, null, 2));
           if (analysisResults.keywords.length > 0){
             for (var keyword of analysisResults.keywords){
-              //console.log("Analyse: " + JSON.stringify(keyword))
               if (keyword.hasOwnProperty("sentiment")){
                 thisClass.transcript.sentenceSentimentScore = keyword.sentiment.score
                 thisClass.sentimentScore += keyword.sentiment.score
-                //thisClass.transcript.analysis.sentimentScore = Math.floor((thisClass.sentimentScore / thisClass.sentimentCount) * 100)
-
                 var scaled = Math.floor((thisClass.sentimentScore / thisClass.sentimentCount) * 100)
                 if (scaled > 0){
                   thisClass.transcript.analysis.sentimentScore = Math.ceil((scaled / 2) + 50)
                 }else{
                   thisClass.transcript.analysis.sentimentScore = Math.ceil(scaled / 2) * -1
                 }
-
                 thisClass.sentimentCount++
               }
               if (keyword.hasOwnProperty('emotion')){
@@ -291,3 +284,26 @@ WatsonEngine.prototype = {
 }
 
 module.exports = WatsonEngine;
+/*
+this.ws.onopen = function(evt) {
+  thisClass.ws.send(JSON.stringify(message));
+  callback(null, "READY")
+};
+
+this.ws.on ("close", function(data) {
+  console.log("Watson Socket closed. NEED TO NOTIFY SUPERVISION ENGINE!")
+});
+
+this.ws.on('connection', function(evt) {
+  console.log("Watson Socket connect")
+});
+
+this.ws.on ("error", function(evt) {
+  console.log("Watson Socket error")
+  callback(evt, "")
+});
+
+this.ws.on('message', function(evt) {
+  ...
+});
+*/
