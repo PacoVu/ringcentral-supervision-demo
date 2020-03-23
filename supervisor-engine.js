@@ -31,8 +31,9 @@ PhoneEngine.prototype = {
           }
           server.sendPhoneEvent(phoneStatus)
         }
-
         this.softphone.on('INVITE', sipMessage => {
+          console.log("SIP INVITE")
+          console.log(sipMessage.headers['p-rc-api-monitoring-ids'])
           var headers = sipMessage.headers['p-rc-api-monitoring-ids'].split(";")
           var partyId = headers[0].split("=")[1]
           var agentExtNumber = ""
@@ -67,7 +68,7 @@ PhoneEngine.prototype = {
                   creatingWatsonSocket = true
                   console.log("third frame sample rate: " + data.sampleRate)
                   if (data.sampleRate < 16000)
-                    MAXBUFFERSIZE = 16000
+                    MAXBUFFERSIZE = 16000 // Have to limit to 16K for running on heroku low memory!
 
                   this.agents[agentIndex].watson.createWatsonSocket(data.sampleRate, (err, res) => {
                     if (!err) {

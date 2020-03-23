@@ -536,7 +536,7 @@ async function readCallMonitoringGroup(){
   var jsonObj = await resp.json()
   agentsList = []
   for (var record of jsonObj.records){
-    if (record.name == "Paco Supervisor"){
+    if (record.name == process.env.SUPERVISOR_GROUP_NAME){
       var resp = await rcsdk.get('/restapi/v1.0/account/~/call-monitoring-groups/' + record.id + "/members")
       var jsonObj1 = await resp.json()
       for (var rec of jsonObj1.records){
@@ -558,6 +558,7 @@ async function readCallMonitoringGroup(){
     }
   }
 }
+
 async function checkRegisteredWebHookSubscription(subscriptionId) {
     try {
       let response = await rcsdk.get('/restapi/v1.0/subscription')

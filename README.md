@@ -1,6 +1,12 @@
 # RingCentral calls supervision demo
 
-## Clone and Setup
+## Create a RingCentral app
+Login your RingCentral developer account at https://developers.ringcentral.com and create an app with the following requirements:
+- App type: "Web Server"
+- Authorization: "Only members of my organization/company" (a.k.a password flow)
+- Permissions: Call Control - ReadAccounts - WebhookSubscriptions
+
+## Clone the project and Setup
 
 ```
 git clone https://github.com/PacoVu/ringcentral-supervision-demo
@@ -11,12 +17,30 @@ cp .env.sample .env
 
 Edit `.env` to specify credentials.
 
- - `RINGCENTRAL_USERNAME` is the supervisor username
- - `RINGCENTRAL_AGENT_EXT` is the extension number to be supervised. E.g. "105"
- - `WATSON_SPEECH_TO_TEXT_USERNAME` is your Watson Speech-to-Text service username credential
- - `WATSON_SPEECH_TO_TEXT_PASSWORD` is your Watson Speech-to-Text service password credential
- - `WATSON_LANGUAGE_TRANSLATION_API_KEY`  is your Watson Language Translation service API key
- - `WATSON_NATURAL_LANGUAGE_UNDERSTANDING_API_KEY` is your Watson NLU service API key
+- `RINGCENTRAL_SERVER_URL`=https://platform.devtest.ringcentral.com
+- `RINGCENTRAL_CLIENT_ID`=Your App Client Id
+- `RINGCENTRAL_CLIENT_SECRET`=Your App Client Secret
+
+- `RINGCENTRAL_USERNAME`=
+- `RINGCENTRAL_EXTENSION`=
+- `RINGCENTRAL_PASSWORD`=
+
+ - `WATSON_SPEECH_TO_TEXT_USERNAME`=Your Watson Speech-to-Text service username credential
+ - `WATSON_SPEECH_TO_TEXT_PASSWORD`=Your Watson Speech-to-Text service password credential
+ - `WATSON_LANGUAGE_TRANSLATION_API_KEY`=Your Watson Language Translation service API key
+ - `WATSON_NATURAL_LANGUAGE_UNDERSTANDING_API_KEY`=Your Watson NLU service API key
+
+ - `PGHOST`=Your local Postgres host (e.g. localhost)
+ - `PGUSER`=Your Postgres user name
+ - `PGDATABASE`=Your Postgres database name
+ - `PGPASSWORD`=Your Postgres password
+ - `PGPORT`=Your Postgres port (e.g. 5432)
+
+## Setup a Call Monitoring Group
+Login your sandbox account at https://service.devtest.ringcentral.com and create a call monitoring group and name it "Demo Supervisor"
+
+- Choose one user extension as a supervisor. Use this extension's login credentials to authenticate your app.
+- Choose 2 user extensions as the monitored agents.
 
 ## Run the demo
 Open 4 terminal windows and run the following command on each window
@@ -27,7 +51,7 @@ $ ngrok http 5000
 ```
 Copy the ngrok address and specify it in the .env as follow:
 
-`DELIVERY_MODE_ADDRESS=https://7ba3f616.ngrok.io/webhookcallback`
+`DELIVERY_MODE_ADDRESS=https://XXXXXXXX.ngrok.io/webhookcallback`
 
 Start client
 ```
@@ -42,7 +66,7 @@ $ node index.js
 
 ## Test
 
-Make an incoming call to `RINGCENTRAL_AGENT_EXT`, answer it and start a conversation.
+Make an incoming call to one of the monitored agents, answer it and start a conversation.
 
 Watch the conversation transcription on the client app.
 
