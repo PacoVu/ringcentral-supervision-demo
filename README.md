@@ -21,14 +21,16 @@ Edit `.env` to specify credentials.
 - `RINGCENTRAL_CLIENT_ID`=Your App Client Id
 - `RINGCENTRAL_CLIENT_SECRET`=Your App Client Secret
 
-- `RINGCENTRAL_USERNAME`=
-- `RINGCENTRAL_EXTENSION`=
-- `RINGCENTRAL_PASSWORD`=
+- `RINGCENTRAL_USERNAME`=Your_Supervisor_Username
+- `RINGCENTRAL_EXTENSION`=Your_Supervisor_Extension_Number
+- `RINGCENTRAL_PASSWORD`=Your_Supervisor_Password
 
- - `WATSON_SPEECH_TO_TEXT_USERNAME`=Your Watson Speech-to-Text service username credential
- - `WATSON_SPEECH_TO_TEXT_PASSWORD`=Your Watson Speech-to-Text service password credential
+- `AGENT_EXTENSION_NUMBER`=Your_Agent_Extension_Number
+- `SUPERVISOR_GROUP_NAME`=Demo Supervisor
+
+ - `WATSON_SPEECH2TEXT_API_KEY`=Your_Watson_Speech_To_Text_Api_Key
  - `WATSON_LANGUAGE_TRANSLATION_API_KEY`=Your Watson Language Translation service API key
- - `WATSON_NATURAL_LANGUAGE_UNDERSTANDING_API_KEY`=Your Watson NLU service API key
+ - `WATSON_NLU_API_KEY`=Your Watson NLU service API key
 
  - `PGHOST`=Your local Postgres host (e.g. localhost)
  - `PGUSER`=Your Postgres user name
@@ -43,39 +45,34 @@ Login your sandbox account at https://service.devtest.ringcentral.com and create
 - Choose 2 user extensions as the monitored agents.
 
 ## Run the demo
-Open 4 terminal windows and run the following command on each window
+Open 3 terminal windows and run the following command on each window. Assumed that you are under the main project folder.
 
 Ngrok tunnel
 ```
+$ cd ringcentral-supervision-demo
 $ ngrok http 5000
 ```
 Copy the ngrok address and specify it in the .env as follow:
 
 `DELIVERY_MODE_ADDRESS=https://XXXXXXXX.ngrok.io/webhookcallback`
 
+Start server
+```
+$ cd ringcentral-supervision-demo
+$ node index.js
+```
+
 Start client
 ```
+$ cd ringcentral-supervision-demo
 $ cd client
 $ npm start
 ```
 
-Start server
-```
-$ node index.js
-```
-
 ## Test
 
-Make an incoming call to one of the monitored agents, answer it and start a conversation.
+Make an call to the monitored agent phone number, answer it and start a conversation.
 
 Watch the conversation transcription on the client app.
 
-Enable the translation to see conversation translated from English to Chinese.
-
-## Playback a call recording
-
-If you clicked the start/stop recording during the call, you can play the saved audio by:
-
-```
-$ play -c 1 -r 16000 -e signed -b 16 audio_file_name.raw
-```
+Enable the translation to see conversation translated from English to Spanish.

@@ -48,7 +48,7 @@ export default class App extends Component {
   async componentDidMount() {
     this.eventSource.addEventListener('transcriptUpdate', (e) => this.updateTranscript(JSON.parse(e.data)));
     this.eventSource.addEventListener('phoneEvent', (e) => this.updatePhoneStatus(e.data));
-    this.eventSource.addEventListener('closedConnection', () => this.stopUpdates());
+    //this.eventSource.addEventListener('closedConnection', () => this.stopUpdates());
   }
 
   updateTranscript(data) {
@@ -125,9 +125,11 @@ export default class App extends Component {
       }))
   }
 
+/*
   stopUpdates() {
     this.eventSource.close();
   }
+*/
 
   clearTranscript() {
     this.setState(prevState => ({
@@ -172,7 +174,7 @@ export default class App extends Component {
                 recordingButtonName: 'Stop Recording'
         }))
     }
-    const response = await axios.get("/recording",
+    const response = await axios.get("/enable_recording",
           { params: {enable: isRecording}
         })
   }
@@ -331,6 +333,14 @@ export default class App extends Component {
               stepsColors={this.negativestepsColors}
               width={90}
             />
+            </div>
+            <div className="textColumn">
+              <div>Sentiment</div>
+              <div>Joy</div>
+              <div>Sadness</div>
+              <div>Fear</div>
+              <div>Disgust</div>
+              <div>Anger</div>
             </div>
           </div>
         </div>

@@ -6,8 +6,8 @@ const async = require('async')
 var fs = require('fs')
 
 const RingCentral = require('@ringcentral/sdk').SDK
+const PhoneEngine = require('./supervisor-engine');
 
-// Test params
 var agentInfo = {
     id: "",
     mergedTranscription: {
@@ -21,14 +21,10 @@ var supervisorExtensionId = ""
 // Create the server
 const app = express()
 
-// Serve static files from the React frontend app
 app.use(express.static(path.join(__dirname, 'client/build')))
 
-// SoftPhone
-if (process.env.PRODUCTION == false)
-  require('dotenv').config()
+require('dotenv').config()
 
-const PhoneEngine = require('./supervisor-engine');
 
 let supervisor = new PhoneEngine()
 var eventResponse = null
@@ -43,7 +39,6 @@ createTable((err, res) => {
     }
 });
 
-// Serve our api route /cow that returns a custom talking text cow
 app.get('/events', cors(), async (req, res) => {
   console.log("METHOD EVENTS")
   res.set({
@@ -52,7 +47,6 @@ app.get('/events', cors(), async (req, res) => {
     'Cache-Control': 'no-cache',
     'Access-Control-Allow-Origin': '*'
   });
-
   res.statusCode = 200;
   eventResponse = res
 })
@@ -66,7 +60,7 @@ app.get('/enable_translation', cors(), async (req, res) => {
   res.end();
 })
 
-app.get('/recording', cors(), async (req, res) => {
+app.get('/enable_recording', cors(), async (req, res) => {
   console.log("ENABLE RECORDING")
   var queryData = req.query;
   console.log(queryData.enable)
@@ -131,7 +125,6 @@ app.post('/webhookcallback', function(req, res) {
     }
 })
 
-
 // Choose the port and start the server
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
@@ -140,7 +133,6 @@ app.listen(PORT, () => {
 
 
 function sendPhoneEvent(status){
-
   var res = 'event: phoneEvent\ndata: ' + status + '\n\n'
   if (eventResponse != null){
     if (!eventResponse.finished) {
@@ -151,8 +143,6 @@ function sendPhoneEvent(status){
   }else{
     console.log("eventResponse is null")
   }
-  //if (phone.status == "connected")
-  //  eventHistory = []
 }
 
 function mergingChannels(speakerId, transcript){
@@ -191,7 +181,6 @@ function mergingChannels(speakerId, transcript){
 
 function sendTranscriptEvents(transcript) {
   var t = JSON.stringify(transcript)
-  //console.log(t)
   var res = 'event: transcriptUpdate\ndata: ' + t + '\n\n'
   if (eventResponse != null){
     if (!eventResponse.finished) {
@@ -202,48 +191,9 @@ function sendTranscriptEvents(transcript) {
   }else{
     console.log("eventResponse is null")
   }
-  //if (transcript.status)
-  //  eventHistory.push(transcript);
-}
-
-function sendAnalyticsEvents(analytics) {
-  var a = JSON.stringify(analytics)
-  //console.log(a)
-  var res = 'event: analyticsEvent\ndata: ' + t + '\n\n'
-  if (eventResponse != null){
-    if (!eventResponse.finished) {
-        eventResponse.write(res);
-    }else{
-      console.log("eventResponse is finished")
-    }
-  }else{
-    console.log("eventResponse is null")
-  }
-  //if (transcript.status)
-  //  eventHistory.push(transcript);
-}
-
-function closeConnection(response) {
-  if (!response.finished) {
-    response.end();
-    //console.log('Stopped sending events.');
-  }
-}
-
-function checkConnectionToRestore(request, response, eventHistory) {
-  if (request.headers['last-event-id']) {
-    const eventId = parseInt(request.headers['last-event-id']);
-    eventsToReSend = eventHistory.filter((e) => e.id > eventId);
-    eventsToReSend.forEach((e) => {
-      if (!response.finished) {
-        response.write(e);
-      }
-    });
-  }
 }
 
 module.exports.mergingChannels = mergingChannels;
-module.exports.sendAnalyticsEvents = sendAnalyticsEvents;
 module.exports.sendPhoneEvent = sendPhoneEvent;
 
 const rcsdk = new RingCentral({
@@ -446,7 +396,6 @@ async function submitSuperviseRequest(inputParams){
   })
 }
 
-
 async function startWebhookSubscription() {
     var eventFilters = [`/restapi/v1.0/account/~/extension/${agentInfo.id}/telephony/sessions`]
     var res = await  rcsdk.post('/restapi/v1.0/subscription',
@@ -472,7 +421,6 @@ function storeSubscriptionId(subId){
     })
 }
 
-// 19165016
 async function readCallMonitoringGroup(){
   var resp = await rcsdk.get('/restapi/v1.0/account/~/call-monitoring-groups')
   var jsonObj = await resp.json()
