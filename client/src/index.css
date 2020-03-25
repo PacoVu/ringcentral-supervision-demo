@@ -6,8 +6,8 @@ body {
 }
 
 .conversations {
-  width: 700px;
-  height: 300px;
+  width: 600px;
+  height: 500px;
   overflow: scroll;
   border: 1px gray solid;
 }
@@ -22,7 +22,7 @@ body {
 }
 
 .infoColumn {
-  width: 700px;
+  width: 600px;
   column-count: 6;
   column-gap: 10px;
   /*background-color: black;*/
@@ -32,14 +32,14 @@ body {
   /*border: 1px dashed gray;*/
 }
 .analysisBlock{
-  width: 700px;
+  width: 600px;
   padding-top: 20px;
   padding-bottom: 20px;
   margin-bottom: 10px;
-  border: 1px dashed gray;
+  /*border: 1px dashed gray;*/
 }
 .textColumn {
-  width: 700px;
+  width: 600px;
   column-count: 6;
   column-gap: 10px;
   /*background-color: black;*/
@@ -50,6 +50,10 @@ body {
  .reportHeader {
    font-size: 1.3em;
    padding-top: 10px;
+ }
+
+ .neutral {
+   display: inline;
  }
 
 .positive {
