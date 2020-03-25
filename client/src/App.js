@@ -3,8 +3,6 @@ import React, { Component } from 'react';
 import ReactStoreIndicator from 'react-score-indicator'
 import axios from "axios";
 
-//import mylib from "myscript";
-
 export default class App extends Component {
 
   constructor(props) {
@@ -42,9 +40,9 @@ export default class App extends Component {
     this.negativestepsColors = ['#3da940','#3da940','#3da940','#53b83a','#84c42b','#f1bc00','#ed8d00','#d12000']
     this.isLoggedIn = false;
     /* For testing in localhost */
-    this.eventSource = new EventSource('http://localhost:5000/events');
+    //this.eventSource = new EventSource('http://localhost:5000/events');
     /* For testing in remote server */
-    //this.eventSource = new EventSource('/events');
+    this.eventSource = new EventSource('/events');
   }
 
   async componentDidMount() {
@@ -83,7 +81,6 @@ export default class App extends Component {
               id: data.id
         }))
       }
-      // closed this to split => move to data analytics
       if (data.final){
         if (data.id == 0){
           this.setState(prevState => ({
