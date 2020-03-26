@@ -48,7 +48,6 @@ export default class App extends Component {
   async componentDidMount() {
     this.eventSource.addEventListener('transcriptUpdate', (e) => this.updateTranscript(JSON.parse(e.data)));
     this.eventSource.addEventListener('phoneEvent', (e) => this.updatePhoneStatus(e.data));
-    //this.eventSource.addEventListener('closedConnection', () => this.stopUpdates());
   }
 
   updateTranscript(data) {
@@ -124,12 +123,6 @@ export default class App extends Component {
             phoneStatus: phoneStatus
       }))
   }
-
-/*
-  stopUpdates() {
-    this.eventSource.close();
-  }
-*/
 
   clearTranscript() {
     this.setState(prevState => ({

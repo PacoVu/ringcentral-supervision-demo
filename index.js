@@ -77,7 +77,6 @@ app.get('/delete_subscriptions', cors(), async (req, res) => {
   res.end();
 })
 
-// Anything that doesn't match the above, send back the index.html file
 app.get('*', cors(), (req, res) => {
   console.log("LOAD INDEX")
   res.set({
@@ -125,10 +124,9 @@ app.post('/webhookcallback', function(req, res) {
     }
 })
 
-// Choose the port and start the server
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
-  console.log(`Mixing it up on port ${PORT}`)
+  console.log(`Running on port ${PORT}`)
 })
 
 
@@ -202,7 +200,6 @@ const rcsdk = new RingCentral({
   clientSecret: process.env.RINGCENTRAL_CLIENT_SECRET
 })
 
-
 async function readDeviceId(extId, callback){
   var query = "SELECT device_id from supervision_subscriptionids WHERE ext_id=" + extId
   pgdb.read(query, async (err, result) => {
@@ -274,7 +271,6 @@ platform.on(platform.events.refreshSuccess, async function(res){
 async function login(){
   var loggedIn = await rcsdk.platform().loggedIn()
   if (!loggedIn){
-    console.log("FORCE TO LOGIN !!!")
     try{
       await rcsdk.login({
         username: process.env.RINGCENTRAL_USERNAME,
@@ -342,7 +338,6 @@ async function getCallSessionInfo(payload){
     customer: [],
     agent: []
   }
-
   async.each(json.parties,
       function(party, callback){
         var params = {
@@ -424,22 +419,22 @@ function storeSubscriptionId(subId){
 async function readCallMonitoringGroup(){
   var resp = await rcsdk.get('/restapi/v1.0/account/~/call-monitoring-groups')
   var jsonObj = await resp.json()
-  for (var record of jsonObj.records){
-    if (record.name == process.env.SUPERVISOR_GROUP_NAME){
-      var resp = await rcsdk.get('/restapi/v1.0/account/~/call-monitoring-groups/' + record.id + "/members")
+  for (var group of jsonObj.records){
+    if (group.name == process.env.SUPERVISOR_GROUP_NAME){
+      var resp = await rcsdk.get('/restapi/v1.0/account/~/call-monitoring-groups/' + group.id + "/members")
       var jsonObj1 = await resp.json()
-      for (var rec of jsonObj1.records){
-        if (rec.permissions[0] == "Monitored"){
-          if (rec.extensionNumber == process.env.AGENT_EXTENSION_NUMBER){
-            agentInfo.id = rec.id
+      for (var member of jsonObj1.records){
+        if (member.permissions[0] == "Monitored"){
+          if (member.extensionNumber == process.env.AGENT_EXTENSION_NUMBER){
+            agentInfo.id = member.id
             agentInfo.mergedTranscription = {
                   index: -1,
                   customer: [],
                   agent: []
                   }
           }
-        }else if (rec.permissions[0] == "Monitoring"){
-          supervisorExtensionId = rec.id
+        }else if (member.permissions[0] == "Monitoring"){
+          supervisorExtensionId = member.id
         }
       }
     }

@@ -2,7 +2,6 @@ body {
   margin: 20px;
   padding: 0px;
   font-family: sans-serif;
-  /*text-align: center;*/
 }
 
 .conversations {
@@ -25,34 +24,28 @@ body {
   width: 600px;
   column-count: 6;
   column-gap: 10px;
-  /*background-color: black;*/
-  /*padding: 20px;*/
-  /*color: white;*/
   text-align: center;
-  /*border: 1px dashed gray;*/
 }
 .analysisBlock{
   width: 600px;
   padding-top: 20px;
   padding-bottom: 20px;
   margin-bottom: 10px;
-  /*border: 1px dashed gray;*/
 }
 .textColumn {
   width: 600px;
   column-count: 6;
   column-gap: 10px;
-  /*background-color: black;*/
   padding: 0px;
-  /*color: white;*/
   text-align: center;
 }
- .reportHeader {
+
+.reportHeader {
    font-size: 1.3em;
    padding-top: 10px;
  }
 
- .neutral {
+.neutral {
    display: inline;
  }
 
