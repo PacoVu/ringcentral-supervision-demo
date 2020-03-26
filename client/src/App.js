@@ -202,22 +202,22 @@ export default class App extends Component {
       this.conversation = this.state.dialogue.map(item =>
         {
         if (item.sentiment > 0.5)
-          return <div>{item.index}. {item.name}: <div className="positive">{item.text}</div><div className="translation">{item.index}. Translated: {item.translation}</div></div>
+          return <div className="speaker">{item.name}: <div className="positive">{item.text}</div><div className="translation">{item.index}. Translated: {item.translation}</div></div>
         else if (item.sentiment < -0.5)
-          return <div>{item.index}. {item.name}: <div className="negative">{item.text}</div><div className="translation">{item.index}. Translated: {item.translation}</div></div>
+          return <div className="speaker">{item.name}: <div className="negative">{item.text}</div><div className="translation">{item.index}. Translated: {item.translation}</div></div>
         else
-          return <div>{item.index}. {item.name}: <div className="neutral">{item.text}</div><div className="translation">{item.index}. Translated: {item.translation}</div></div>
+          return <div className="speaker">{item.name}: <div className="neutral">{item.text}</div><div className="translation">{item.index}. Translated: {item.translation}</div></div>
         }
       );
     }else{
       this.conversation = this.state.dialogue.map(item =>
         {
         if (item.sentiment > 0.5)
-          return <div>{item.index}. {item.name}: <div className="positive">{item.text}</div></div>
+          return <div className="speaker">{item.name}: <div className="positive">{item.text}</div></div>
         else if (item.sentiment < -0.5)
-          return <div>{item.index}. {item.name}: <div className="negative">{item.text}</div></div>
+          return <div className="speaker">{item.name}: <div className="negative">{item.text}</div></div>
         else
-          return <div>{item.index}. {item.name}: <div className="neutral">{item.text}</div></div>
+          return <div className="speaker">{item.name}: <div className="neutral">{item.text}</div></div>
         }
       );
     }

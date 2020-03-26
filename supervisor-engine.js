@@ -100,7 +100,7 @@ PhoneEngine.prototype = {
             setTimeout(function () {
               thisClass.channels[i].watson.closeConnection()
               thisClass.channels[i].watson = null
-              thisClass.channels.splice(i, 1);
+              //thisClass.channels.splice(i, 1);
             }, 15000, i)
             break
           }

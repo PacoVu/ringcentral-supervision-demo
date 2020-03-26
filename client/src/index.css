@@ -11,10 +11,6 @@ body {
   border: 1px gray solid;
 }
 
-.translation {
-  color: blue;
-}
-
 .columns {
    column-count: 2;
    column-gap: 10px;
@@ -45,15 +41,26 @@ body {
    padding-top: 10px;
  }
 
+ .speaker {
+    font-weight: bold;
+    margin-bottom: 6px;
+    margin-left: 2px;
+ }
 .neutral {
    display: inline;
+   font-weight: normal !important;
  }
-
 .positive {
   color: #1F8605;
   display: inline;
+  font-weight: normal !important;
 }
 .negative {
   color: #DC2504;
   display: inline;
+  font-weight: normal !important;
+}
+.translation {
+  color: blue;
+  font-weight: normal !important;
 }
