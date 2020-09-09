@@ -524,6 +524,7 @@ async function deleteAllRegisteredWebHookSubscriptions() {
       }
     }
     console.log("Deleted all")
+    storeSubscriptionId("")
   }else{
     console.log("No subscription to delete")
   }
