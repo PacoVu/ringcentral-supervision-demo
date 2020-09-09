@@ -118,12 +118,12 @@ PhoneEngine.prototype = {
     query += " VALUES ($1,$2,$3,$4)"
     var values = [extensionId,"","",deviceId]
     query += " ON CONFLICT (ext_id) DO UPDATE SET device_id='" + deviceId + "'"
-    console.log(query)
+    //console.log(query)
     pgdb.insert(query, values, (err, result) =>  {
       if (err){
         console.error(err.message);
       }else{
-        console.log(result)
+        console.log("Done")
       }
     })
   },

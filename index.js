@@ -330,8 +330,10 @@ function createTable(callback){
 }
 
 async function getCallSessionInfo(payload){
+  console.log("getCallSessionInfo")
   var body = payload.body
   console.log(payload)
+
   var endpoint = `/restapi/v1.0/account/~/telephony/sessions/${body.telephonySessionId}`
   var res = await rcsdk.get(endpoint)
   var json = await res.json()
@@ -386,6 +388,7 @@ async function submitSuperviseRequest(inputParams){
               }
         params['agentExtensionId'] = inputParams.extensionId
         var res = await rcsdk.post(endpoint, params)
+        console.log("POST supervise succeeded")
       }catch(e) {
         console.log("POST supervise failed")
         console.log(e.message)
