@@ -4,10 +4,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="theme-color" content="#fff">
-    <!--
-      manifest.json provides metadata used when your web app is added to the
-      homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
-    -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
     <link rel="stylesheet" type="text/css" href="%PUBLIC_URL%/main.css">
@@ -16,43 +12,7 @@
 
     <link rel="stylesheet" type="text/css" href="%PUBLIC_URL%/css/main.css">
     <link rel="stylesheet" type="text/css" href="%PUBLIC_URL%/css/ui.css">
-    <!--script type="text/javascript" src="%PUBLIC_URL%/src/myscripts.js"></script-->
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
     <script>
-    /*
-    var OAuthCode = function() {
-      var authUri = "https://platform.ringcentral.com/restapi/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fringcentral-supervision-demo.herokuapp.com%2Foauth2callback&client_id=97gJYhYSTNyH7hmukrdbUg&state=&brand_id=1210&display=page&prompt=login%20consent%20sso&scope=&appUrlScheme=https%3A%2F%2Fringcentral-supervision-demo.herokuapp.com%2Foauth2callback";
-      var redirectUri = "https%3A%2F%2Fringcentral-supervision-demo.herokuapp.com%2Foauth2callback"
-      this.loginPopup  = function() {
-        this.loginPopupUri(authUri, redirectUri);
-      }
-        this.loginPopupUri  = function(authUri, redirectUri) {
-          var win         = window.open(authUri, 'windowname1', 'width=800, height=600');
-          var pollOAuth   = window.setInterval(function() {
-            try {
-              if (win.document.URL.indexOf(redirectUri) != -1) {
-                window.clearInterval(pollOAuth);
-                win.close();
-                window.setTimeout(function() {
-                  window.location.href = "loadmainpage"
-                }, 100)
-              }
-            } catch(e) {
-              console.log(e)
-          }
-        }, 100);
-      }
-    }
-    */
-
     </script>
     <title>Call Supervisor</title>
   </head>
@@ -63,16 +23,14 @@
           <span class="title">Call Supervisor Demo</span>
         </span>
         <ul class="nav navbar-nav navbar-left left-align-nav">
-          <li><div id="login"></div></li>
+          <li><div id="login">App Menu</div></li>
         </ul>
         <ul class="nav navbar-nav navbar-right middle-align">
           <li><a href="#">Settings</a></li>
         </ul>
-      </nav>
+    </nav>
 
     <div id="root"></div>
-
-    <div id="analytics"></div>
 
     <div id="footer" class="rc-login-footer">
       <div>
@@ -82,7 +40,6 @@
       </div>
       <span>© 1999 - 2020 RingCentral Intellectual Property.</span><br>
       All rights reserved. RingCentral and the RingCentral logo are trademarks of RingCentral, Inc.
-       With courtesy of Tyler Liu - The SVP of RC SDKs.
     </div>
   </body>
 </html>

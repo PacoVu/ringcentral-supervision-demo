@@ -24,11 +24,14 @@ PhoneEngine.prototype = {
     try {
         await this.softphone.register()
         this.storeDeviceId(extensionId, this.softphone.device.id)
+        console.log("SP DEVICE ID: " + this.softphone.device.id)
         server.sendPhoneEvent('ready')
 
         this.softphone.on('INVITE', sipMessage => {
           var headers = sipMessage.headers['p-rc-api-monitoring-ids'].split(";")
           var partyId = headers[0].split("=")[1]
+          console.log(headers[0])
+          console.log(headers[1])
           var channelIndex = 0
           for (channelIndex=0; channelIndex<this.channels.length; channelIndex++){
             if (this.channels[channelIndex].partyId == partyId){
@@ -83,7 +86,7 @@ PhoneEngine.prototype = {
       })
       this.softphone.on('BYE', sipMessage => {
         console.log("RECEIVE BYE MESSAGE => Hanged up now")
-        console.log(sipMessage.headers)
+        //console.log(sipMessage.headers)
         var i = 0
         for (i=0; i<this.channels.length; i++){
           var agent = this.channels[i]
@@ -111,15 +114,19 @@ PhoneEngine.prototype = {
     }
   },
   storeDeviceId: function (extensionId, deviceId){
-      var query = "UPDATE supervision_subscriptionids SET device_id='" + deviceId + "' WHERE ext_id=" + extensionId
-      console.log(query)
-      pgdb.update(query, (err, result) =>  {
-        if (err){
-          console.error(err.message);
-        }
-      })
+    var query = "INSERT INTO supervision_subscriptionids (ext_id,sub_id,tokens,device_id)"
+    query += " VALUES ($1,$2,$3,$4)"
+    var values = [extensionId,"","",deviceId]
+    query += " ON CONFLICT (ext_id) DO UPDATE SET device_id='" + deviceId + "'"
+    console.log(query)
+    pgdb.insert(query, values, (err, result) =>  {
+      if (err){
+        console.error(err.message);
+      }else{
+        console.log(result)
+      }
+    })
   },
-
   setChannel: function (agentObj){
     var channel = {
       speakerName: agentObj.speakerName,

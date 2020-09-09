@@ -64,3 +64,22 @@ body {
   color: blue;
   font-weight: normal !important;
 }
+
+.hide {
+  display: none;
+}
+
+.show {
+  display: block;
+}
+
+#about {
+  position: absolute;
+  x: 200;
+  y:400;
+  width: 300;
+  height: 200;
+  color: blue;
+  background-color: gray;
+  z-index: 100;
+}

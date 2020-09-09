@@ -91,6 +91,7 @@ app.get('*', cors(), (req, res) => {
 
 // Receiving RingCentral webhooks notifications
 app.post('/webhookcallback', function(req, res) {
+  console.log("webhooks")
     if(req.headers.hasOwnProperty("validation-token")) {
         res.setHeader('Validation-Token', req.headers['validation-token']);
         res.statusCode = 200;
@@ -330,6 +331,7 @@ function createTable(callback){
 
 async function getCallSessionInfo(payload){
   var body = payload.body
+  console.log(payload)
   var endpoint = `/restapi/v1.0/account/~/telephony/sessions/${body.telephonySessionId}`
   var res = await rcsdk.get(endpoint)
   var json = await res.json()
@@ -369,6 +371,7 @@ async function getCallSessionInfo(payload){
 async function submitSuperviseRequest(inputParams){
   readDeviceId(inputParams.ownerId, async function (err, deviceId){
     if (!err){
+      console.log("deviceId: " + deviceId)
       try{
         var endpoint = `/restapi/v1.0/account/~/telephony/sessions/`
         endpoint += `${inputParams.telSessionId}/parties/${inputParams.partyId}/supervise`
@@ -387,6 +390,8 @@ async function submitSuperviseRequest(inputParams){
         console.log("POST supervise failed")
         console.log(e.message)
       }
+    }else{
+      console.log(err)
     }
   })
 }
@@ -409,6 +414,7 @@ async function startWebhookSubscription() {
 
 function storeSubscriptionId(subId){
     query = "UPDATE supervision_subscriptionids SET sub_id='" + subId + "' WHERE ext_id=" + supervisorExtensionId
+    console.log(query)
     pgdb.update(query, (err, result) =>  {
       if (err){
         console.error(err.message);
@@ -417,6 +423,8 @@ function storeSubscriptionId(subId){
 }
 
 async function readCallMonitoringGroup(){
+  console.log(process.env.SUPERVISOR_GROUP_NAME)
+  console.log(process.env.AGENT_EXTENSION_NUMBER)
   var resp = await rcsdk.get('/restapi/v1.0/account/~/call-monitoring-groups')
   var jsonObj = await resp.json()
   for (var group of jsonObj.records){
@@ -426,6 +434,7 @@ async function readCallMonitoringGroup(){
       for (var member of jsonObj1.records){
         if (member.permissions[0] == "Monitored"){
           if (member.extensionNumber == process.env.AGENT_EXTENSION_NUMBER){
+            console.log("Monitored Agent: " + member.extensionNumber)
             agentInfo.id = member.id
             agentInfo.mergedTranscription = {
                   index: -1,
@@ -434,6 +443,7 @@ async function readCallMonitoringGroup(){
                   }
           }
         }else if (member.permissions[0] == "Monitoring"){
+          console.log("Supervisor: " + member.extensionNumber)
           supervisorExtensionId = member.id
         }
       }
