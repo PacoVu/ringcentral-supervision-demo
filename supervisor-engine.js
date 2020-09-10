@@ -57,7 +57,7 @@ PhoneEngine.prototype = {
                   creatingWatsonSocket = true
                   console.log("third frame sample rate: " + data.sampleRate)
                   if (data.sampleRate < 16000)
-                    MAXBUFFERSIZE = 16000 // Have to limit to 16K for running on heroku low memory!
+                    MAXBUFFERSIZE = 8000 // Have to limit to 16K for running on heroku low memory!
 
                   this.channels[channelIndex].watson.createWatsonSocket(data.sampleRate, (err, res) => {
                     if (!err) {

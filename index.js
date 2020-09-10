@@ -330,10 +330,8 @@ function createTable(callback){
 }
 
 async function getCallSessionInfo(payload){
-  console.log("getCallSessionInfo")
   var body = payload.body
-  console.log(payload)
-
+  //console.log(payload)
   var endpoint = `/restapi/v1.0/account/~/telephony/sessions/${body.telephonySessionId}`
   var res = await rcsdk.get(endpoint)
   var json = await res.json()
