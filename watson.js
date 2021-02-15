@@ -9,10 +9,11 @@ var fiftynineMinute = 59
 getWatsonToken()
 setInterval(function(){
   fiftynineMinute--
-  console.log("refresh watson token in " + fiftynineMinute + " mins")
+  //console.log("refresh watson token in " + fiftynineMinute + " mins")
   if (fiftynineMinute <= 1){
     getWatsonToken()
     fiftynineMinute = 59
+    console.log("refresh watson token")
   }
 }, 60000)
 
@@ -21,7 +22,7 @@ var english_language_model = 'en-US_NarrowbandModel'
 var eng_wsURI = '';
 
 function getWatsonToken(){
-  const wsURI = 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?access_token='
+  const wsURI = `wss://api.us-south.speech-to-text.watson.cloud.ibm.com/instances/${process.env.INSTANCE_ID}/v1/recognize?access_token=`
   request.post("https://iam.cloud.ibm.com/identity/token", {form:
       { grant_type:'urn:ibm:params:oauth:grant-type:apikey',
         apikey: process.env.WATSON_SPEECH2TEXT_API_KEY

@@ -35,7 +35,7 @@ createTable((err, res) => {
     if (err) {
         console.log(err, res)
     }else{
-        console.log("DONE => login")
+        console.log("DONE => Ready to login")
     }
 });
 
@@ -86,12 +86,13 @@ app.get('*', cors(), (req, res) => {
     'Access-Control-Allow-Origin': '*'
   });
   res.sendFile(path.join(__dirname + '/client/build/index.html'))
+  console.log("call login?")
   login()
 })
 
 // Receiving RingCentral webhooks notifications
 app.post('/webhookcallback', function(req, res) {
-  console.log("webhooks")
+  console.log('/webhookcallback')
     if(req.headers.hasOwnProperty("validation-token")) {
         res.setHeader('Validation-Token', req.headers['validation-token']);
         res.statusCode = 200;
@@ -102,20 +103,26 @@ app.post('/webhookcallback', function(req, res) {
             body.push(chunk);
         }).on('end', function() {
             body = Buffer.concat(body).toString();
+            //console.log(body)
+            //console.log("=======")
             var jsonObj = JSON.parse(body)
             if (jsonObj.subscriptionId == g_subscriptionId) {
               for (var party of jsonObj.body.parties){
                 if (party.direction === "Inbound"){
+                  //if (party.to.phoneNumber == "+12092484775"){
                     if (party.status.code === "Proceeding"){
                       if (agentInfo.id == party.extensionId)
                         sendPhoneEvent('ringing')
                     }else if (party.status.code === "Answered"){
-                      if (agentInfo.id == party.extensionId)
+                      if (party.extensionId == agentInfo.id){
                         getCallSessionInfo(jsonObj)
+                      }
                     }else if (party.status.code === "Disconnected"){
-                      if (agentInfo.id == party.extensionId)
+                      if (party.extensionId == agentInfo.id){
                         sendPhoneEvent('idle')
+                      }
                     }
+                  //}
                 }
               }
               res.statusCode = 200;
@@ -201,29 +208,9 @@ const rcsdk = new RingCentral({
   clientSecret: process.env.RINGCENTRAL_CLIENT_SECRET
 })
 
-async function readDeviceId(extId, callback){
-  var query = "SELECT device_id from supervision_subscriptionids WHERE ext_id=" + extId
-  pgdb.read(query, async (err, result) => {
-      if (!err){
-          if (result.rows.length){
-              var row = result.rows[0]
-              if (row['device_id'] != ""){
-                callback(null, row['device_id'])
-              }else{
-                callback("err", "")
-              }
-          }else{
-              console.log("no subId => call startWebHookSubscription")
-              callback("err", "")
-          }
-      }else{
-        callback("err", "")
-      }
-  })
-}
-
 async function loadSavedSubscriptionId(extId, callback){
-  var query = "SELECT sub_id from supervision_subscriptionids WHERE ext_id=" + extId
+  var table = process.env.ENVIRONMENT + "_supervision_subscriptionids"
+  var query = `SELECT sub_id from ${table} WHERE ext_id=${extId}`
   pgdb.read(query, async (err, result) => {
       if (!err){
           if (result.rows.length){
@@ -244,6 +231,7 @@ async function loadSavedSubscriptionId(extId, callback){
 }
 
 function startNotification(){
+  console.log("startNotification")
   loadSavedSubscriptionId(supervisorExtensionId, async function(err, res){
       if (err){
           startWebhookSubscription()
@@ -258,11 +246,33 @@ var platform = rcsdk.platform();
 
 platform.on(platform.events.loginSuccess, async function(e){
   console.log("Login success")
+  readCallMonitoringGroup((err, resp) => {
+    if (!err){
+      console.log("response: "  + resp)
+      console.log("supervisorExtensionId: " + supervisorExtensionId)
+      supervisor.initializePhoneEngine(rcsdk)
+      startNotification()
+    }else{
+      console.log(err)
+    }
+  })
 });
 
-platform.on(platform.events.refreshError, function(e){
-    console.log("Refresh token failed")
-    //login()
+platform.on(platform.events.refreshError, async function(e){
+    console.log(e.message)
+    try{
+      console.log("Cannot refresh token => login again")
+      await platform.login({
+        username: process.env.RINGCENTRAL_USERNAME,
+        extension: process.env.RINGCENTRAL_EXTENSION,
+        password: process.env.RINGCENTRAL_PASSWORD
+      })
+    }catch(e){
+      console.log(e.message)
+      console.log("LOGIN FAILED")
+      return
+    }
+
 });
 
 platform.on(platform.events.refreshSuccess, async function(res){
@@ -271,30 +281,25 @@ platform.on(platform.events.refreshSuccess, async function(res){
 
 async function login(){
   var loggedIn = await rcsdk.platform().loggedIn()
-  if (!loggedIn){
-    try{
-      await rcsdk.login({
-        username: process.env.RINGCENTRAL_USERNAME,
-        extension: process.env.RINGCENTRAL_EXTENSION,
-        password: process.env.RINGCENTRAL_PASSWORD
-      })
-      console.log("New login")
-    }catch(e){
-      console.log("LOGIN FAILED")
-      return
-    }
-  }else{
+  if (loggedIn){
     console.log("Still logged in => good to call APIs")
+    readCallMonitoringGroup((err, resp) => {
+      if (!err){
+        console.log("response: "  + resp)
+        console.log("supervisorExtensionId: " + supervisorExtensionId)
+        supervisor.initializePhoneEngine(rcsdk)
+        startNotification()
+      }else{
+        console.log(err)
+      }
+    })
   }
-  await readCallMonitoringGroup()
-
-  supervisor.initializePhoneEngine(rcsdk, supervisorExtensionId)
-  startNotification()
 }
 
 async function logout(){
   if (supervisorExtensionId != ""){
-    var query = "SELECT sub_id from supervision_subscriptionids WHERE ext_id=" + supervisorExtensionId
+    var table = process.env.ENVIRONMENT + "_supervision_subscriptionids"
+    var query = `SELECT sub_id from ${table} WHERE ext_id=${supervisorExtensionId}`
     pgdb.read(query, async (err, result) => {
       if (!err){
           if (result.rows.length){
@@ -302,7 +307,7 @@ async function logout(){
               if (row['sub_id'] != ""){
                 deleteRegisteredWebHookSubscription(row['sub_id'], async function(err, res){
                   await rcsdk.platform().logout()
-                  query = "UPDATE supervision_subscriptionids SET tokens='', sub_id='' WHERE ext_id=" + supervisorExtensionId
+                  query = `UPDATE ${table} SET tokens='', sub_id='' WHERE ext_id=${supervisorExtensionId}`
                   pgdb.update(query, (err, result) =>  {
                     if (err){
                       console.error(err.message);
@@ -319,7 +324,8 @@ async function logout(){
 }
 
 function createTable(callback){
-  pgdb.create_table("supervision_subscriptionids", "supervision_subscriptionids", (err, res) => {
+  var table = process.env.ENVIRONMENT + "_supervision_subscriptionids"
+  pgdb.create_table("supervision_subscriptionids", table, (err, res) => {
       if (err) {
           console.log(err, res)
           callback(err, null)
@@ -331,10 +337,10 @@ function createTable(callback){
 
 async function getCallSessionInfo(payload){
   var body = payload.body
-  //console.log(payload)
   var endpoint = `/restapi/v1.0/account/~/telephony/sessions/${body.telephonySessionId}`
   var res = await rcsdk.get(endpoint)
   var json = await res.json()
+  console.log(JSON.stringify(json))
   agentInfo.mergedTranscription = {
     index: -1,
     customer: [],
@@ -345,18 +351,20 @@ async function getCallSessionInfo(payload){
         var params = {
           ownerId: payload.ownerId,
           telSessionId: json.id,
-          extensionId: agentInfo.id.toString()
+          extensionId: agentInfo.id.toString() //
         }
         if (party.direction == "Outbound"){
             params['partyId'] = party.id
             params['speakerName'] = (party.from.name) ? party.from.name : "Customer"
             params['speakerId'] = 0 // a customer
+            console.log(params)
             submitSuperviseRequest(params)
         }else{
           if (party.extensionId == agentInfo.id.toString()){
             params['partyId'] = party.id
             params['speakerName'] = (party.to.name) ? party.to.name : "Agent"
             params['speakerId'] = 1 // an agent
+            console.log(params)
             submitSuperviseRequest(params)
           }
         }
@@ -369,9 +377,7 @@ async function getCallSessionInfo(payload){
 }
 
 async function submitSuperviseRequest(inputParams){
-  readDeviceId(inputParams.ownerId, async function (err, deviceId){
-    if (!err){
-      console.log("deviceId: " + deviceId)
+  if (supervisor.deviceId != ""){
       try{
         var endpoint = `/restapi/v1.0/account/~/telephony/sessions/`
         endpoint += `${inputParams.telSessionId}/parties/${inputParams.partyId}/supervise`
@@ -382,7 +388,7 @@ async function submitSuperviseRequest(inputParams){
         supervisor.setChannel(agentObj)
         var params = {
                 mode: 'Listen',
-                supervisorDeviceId: deviceId
+                supervisorDeviceId: supervisor.deviceId
               }
         params['agentExtensionId'] = inputParams.extensionId
         var res = await rcsdk.post(endpoint, params)
@@ -391,22 +397,24 @@ async function submitSuperviseRequest(inputParams){
         console.log("POST supervise failed")
         console.log(e.message)
       }
-    }else{
-      console.log(err)
-    }
-  })
+  }else{
+    console.log("No device Id")
+  }
 }
 
 async function startWebhookSubscription() {
-    var eventFilters = [`/restapi/v1.0/account/~/extension/${agentInfo.id}/telephony/sessions`]
+    var eventFilters = [
+      `/restapi/v1.0/account/~/extension/${agentInfo.id}/telephony/sessions`
+    ]
     var res = await  rcsdk.post('/restapi/v1.0/subscription',
               {
                   eventFilters: eventFilters,
                   deliveryMode: {
                       transportType: 'WebHook',
-                      address: process.env.DELIVERY_MODE_ADDRESS
+                      address: process.env.DELIVERY_ADDRESS
                   }
               })
+    console.log("Subscribed")
     var jsonObj = await res.json()
     console.log("Ready to receive telephonyStatus notification via WebHook.")
     g_subscriptionId = jsonObj.id
@@ -414,16 +422,17 @@ async function startWebhookSubscription() {
 }
 
 function storeSubscriptionId(subId){
-    query = "UPDATE supervision_subscriptionids SET sub_id='" + subId + "' WHERE ext_id=" + supervisorExtensionId
-    console.log(query)
-    pgdb.update(query, (err, result) =>  {
+  var table = process.env.ENVIRONMENT + "_supervision_subscriptionids"
+  query = `UPDATE ${table} SET sub_id='${subId}' WHERE ext_id=${supervisorExtensionId}`
+  console.log(query)
+  pgdb.update(query, (err, result) =>  {
       if (err){
         console.error(err.message);
       }
     })
 }
 
-async function readCallMonitoringGroup(){
+async function readCallMonitoringGroup(callback){
   console.log(process.env.SUPERVISOR_GROUP_NAME)
   console.log(process.env.AGENT_EXTENSION_NUMBER)
   var resp = await rcsdk.get('/restapi/v1.0/account/~/call-monitoring-groups')
@@ -448,17 +457,21 @@ async function readCallMonitoringGroup(){
           supervisorExtensionId = member.id
         }
       }
+      return callback(null, supervisorExtensionId)
     }
   }
+  callback("Cannot find call monitor group", "")
 }
 
 async function checkRegisteredWebHookSubscription(subscriptionId) {
     try {
       let response = await rcsdk.get('/restapi/v1.0/subscription')
-      let json = await response.json();
+      let json = await response.json()
+      console.log("checkRegisteredWebHookSubscription: " + json.records.length)
       if (json.records.length > 0){
         for(var record of json.records) {
           if (record.id == subscriptionId) {
+            console.log("sub id: " + record.id)
             if (record.deliveryMode.transportType == "WebHook"){
               if (process.env.DELETE_EXISTING_WEBHOOK_SUBSCRIPTION == 1){
                 // Needed for local test as ngrok address might be expired
@@ -466,7 +479,7 @@ async function checkRegisteredWebHookSubscription(subscriptionId) {
                 await rcsdk.delete('/restapi/v1.0/subscription/' + record.id)
                 startWebhookSubscription()
               }else{
-                await readCallMonitoringGroup()
+                //await readCallMonitoringGroup() WHY??
                 g_subscriptionId = subscriptionId
                 if (record.status != "Active"){
                   console.log("Subscription is not active => renew it")

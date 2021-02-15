@@ -23,7 +23,7 @@
     "path": "^0.12.7",
     "pg": "^7.18.2",
     "request": "^2.88.0",
-    "ringcentral-softphone": "^0.4.1",
+    "ringcentral-softphone": "^0.5.0",
     "wrtc": "^0.4.2",
     "ws": "^7.1.2"
   },

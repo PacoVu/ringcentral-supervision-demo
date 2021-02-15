@@ -5,33 +5,35 @@ const Softphone = require('ringcentral-softphone').default
 
 const WatsonEngine = require('./watson.js');
 var server = require('./index')
-var MAXBUFFERSIZE = 64000
+var MAXBUFFERSIZE = 32000
 
 function PhoneEngine() {
   this.channels = []
   this.softphone = null
-  console.log("constructor")
+  this.deviceId = ""
   return this
 }
 
 PhoneEngine.prototype = {
-  initializePhoneEngine: async function(rcsdk, extensionId){
+  initializePhoneEngine: async function(rcsdk){
     if (this.softphone){
       console.log("Has been initialized")
       return
     }
     this.softphone = new Softphone(rcsdk)
     try {
+        console.log("CREATE SP REGISTER?")
         await this.softphone.register()
-        this.storeDeviceId(extensionId, this.softphone.device.id)
-        console.log("SP DEVICE ID: " + this.softphone.device.id)
+        this.deviceId = this.softphone.device.id
         server.sendPhoneEvent('ready')
 
         this.softphone.on('INVITE', sipMessage => {
+          console.log("SIP Invite")
+          console.log("p-rc-api-ids " + sipMessage.headers['p-rc-api-ids'])
+          console.log("p-rc-api-monitoring-ids " + sipMessage.headers['p-rc-api-monitoring-ids'])
           var headers = sipMessage.headers['p-rc-api-monitoring-ids'].split(";")
+          //var headers = sipMessage.headers['p-rc-api-ids'].split(";")
           var partyId = headers[0].split("=")[1]
-          console.log(headers[0])
-          console.log(headers[1])
           var channelIndex = 0
           for (channelIndex=0; channelIndex<this.channels.length; channelIndex++){
             if (this.channels[channelIndex].partyId == partyId){
@@ -110,22 +112,9 @@ PhoneEngine.prototype = {
         }
       })
     }catch(e){
-        console.log(e)
+      console.log("FAILED REGISTER?")
+      console.log(e)
     }
-  },
-  storeDeviceId: function (extensionId, deviceId){
-    var query = "INSERT INTO supervision_subscriptionids (ext_id,sub_id,tokens,device_id)"
-    query += " VALUES ($1,$2,$3,$4)"
-    var values = [extensionId,"","",deviceId]
-    query += " ON CONFLICT (ext_id) DO UPDATE SET device_id='" + deviceId + "'"
-    //console.log(query)
-    pgdb.insert(query, values, (err, result) =>  {
-      if (err){
-        console.error(err.message);
-      }else{
-        console.log("Done")
-      }
-    })
   },
   setChannel: function (agentObj){
     var channel = {
