@@ -406,19 +406,24 @@ async function startWebhookSubscription() {
     var eventFilters = [
       `/restapi/v1.0/account/~/extension/${agentInfo.id}/telephony/sessions`
     ]
-    var res = await  rcsdk.post('/restapi/v1.0/subscription',
-              {
-                  eventFilters: eventFilters,
-                  deliveryMode: {
-                      transportType: 'WebHook',
-                      address: process.env.DELIVERY_ADDRESS
-                  }
-              })
-    console.log("Subscribed")
-    var jsonObj = await res.json()
-    console.log("Ready to receive telephonyStatus notification via WebHook.")
-    g_subscriptionId = jsonObj.id
-    storeSubscriptionId(jsonObj.id)
+    console.log(process.env.DELIVERY_ADDRESS)
+    try{
+      var res = await  rcsdk.post('/restapi/v1.0/subscription',
+                {
+                    eventFilters: eventFilters,
+                    deliveryMode: {
+                        transportType: 'WebHook',
+                        address: process.env.DELIVERY_ADDRESS
+                    }
+                })
+      console.log("Subscribed")
+      var jsonObj = await res.json()
+      console.log("Ready to receive telephonyStatus notification via WebHook.")
+      g_subscriptionId = jsonObj.id
+      storeSubscriptionId(jsonObj.id)
+    }catch(e){
+      console.log(e.message)
+    }
 }
 
 function storeSubscriptionId(subId){
