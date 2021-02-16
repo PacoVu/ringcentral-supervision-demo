@@ -106,6 +106,7 @@ app.post('/webhookcallback', function(req, res) {
             //console.log(body)
             //console.log("=======")
             var jsonObj = JSON.parse(body)
+            //console.log(jsonObj.subscriptionId + " == " +  g_subscriptionId)
             if (jsonObj.subscriptionId == g_subscriptionId) {
               for (var party of jsonObj.body.parties){
                 if (party.direction === "Inbound"){
@@ -358,7 +359,7 @@ async function getCallSessionInfo(payload){
             params['speakerName'] = (party.from.name) ? party.from.name : "Customer"
             params['speakerId'] = 0 // a customer
             console.log(params)
-            //submitSuperviseRequest(params)
+            submitSuperviseRequest(params)
         }else{
           if (party.extensionId == agentInfo.id.toString()){
             params['partyId'] = party.id
