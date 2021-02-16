@@ -358,7 +358,7 @@ async function getCallSessionInfo(payload){
             params['speakerName'] = (party.from.name) ? party.from.name : "Customer"
             params['speakerId'] = 0 // a customer
             console.log(params)
-            submitSuperviseRequest(params)
+            //submitSuperviseRequest(params)
         }else{
           if (party.extensionId == agentInfo.id.toString()){
             params['partyId'] = party.id
