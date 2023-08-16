@@ -9,7 +9,7 @@ Login your RingCentral developer account at https://developers.ringcentral.com a
 ## Clone the project and Setup
 
 ```
-git clone https://github.com/PacoVu/ringcentral-supervision-demo
+git clone -b Simple-NoUI-NoDB https://github.com/PacoVu/ringcentral-supervision-demo
 cd ringcentral-supervision-demo
 $ npm install --save
 cp .env.sample .env
