@@ -4,7 +4,7 @@
 Login your RingCentral developer account at https://developers.ringcentral.com and create an app with the following requirements:
 - App type: "Web Server"
 - Authorization: "Only members of my organization/company" (a.k.a password flow)
-- Permissions: Call Control - ReadAccounts - WebhookSubscriptions
+- Permissions: Call Control - ReadAccounts - WebhookSubscriptions - VoIP Calling
 
 ## Clone the project and Setup
 
@@ -21,22 +21,9 @@ Edit `.env` to specify credentials.
 - `RINGCENTRAL_CLIENT_ID`=Your App Client Id
 - `RINGCENTRAL_CLIENT_SECRET`=Your App Client Secret
 
-- `RINGCENTRAL_USERNAME`=Your_Supervisor_Username
-- `RINGCENTRAL_EXTENSION`=Your_Supervisor_Extension_Number
-- `RINGCENTRAL_PASSWORD`=Your_Supervisor_Password
+- `RINGCENTRAL_JWT`=Call_Supervisor_JWT
 
-- `AGENT_EXTENSION_NUMBER`=Your_Agent_Extension_Number
-- `SUPERVISOR_GROUP_NAME`=Demo Supervisor
-
- - `WATSON_SPEECH2TEXT_API_KEY`=Your_Watson_Speech_To_Text_Api_Key
- - `WATSON_LANGUAGE_TRANSLATION_API_KEY`=Your Watson Language Translation service API key
- - `WATSON_NLU_API_KEY`=Your Watson NLU service API key
-
- - `PGHOST`=Your local Postgres host (e.g. localhost)
- - `PGUSER`=Your Postgres user name
- - `PGDATABASE`=Your Postgres database name
- - `PGPASSWORD`=Your Postgres password
- - `PGPORT`=Your Postgres port (e.g. 5432)
+- `SUPERVISOR_GROUP_NAME`=Call Monitor GroupName
 
 ## Setup a Call Monitoring Group
 Login your sandbox account at https://service.devtest.ringcentral.com and create a call monitoring group and name it "Demo Supervisor"
@@ -45,12 +32,11 @@ Login your sandbox account at https://service.devtest.ringcentral.com and create
 - Choose 2 user extensions as the monitored agents.
 
 ## Run the demo
-Open 3 terminal windows and run the following command on each window. Assumed that you are under the main project folder.
+Open 2 terminal windows and run the following command on each window. Assumed that you are under the main project folder.
 
 Ngrok tunnel
 ```
-$ cd ringcentral-supervision-demo
-$ ngrok http 5000
+% ngrok http 3000
 ```
 Copy the ngrok address and specify it in the .env as follow:
 
@@ -58,21 +44,17 @@ Copy the ngrok address and specify it in the .env as follow:
 
 Start server
 ```
-$ cd ringcentral-supervision-demo
-$ node index.js
-```
-
-Start client
-```
-$ cd ringcentral-supervision-demo
-$ cd client
-$ npm start
+% cd ringcentral-supervision-demo
+% node index.js
 ```
 
 ## Test
 
 Make an call to the monitored agent phone number, answer it and start a conversation.
 
-Watch the conversation transcription on the client app.
+Hang up the call and check the audio recording .raw files.
 
-Enable the translation to see conversation translated from English to Spanish.
+Play back the audio using this command (on MacOS). Change the rate accordingly if it is not 8000
+```
+% play -e signed -b 16 -c 1 -r 8000 xxx.raw
+```
