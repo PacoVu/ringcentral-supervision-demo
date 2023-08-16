@@ -40,9 +40,9 @@ export default class App extends Component {
     this.negativestepsColors = ['#3da940','#3da940','#3da940','#53b83a','#84c42b','#f1bc00','#ed8d00','#d12000']
     this.isLoggedIn = false;
     /* For testing in localhost */
-    //this.eventSource = new EventSource('http://localhost:5000/events');
+    this.eventSource = new EventSource('http://localhost:3000/events');
     /* For testing in remote server */
-    this.eventSource = new EventSource('/events');
+    //this.eventSource = new EventSource('/events');
   }
 
   async componentDidMount() {

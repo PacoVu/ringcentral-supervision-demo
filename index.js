@@ -7,7 +7,7 @@ var fs = require('fs')
 
 const RingCentral = require('@ringcentral/sdk').SDK
 const PhoneEngine = require('./supervisor-engine');
-
+/*
 var agentInfo = {
     id: "",
     mergedTranscription: {
@@ -16,6 +16,9 @@ var agentInfo = {
       agent: []
     }
 }
+*/
+var monitoredAgents = []
+
 var supervisorExtensionId = ""
 
 // Create the server
@@ -31,8 +34,9 @@ var eventResponse = null
 var g_subscriptionId = ""
 
 createTable((err, res) => {
-    console.log(res)
+    console.log("What is this")
     if (err) {
+      console.log("Error create table")
         console.log(err, res)
     }else{
         console.log("DONE => Ready to login")
@@ -92,7 +96,7 @@ app.get('*', cors(), (req, res) => {
 
 // Receiving RingCentral webhooks notifications
 app.post('/webhookcallback', function(req, res) {
-  console.log('/webhookcallback')
+  //console.log('/webhookcallback')
     if(req.headers.hasOwnProperty("validation-token")) {
         res.setHeader('Validation-Token', req.headers['validation-token']);
         res.statusCode = 200;
@@ -110,16 +114,31 @@ app.post('/webhookcallback', function(req, res) {
             if (jsonObj.subscriptionId == g_subscriptionId) {
               for (var party of jsonObj.body.parties){
                 if (party.direction === "Inbound"){
-                  //if (party.to.phoneNumber == "+12092484775"){
+                  //if (party.to.phoneNumber == "+xxxx"){
                     if (party.status.code === "Proceeding"){
-                      if (agentInfo.id == party.extensionId)
+                      var agent = monitoredAgents.find(o => o.id == party.extensionId)
+                      if (agent){
+                        agent.status = party.status.code
                         sendPhoneEvent('ringing')
+                      }
                     }else if (party.status.code === "Answered"){
-                      if (party.extensionId == agentInfo.id){
-                        getCallSessionInfo(jsonObj)
+                      var agent = monitoredAgents.find(o => o.id == party.extensionId)
+                      if (agent){
+                        if (agent.status == "Hold")
+                          return
+                        agent.status = party.status.code
+                        getCallSessionInfo(jsonObj, agent)
+                      }
+                    }else if (party.status.code === "Hold"){
+                      var agent = monitoredAgents.find(o => o.id == party.extensionId)
+                      if (agent){
+                        agent.status = party.status.code
+                        // Can pause recording/monitoring for this party
                       }
                     }else if (party.status.code === "Disconnected"){
-                      if (party.extensionId == agentInfo.id){
+                      var agent = monitoredAgents.find(o => o.id == party.extensionId)
+                      if (agent){
+                        agent.status = party.status.code
                         sendPhoneEvent('idle')
                       }
                     }
@@ -133,7 +152,7 @@ app.post('/webhookcallback', function(req, res) {
     }
 })
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
   console.log(`Running on port ${PORT}`)
 })
@@ -153,6 +172,7 @@ function sendPhoneEvent(status){
 }
 
 function mergingChannels(speakerId, transcript){
+  var agentInfo = monitoredAgents.find(o => o.id == '595861017')
   if (speakerId == 0){ // customer
     for (let i = 0; i < agentInfo.mergedTranscription.customer.length; i++) {
       if (agentInfo.mergedTranscription.customer[i].index === transcript.index){
@@ -227,6 +247,9 @@ async function loadSavedSubscriptionId(extId, callback){
               console.log("no subId => call startWebHookSubscription")
               callback("err", "")
           }
+      }else{
+        console.log("loadSavedSubscriptionId Failed")
+        callback("err", "")
       }
   })
 }
@@ -328,21 +351,23 @@ function createTable(callback){
   var table = process.env.ENVIRONMENT + "_supervision_subscriptionids"
   pgdb.create_table("supervision_subscriptionids", table, (err, res) => {
       if (err) {
-          console.log(err, res)
+          console.log(err)
+          console.log("failed create table")
           callback(err, null)
       }else{
-          callback(null, "done")
+        console.log("create table done")
+        callback(null, "done")
       }
   })
 }
 
-async function getCallSessionInfo(payload){
+async function getCallSessionInfo(payload, agent){
   var body = payload.body
   var endpoint = `/restapi/v1.0/account/~/telephony/sessions/${body.telephonySessionId}`
   var res = await rcsdk.get(endpoint)
   var json = await res.json()
   console.log(JSON.stringify(json))
-  agentInfo.mergedTranscription = {
+  agent.mergedTranscription = {
     index: -1,
     customer: [],
     agent: []
@@ -352,7 +377,7 @@ async function getCallSessionInfo(payload){
         var params = {
           ownerId: payload.ownerId,
           telSessionId: json.id,
-          extensionId: agentInfo.id.toString() //
+          extensionId: agent.id.toString() //
         }
         if (party.direction == "Outbound"){
             params['partyId'] = party.id
@@ -361,7 +386,7 @@ async function getCallSessionInfo(payload){
             console.log(params)
             submitSuperviseRequest(params)
         }else{
-          if (party.extensionId == agentInfo.id.toString()){
+          if (party.extensionId == agent.id.toString()){
             params['partyId'] = party.id
             params['speakerName'] = (party.to.name) ? party.to.name : "Agent"
             params['speakerId'] = 1 // an agent
@@ -404,10 +429,12 @@ async function submitSuperviseRequest(inputParams){
 }
 
 async function startWebhookSubscription() {
-    var eventFilters = [
-      `/restapi/v1.0/account/~/extension/${agentInfo.id}/telephony/sessions`
-    ]
-    console.log(process.env.DELIVERY_ADDRESS)
+  console.log("startWebhookSubscription")
+    var eventFilters = []
+    for (var agent of monitoredAgents){
+      eventFilters.push(`/restapi/v1.0/account/~/extension/${agent.id}/telephony/sessions`)
+    }
+    console.log(eventFilters)
     try{
       var res = await  rcsdk.post('/restapi/v1.0/subscription',
                 {
@@ -430,34 +457,40 @@ async function startWebhookSubscription() {
 function storeSubscriptionId(subId){
   var table = process.env.ENVIRONMENT + "_supervision_subscriptionids"
   query = `UPDATE ${table} SET sub_id='${subId}' WHERE ext_id=${supervisorExtensionId}`
-  console.log(query)
-  pgdb.update(query, (err, result) =>  {
+  var query = `INSERT INTO ${table} (ext_id, sub_id, tokens, device_id)`
+  query += " VALUES ($1,$2,$3,$4)"
+  var values = [supervisorExtensionId, subId, "", ""]
+  query += ` ON CONFLICT (ext_id) DO UPDATE SET sub_id='${subId}'`
+  pgdb.insert(query, values, (err, result) =>  {
       if (err){
         console.error(err.message);
       }
+      console.log("subscription id saved!")
     })
 }
 
 async function readCallMonitoringGroup(callback){
   console.log(process.env.SUPERVISOR_GROUP_NAME)
-  console.log(process.env.AGENT_EXTENSION_NUMBER)
   var resp = await rcsdk.get('/restapi/v1.0/account/~/call-monitoring-groups')
   var jsonObj = await resp.json()
+  monitoredAgents = []
   for (var group of jsonObj.records){
     if (group.name == process.env.SUPERVISOR_GROUP_NAME){
       var resp = await rcsdk.get('/restapi/v1.0/account/~/call-monitoring-groups/' + group.id + "/members")
       var jsonObj1 = await resp.json()
       for (var member of jsonObj1.records){
         if (member.permissions[0] == "Monitored"){
-          if (member.extensionNumber == process.env.AGENT_EXTENSION_NUMBER){
             console.log("Monitored Agent: " + member.extensionNumber)
-            agentInfo.id = member.id
-            agentInfo.mergedTranscription = {
+            var agentInfo = {
+                id: member.id,
+                status: 'Disconnected',
+                mergedTranscription: {
                   index: -1,
                   customer: [],
                   agent: []
-                  }
-          }
+                }
+            }
+            monitoredAgents.push(agentInfo)
         }else if (member.permissions[0] == "Monitoring"){
           console.log("Supervisor: " + member.extensionNumber)
           supervisorExtensionId = member.id

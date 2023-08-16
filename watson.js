@@ -3,6 +3,7 @@ const WS = require('ws')
 const request = require('request')
 const TranslatorV3 = require('ibm-watson/language-translator/v3');
 const NLUnderstandingV1 = require("ibm-watson/natural-language-understanding/v1.js")
+//const { IamAuthenticator } = require('ibm-watson/auth');
 
 var fiftynineMinute = 59
 
@@ -37,19 +38,30 @@ function WatsonEngine(speakerName, speakerId) {
   this.doTranslation = false
   this.ws = null
   this.speakerId = speakerId
-
+  this.NLUnderstanding = undefined
+  /*
   this.NLUnderstanding = new NLUnderstandingV1({
-    version: '2019-07-12',
+
+    version: '2021-08-01',
     iam_apikey: process.env.WATSON_NLU_API_KEY,
     url: 'https://gateway.watsonplatform.net/natural-language-understanding/api'
-  });
 
+    //
+    version: '2021-08-01',
+    authenticator: new IamAuthenticator({
+      apikey: process.env.WATSON_NLU_API_KEY,
+    }),
+    serviceUrl: 'https://api.us-east.natural-language-understanding.watson.cloud.ibm.com',
+    //
+  });
+  */
+  /*
   this.translator = new TranslatorV3({
     version: '2018-05-01',
     iam_apikey: process.env.WATSON_LANGUAGE_TRANSLATION_API_KEY,
     url: 'https://gateway.watsonplatform.net/language-translator/api'
   });
-
+  */
   this.sentimentScore = 0
   this.sentimentCount = 1
 
@@ -112,6 +124,7 @@ WatsonEngine.prototype = {
 
     this.ws.onerror = function(evt) {
       console.log("Watson Socket error")
+      console.log(evt)
       callback(evt, "")
     };
     this.ws.on('message', function(evt) {
@@ -134,21 +147,28 @@ WatsonEngine.prototype = {
                 thisClass.transcript.translation = translatedText
                 console.log("ORIGIONAL: " + text)
                 console.log("TRANSLATED: " + translatedText)
-                if (wordCount > 4){
-                  thisClass.analyze(text, (err, data) => {
+                if (thisClass.NLUnderstanding){
+                  if (wordCount > 4){
+                    thisClass.analyze(text, (err, data) => {
+                      server.mergingChannels(thisClass.speakerId, thisClass.transcript)
+                    })
+                  }else{
                     server.mergingChannels(thisClass.speakerId, thisClass.transcript)
-                  })
-                }else{
+                  }
+                }else
                   server.mergingChannels(thisClass.speakerId, thisClass.transcript)
-                }
               })
             }else
               server.mergingChannels(thisClass.speakerId, thisClass.transcript)
           }else{
-            if (wordCount > 4){
-              thisClass.analyze(text, (err, data) => {
+            if (thisClass.NLUnderstanding){
+              if (wordCount > 4){
+                thisClass.analyze(text, (err, data) => {
+                  server.mergingChannels(thisClass.speakerId, thisClass.transcript)
+                })
+              }else{
                 server.mergingChannels(thisClass.speakerId, thisClass.transcript)
-              })
+              }
             }else{
               server.mergingChannels(thisClass.speakerId, thisClass.transcript)
             }

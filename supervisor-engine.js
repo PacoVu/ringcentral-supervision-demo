@@ -25,6 +25,7 @@ PhoneEngine.prototype = {
         console.log("CREATE SP REGISTER?")
         await this.softphone.register()
         this.deviceId = this.softphone.device.id
+        console.log(this.deviceId)
         server.sendPhoneEvent('ready')
 
         this.softphone.on('INVITE', sipMessage => {
@@ -79,7 +80,7 @@ PhoneEngine.prototype = {
                   if (localSpeachRegconitionReady){
                     this.channels[channelIndex].watson.transcribe(buffer)
                   }else{
-                    console.log("Dumping data")
+                    console.log(`Dumping data of party ${this.channels[channelIndex].partyId} / ${this.channels[channelIndex].speakerName}`)
                   }
                   buffer = null
               }
@@ -93,6 +94,8 @@ PhoneEngine.prototype = {
         for (i=0; i<this.channels.length; i++){
           var agent = this.channels[i]
           if (agent.callId == sipMessage.headers['Call-Id']){
+            console.log(`Agent callId: ${agent.callId}`)
+            console.log(`Agent party id: ${this.channels[i].partyId}`)
             this.channels[i].partyId = ""
             server.sendPhoneEvent('ready')
             this.channels[i].audioSink.stop()
