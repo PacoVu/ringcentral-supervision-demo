@@ -2,8 +2,8 @@
 
 ## Create a RingCentral app
 Login your RingCentral developer account at https://developers.ringcentral.com and create an app with the following requirements:
-- App type: "Web Server"
-- Authorization: "Only members of my organization/company" (a.k.a password flow)
+- App type: "Server Only/No UI"
+- Authorization: "JWT flow
 - Permissions: Call Control - ReadAccounts - WebhookSubscriptions - VoIP Calling
 
 ## Clone the project and Setup
