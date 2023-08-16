@@ -287,9 +287,7 @@ platform.on(platform.events.refreshError, async function(e){
     try{
       console.log("Cannot refresh token => login again")
       await platform.login({
-        username: process.env.RINGCENTRAL_USERNAME,
-        extension: process.env.RINGCENTRAL_EXTENSION,
-        password: process.env.RINGCENTRAL_PASSWORD
+        jwt: process.env.RINGCENTRAL_JWT
       })
     }catch(e){
       console.log(e.message)
