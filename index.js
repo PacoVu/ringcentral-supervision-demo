@@ -270,6 +270,7 @@ var platform = rcsdk.platform();
 
 platform.on(platform.events.loginSuccess, async function(e){
   console.log("Login success")
+  /*
   readCallMonitoringGroup((err, resp) => {
     if (!err){
       console.log("response: "  + resp)
@@ -280,6 +281,15 @@ platform.on(platform.events.loginSuccess, async function(e){
       console.log(err)
     }
   })
+  */
+  await readCallMonitoringGroup()
+  if (supervisorExtensionId != ""){
+    console.log("supervisorExtensionId: " + supervisorExtensionId)
+    supervisor.initializePhoneEngine(rcsdk)
+    startNotification()
+  }else{
+    console.log("Cannot read call monitor group")
+  }
 });
 
 platform.on(platform.events.refreshError, async function(e){
@@ -467,7 +477,7 @@ function storeSubscriptionId(subId){
     })
 }
 
-async function readCallMonitoringGroup(callback){
+async function readCallMonitoringGroupSync(callback){
   console.log(process.env.SUPERVISOR_GROUP_NAME)
   var resp = await rcsdk.get('/restapi/v1.0/account/~/call-monitoring-groups')
   var jsonObj = await resp.json()
@@ -498,6 +508,40 @@ async function readCallMonitoringGroup(callback){
     }
   }
   callback("Cannot find call monitor group", "")
+}
+
+async function readCallMonitoringGroup(){
+  console.log(process.env.SUPERVISOR_GROUP_NAME)
+  var resp = await rcsdk.get('/restapi/v1.0/account/~/call-monitoring-groups')
+  var jsonObj = await resp.json()
+  monitoredAgents = []
+  for (var group of jsonObj.records){
+    if (group.name == process.env.SUPERVISOR_GROUP_NAME){
+      var resp = await rcsdk.get('/restapi/v1.0/account/~/call-monitoring-groups/' + group.id + "/members")
+      var jsonObj1 = await resp.json()
+      for (var member of jsonObj1.records){
+        if (member.permissions[0] == "Monitored"){
+            console.log("Monitored Agent: " + member.extensionNumber)
+            var agentInfo = {
+                id: member.id,
+                status: 'Disconnected',
+                mergedTranscription: {
+                  index: -1,
+                  customer: [],
+                  agent: []
+                }
+            }
+            monitoredAgents.push(agentInfo)
+        }else if (member.permissions[0] == "Monitoring"){
+          console.log("Supervisor: " + member.extensionNumber)
+          supervisorExtensionId = member.id
+        }
+      }
+      //return callback(null, supervisorExtensionId)
+    }
+  }
+  //callback("Cannot find call monitor group", "")
+  return
 }
 
 async function checkRegisteredWebHookSubscription(subscriptionId) {

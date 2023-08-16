@@ -58,6 +58,15 @@ module.exports = {
   read: (query, callback) => {
     return pool.query(query, callback)
   },
+  readAsync: async (query) => {
+    let response;
+    try {
+      response = await pool.query(query);
+      return response;
+    } catch (error) {
+      return null
+    }
+  },
   update: (query, callback) => {
     return pool.query(query, callback)
   },
