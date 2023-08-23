@@ -20,7 +20,9 @@ require('dotenv').config()
 
 
 let supervisor = new PhoneEngine()
-
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
 
 // Receiving RingCentral webhooks notifications
 app.post('/webhookcallback', function(req, res) {
