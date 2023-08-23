@@ -3,9 +3,48 @@ const pgdb = require('./db')
 const { RTCAudioSink } = require('wrtc').nonstandard
 const Softphone = require('ringcentral-softphone').default
 
+const opus = require('node-opus');
+const wav = require('wav');
 const WatsonEngine = require('./watson.js');
 var server = require('./index')
 var MAXBUFFERSIZE = 32000
+
+function convertOpusToWav(opusFilePath, wavFilePath) 
+{
+  // Read the Opus file
+  const opusBuffer = fs.readFileSync(opusFilePath);
+
+  // Create a new Opus decoder
+  const opusDecoder = new opus.Decoder();
+
+  // Create a new WAV file writer
+  const wavFileWriter = new wav.FileWriter(wavFilePath, {
+    channels: 2,       // Stereo
+    sampleRate: 48000, // Adjust according to your Opus audio
+    bitDepth: 16       // 16-bit PCM
+  });
+
+  // Pipe Opus data through the decoder and then into the WAV writer
+  opusDecoder.pipe(wavFileWriter);
+
+  // Write the Opus data to the decoder, triggering the conversion
+  opusDecoder.end(opusBuffer);
+
+  // Handle the finish event when writing is complete
+  wavFileWriter.on('finish', () => {
+    console.log('Conversion complete: Opus to WAV');
+  });
+
+  // Handle any errors that occur during the conversion
+  opusDecoder.on('error', (error) => {
+    console.error('Opus decoding error:', error);
+  });
+
+  wavFileWriter.on('error', (error) => {
+    console.error('WAV writing error:', error);
+  });
+}
+
 
 function PhoneEngine() {
   this.channels = []
@@ -151,6 +190,7 @@ PhoneEngine.prototype = {
       }else{
           this.channels[i].audioStream.close()
       }
+      convertOpusToWav(audioPath, audioPath.replace(".raw", ".wav") );
     }
   },
   enableTranslation: function(flag) {
