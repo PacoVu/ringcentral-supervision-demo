@@ -12,7 +12,7 @@ Login your RingCentral developer account at https://developers.ringcentral.com a
 git clone -b Simple-NoUI-NoDB https://github.com/PacoVu/ringcentral-supervision-demo
 cd ringcentral-supervision-demo
 $ npm install --save
-cp .env.sample .env
+cp dotenv .env
 ```
 
 Edit `.env` to specify credentials.
@@ -40,7 +40,7 @@ Ngrok tunnel
 ```
 Copy the ngrok address and specify it in the .env as follow:
 
-`DELIVERY_MODE_ADDRESS=https://XXXXXXXX.ngrok.io/webhookcallback`
+`DELIVERY_ADDRESS=https://XXXXXXXX.ngrok.io/webhookcallback`
 
 Start server
 ```
