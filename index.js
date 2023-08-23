@@ -1,102 +1,31 @@
 const express = require('express')
-const cors = require('cors')
-const path = require('path')
-const pgdb = require('./db')
-const async = require('async')
 var fs = require('fs')
 
 const RingCentral = require('@ringcentral/sdk').SDK
 const PhoneEngine = require('./supervisor-engine');
-/*
-var agentInfo = {
-    id: "",
-    mergedTranscription: {
-      index: -1,
-      customer: [],
-      agent: []
-    }
-}
-*/
+
 var monitoredAgents = []
 
-var supervisorExtensionId = ""
+//var supervisorExtensionId = ""
+const subscriptionFile = "subscription.txt"
+var subscriptionId = ''
+if (fs.existsSync(subscriptionFile))
+  subscriptionId = fs.readFileSync(subscriptionFile, "utf-8")
 
+console.log("subscriptionId", subscriptionId)
 // Create the server
 const app = express()
-
-app.use(express.static(path.join(__dirname, 'client/build')))
 
 require('dotenv').config()
 
 
 let supervisor = new PhoneEngine()
-var eventResponse = null
-var g_subscriptionId = ""
-
-createTable((err, res) => {
-    console.log("What is this")
-    if (err) {
-      console.log("Error create table")
-        console.log(err, res)
-    }else{
-        console.log("DONE => Ready to login")
-    }
-});
-
-app.get('/events', cors(), async (req, res) => {
-  console.log("METHOD EVENTS")
-  res.set({
-    'Connection': 'keep-alive',
-    'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache',
-    'Access-Control-Allow-Origin': '*'
-  });
-  res.statusCode = 200;
-  eventResponse = res
-})
-
-app.get('/enable_translation', cors(), async (req, res) => {
-  console.log("ENABLE TRANSLATION")
-  var queryData = req.query;
-  console.log(queryData.enable)
-  supervisor.enableTranslation(queryData.enable)
-  res.statusCode = 200;
-  res.end();
-})
-
-app.get('/enable_recording', cors(), async (req, res) => {
-  console.log("ENABLE RECORDING")
-  var queryData = req.query;
-  console.log(queryData.enable)
-  supervisor.enableRecording(queryData.enable)
-  res.statusCode = 200;
-  res.end();
-})
-
-// Remove all subscriptions. Needed when changing test environments. E.g. localhost and heroku
-app.get('/delete_subscriptions', cors(), async (req, res) => {
-  console.log("DELETE ALL SUBs")
-  deleteAllRegisteredWebHookSubscriptions()
-  res.statusCode = 200;
-  res.end();
-})
-
-app.get('*', cors(), (req, res) => {
-  console.log("LOAD INDEX")
-  res.set({
-    'Connection': 'keep-alive',
-    'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache',
-    'Access-Control-Allow-Origin': '*'
-  });
-  res.sendFile(path.join(__dirname + '/client/build/index.html'))
-  console.log("call login?")
-  login()
+app.get('/', (req, res) => {
+  res.send('Hello World!')
 })
 
 // Receiving RingCentral webhooks notifications
 app.post('/webhookcallback', function(req, res) {
-  //console.log('/webhookcallback')
     if(req.headers.hasOwnProperty("validation-token")) {
         res.setHeader('Validation-Token', req.headers['validation-token']);
         res.statusCode = 200;
@@ -105,30 +34,41 @@ app.post('/webhookcallback', function(req, res) {
         var body = []
         req.on('data', function(chunk) {
             body.push(chunk);
-        }).on('end', function() {
+        }).on('end', async function() {
             body = Buffer.concat(body).toString();
-            //console.log(body)
-            //console.log("=======")
             var jsonObj = JSON.parse(body)
-            //console.log(jsonObj.subscriptionId + " == " +  g_subscriptionId)
-            if (jsonObj.subscriptionId == g_subscriptionId) {
+            if (jsonObj.subscriptionId == subscriptionId) {
               for (var party of jsonObj.body.parties){
                 if (party.direction === "Inbound"){
-                  //if (party.to.phoneNumber == "+xxxx"){
                     if (party.status.code === "Proceeding"){
                       var agent = monitoredAgents.find(o => o.id == party.extensionId)
                       if (agent){
                         agent.status = party.status.code
-                        sendPhoneEvent('ringing')
+                        console.log('ringing')
                       }
                     }else if (party.status.code === "Answered"){
                       var agent = monitoredAgents.find(o => o.id == party.extensionId)
                       if (agent){
-                        if (agent.status == "Hold")
+                        if (agent.status == "Hold"){
+                          console.log("Call on hold => return")
+                          agent.status = party.status.code
                           return
+                        }
+                        console.log("Answered", party)
                         agent.status = party.status.code
-                        getCallSessionInfo(jsonObj, agent)
+                        if (!party.status.hasOwnProperty('reason')){
+                          await getCallSessionInfo(jsonObj, agent)
+                        }else{
+                          console.log(party.status)
+                          if (party.status.reason == "AttendedTransfer"){
+                            console.log('Attended transfers this call')
+                            await getWarmTransferSessionInfo(jsonObj, agent)
+                          }
+                        }
+                      }else{
+                        console.log("body")
                       }
+                      console.log('answered')
                     }else if (party.status.code === "Hold"){
                       var agent = monitoredAgents.find(o => o.id == party.extensionId)
                       if (agent){
@@ -139,10 +79,20 @@ app.post('/webhookcallback', function(req, res) {
                       var agent = monitoredAgents.find(o => o.id == party.extensionId)
                       if (agent){
                         agent.status = party.status.code
-                        sendPhoneEvent('idle')
+                        console.log('idle')
                       }
+                    }else if (party.status.code === "Gone"){
+                      console.log("Ignore Gone event")
+
+                      var agent = monitoredAgents.find(o => o.id == party.extensionId)
+                      if (agent){
+                        console.log("Gone", jsonObj.body)
+                        agent.status = party.status.code
+                        console.log('Agent transfers this call')
+                        getWarmTransferSessionInfo(jsonObj, agent)
+                      }
+
                     }
-                  //}
                 }
               }
               res.statusCode = 200;
@@ -157,119 +107,40 @@ app.listen(PORT, () => {
   console.log(`Running on port ${PORT}`)
 })
 
-
-function sendPhoneEvent(status){
-  var res = 'event: phoneEvent\ndata: ' + status + '\n\n'
-  if (eventResponse != null){
-    if (!eventResponse.finished) {
-        eventResponse.write(res);
-    }else{
-      console.log("eventResponse is finished")
-    }
+function startNotification(){
+  console.log("startNotification")
+  if (subscriptionId == ""){
+    console.log("create new subscription?")
+    startWebhookSubscription()
   }else{
-    console.log("eventResponse is null")
+    checkRegisteredWebHookSubscription()
   }
 }
-
-function mergingChannels(speakerId, transcript){
-  var agentInfo = monitoredAgents.find(o => o.id == '595861017')
-  if (speakerId == 0){ // customer
-    for (let i = 0; i < agentInfo.mergedTranscription.customer.length; i++) {
-      if (agentInfo.mergedTranscription.customer[i].index === transcript.index){
-        transcript.index = agentInfo.mergedTranscription.index
-        return sendTranscriptEvents(transcript)
-      }
-    }
-    agentInfo.mergedTranscription.index++
-    var item = {
-      index: transcript.index,
-      text: transcript.text
-    }
-    agentInfo.mergedTranscription.customer.push(item)
-    transcript.index = agentInfo.mergedTranscription.index
-    sendTranscriptEvents(transcript)
-  }else{ // agent
-    for (let i = 0; i < agentInfo.mergedTranscription.agent.length; i++) {
-      if (agentInfo.mergedTranscription.agent[i].index === transcript.index){
-        transcript.index = agentInfo.mergedTranscription.index
-        return sendTranscriptEvents(transcript)
-      }
-    }
-    agentInfo.mergedTranscription.index++
-    var item = {
-      index: transcript.index,
-      text: transcript.text
-    }
-    agentInfo.mergedTranscription.agent.push(item)
-    transcript.index = agentInfo.mergedTranscription.index
-    sendTranscriptEvents(transcript)
-  }
-}
-
-function sendTranscriptEvents(transcript) {
-  var t = JSON.stringify(transcript)
-  var res = 'event: transcriptUpdate\ndata: ' + t + '\n\n'
-  if (eventResponse != null){
-    if (!eventResponse.finished) {
-        eventResponse.write(res);
-    }else{
-      console.log("eventResponse is finished")
-    }
-  }else{
-    console.log("eventResponse is null")
-  }
-}
-
-module.exports.mergingChannels = mergingChannels;
-module.exports.sendPhoneEvent = sendPhoneEvent;
 
 const rcsdk = new RingCentral({
   server: process.env.RINGCENTRAL_SERVER_URL,
   clientId: process.env.RINGCENTRAL_CLIENT_ID,
   clientSecret: process.env.RINGCENTRAL_CLIENT_SECRET
 })
-
-async function loadSavedSubscriptionId(extId, callback){
-  var table = process.env.ENVIRONMENT + "_supervision_subscriptionids"
-  var query = `SELECT sub_id from ${table} WHERE ext_id=${extId}`
-  pgdb.read(query, async (err, result) => {
-      if (!err){
-          if (result.rows.length){
-              var row = result.rows[0]
-              if (row['sub_id'] != ""){
-                console.log("has subId => call checkRegisteredWebHookSubscription")
-                callback(null, row['sub_id'])
-              }else{
-                console.log("subId empty => call startWebHookSubscription")
-                callback("err", "")
-              }
-          }else{
-              console.log("no subId => call startWebHookSubscription")
-              callback("err", "")
-          }
-      }else{
-        console.log("loadSavedSubscriptionId Failed")
-        callback("err", "")
-      }
-  })
-}
-
-function startNotification(){
-  console.log("startNotification")
-  loadSavedSubscriptionId(supervisorExtensionId, async function(err, res){
-      if (err){
-          startWebhookSubscription()
-      }else{
-          console.log("saved subId: " + res)
-          checkRegisteredWebHookSubscription(res)
-      }
-  })
-}
-
 var platform = rcsdk.platform();
+
+login()
+async function login(){
+  try{
+    await platform.login({
+      jwt: process.env.RINGCENTRAL_JWT
+    })
+  }catch(e){
+    console.log(e.message)
+    console.log("LOGIN FAILED")
+    return
+  }
+}
+
 
 platform.on(platform.events.loginSuccess, async function(e){
   console.log("Login success")
+<<<<<<< HEAD
   /*
   readCallMonitoringGroup((err, resp) => {
     if (!err){
@@ -289,8 +160,22 @@ platform.on(platform.events.loginSuccess, async function(e){
     startNotification()
   }else{
     console.log("Cannot read call monitor group")
+=======
+  let result = await readCallMonitoringGroup()
+  if (result != ""){
+    supervisor.initializePhoneEngine(rcsdk)
+    startNotification()
+  }else{
+    console.log("Cannot find call monitor group", "")
+>>>>>>> 4246e74f9eca65e51025737ed3a5d593d6294472
   }
 });
+
+// handle auto refresh token
+setInterval(function (){
+  platform.loggedIn()
+  console.log("Force auto refresh hourly")
+}, 3600000)
 
 platform.on(platform.events.refreshError, async function(e){
     console.log(e.message)
@@ -304,110 +189,115 @@ platform.on(platform.events.refreshError, async function(e){
       console.log("LOGIN FAILED")
       return
     }
-
 });
 
 platform.on(platform.events.refreshSuccess, async function(res){
     console.log("Refresh token success")
 });
 
-async function login(){
-  var loggedIn = await rcsdk.platform().loggedIn()
-  if (loggedIn){
-    console.log("Still logged in => good to call APIs")
-    readCallMonitoringGroup((err, resp) => {
-      if (!err){
-        console.log("response: "  + resp)
-        console.log("supervisorExtensionId: " + supervisorExtensionId)
-        supervisor.initializePhoneEngine(rcsdk)
-        startNotification()
-      }else{
-        console.log(err)
-      }
-    })
-  }
-}
-
-async function logout(){
-  if (supervisorExtensionId != ""){
-    var table = process.env.ENVIRONMENT + "_supervision_subscriptionids"
-    var query = `SELECT sub_id from ${table} WHERE ext_id=${supervisorExtensionId}`
-    pgdb.read(query, async (err, result) => {
-      if (!err){
-          if (result.rows.length){
-              var row = result.rows[0]
-              if (row['sub_id'] != ""){
-                deleteRegisteredWebHookSubscription(row['sub_id'], async function(err, res){
-                  await rcsdk.platform().logout()
-                  query = `UPDATE ${table} SET tokens='', sub_id='' WHERE ext_id=${supervisorExtensionId}`
-                  pgdb.update(query, (err, result) =>  {
-                    if (err){
-                      console.error(err.message);
-                    }
-                    console.log("reset subscription")
-                  })
-                  return
-                })
-              }
-          }
-      }
-    })
-  }
-}
-
-function createTable(callback){
-  var table = process.env.ENVIRONMENT + "_supervision_subscriptionids"
-  pgdb.create_table("supervision_subscriptionids", table, (err, res) => {
-      if (err) {
-          console.log(err)
-          console.log("failed create table")
-          callback(err, null)
-      }else{
-        console.log("create table done")
-        callback(null, "done")
-      }
-  })
-}
 
 async function getCallSessionInfo(payload, agent){
   var body = payload.body
   var endpoint = `/restapi/v1.0/account/~/telephony/sessions/${body.telephonySessionId}`
-  var res = await rcsdk.get(endpoint)
-  var json = await res.json()
-  console.log(JSON.stringify(json))
-  agent.mergedTranscription = {
-    index: -1,
-    customer: [],
-    agent: []
+  var resp = await platform.get(endpoint)
+  var jsonObj = await resp.json()
+  console.log("getCallSessionInfo - Call sessions")
+  const forLoop = async _ => {
+    for (let party of jsonObj.parties) {
+      if (party.status.code == "Disconnected"){
+        console.log('This party got disconnected => Cannot supervised', party.id)
+      }else if (party.status.code == "Answered"){
+        //console.log('party', party)
+        let existingChannel = supervisor.getChannel(party.id)
+        if (existingChannel == undefined){
+          var params = {
+            ownerId: payload.ownerId,
+            telSessionId: jsonObj.id,
+            extensionId: agent.id.toString() //
+          }
+          if (party.direction == "Outbound"){
+              params['partyId'] = party.id
+              params['speakerName'] = (party.from.name) ? party.from.name : "Customer"
+              params['speakerId'] = 0 // a customer
+              await submitSuperviseRequest(params)
+          }else{
+            if (party.extensionId == agent.id.toString()){
+              params['partyId'] = party.id
+              params['speakerName'] = (party.to.name) ? party.to.name : "Agent"
+              params['speakerId'] = 1 // an agent
+              await submitSuperviseRequest(params)
+            }
+          }
+        }else{
+          console.log("This party is being monitored.", party.id)
+        }
+      }
+    }
   }
-  async.each(json.parties,
-      function(party, callback){
+  forLoop()
+}
+
+async function getWarmTransferSessionInfo(payload, agent){
+  var body = payload.body
+  var endpoint = `/restapi/v1.0/account/~/telephony/sessions/${body.telephonySessionId}`
+  var resp = await platform.get(endpoint)
+  var jsonObj = await resp.json()
+  console.log("getWarmTransferSessionInfo - Call sessions")
+  const forLoop = async _ => {
+    for (let party of jsonObj.parties) {
+      if (party.status.code == "Disconnected"){
+        console.log('This party got disconnected => Cannot supervised', party.id)
+      }else if (party.status.code == "Gone" && party.status.reason == "AttendedTransfer"){
         var params = {
           ownerId: payload.ownerId,
-          telSessionId: json.id,
-          extensionId: agent.id.toString() //
+          telSessionId: body.telephonySessionId,
+          extensionId: agent.id.toString() //party.extensionId //
         }
         if (party.direction == "Outbound"){
-            params['partyId'] = party.id
+            var partyId = party.status.peerId.partyId
+            params['telSessionId'] = party.status.peerId.sessionId
+            params['partyId'] = partyId.replace('-2', '-1')
             params['speakerName'] = (party.from.name) ? party.from.name : "Customer"
             params['speakerId'] = 0 // a customer
-            console.log(params)
-            submitSuperviseRequest(params)
+            console.log("Subcribe for Customer after transfer???")
+            await submitSuperviseRequest(params)
         }else{
           if (party.extensionId == agent.id.toString()){
             params['partyId'] = party.id
             params['speakerName'] = (party.to.name) ? party.to.name : "Agent"
             params['speakerId'] = 1 // an agent
-            console.log(params)
-            submitSuperviseRequest(params)
+            console.log("Subcribe for Agent after transfer???")
+            await submitSuperviseRequest(params)
           }
         }
-        callback(null, "")
-      },
-      function(err){
-        console.log("done")
+      }else if (party.status.code == "Answered"){
+        let existingChannel = supervisor.getChannel(party.id)
+        if (existingChannel == undefined){
+          var params = {
+            ownerId: payload.ownerId,
+            telSessionId: jsonObj.id,
+            extensionId: agent.id.toString() //
+          }
+          if (party.direction == "Outbound"){
+              params['partyId'] = party.id
+              params['speakerName'] = (party.from.name) ? party.from.name : "Customer"
+              params['speakerId'] = 0 // a customer
+              await submitSuperviseRequest(params)
+          }else{
+            if (party.extensionId == agent.id.toString()){
+              params['partyId'] = party.id
+              params['speakerName'] = (party.to.name) ? party.to.name : "Agent"
+              params['speakerId'] = 1 // an agent
+              await submitSuperviseRequest(params)
+            }
+          }
+        }else{
+          console.log("This party is being monitored.", party.id)
+        }
       }
-    );
+    }
+  }
+  forLoop()
 }
 
 async function submitSuperviseRequest(inputParams){
@@ -425,14 +315,20 @@ async function submitSuperviseRequest(inputParams){
                 supervisorDeviceId: supervisor.deviceId
               }
         params['agentExtensionId'] = inputParams.extensionId
-        var res = await rcsdk.post(endpoint, params)
+        var res = await platform.post(endpoint, params)
+        console.log("ENDPOINT", endpoint)
+        console.log(params)
         console.log("POST supervise succeeded")
       }catch(e) {
-        console.log("POST supervise failed")
+        console.log("ENDPOINT", endpoint)
+        console.log(params)
         console.log(e.message)
+        console.log("POST supervise failed => remove this from supervised channels!")
+        supervisor.removeChannel(inputParams.partyId)
+
       }
   }else{
-    console.log("No device Id")
+    console.log("No supervisor's device Id => Check and try Softphone registration again")
   }
 }
 
@@ -444,24 +340,26 @@ async function startWebhookSubscription() {
     }
     console.log(eventFilters)
     try{
-      var res = await  rcsdk.post('/restapi/v1.0/subscription',
+      var res = await  platform.post('/restapi/v1.0/subscription',
                 {
                     eventFilters: eventFilters,
                     deliveryMode: {
                         transportType: 'WebHook',
                         address: process.env.DELIVERY_ADDRESS
-                    }
+                    },
+                    expiresIn: 86400
                 })
       console.log("Subscribed")
       var jsonObj = await res.json()
       console.log("Ready to receive telephonyStatus notification via WebHook.")
-      g_subscriptionId = jsonObj.id
-      storeSubscriptionId(jsonObj.id)
+      subscriptionId = jsonObj.id
+      fs.writeFileSync(subscriptionFile, subscriptionId)
     }catch(e){
       console.log(e.message)
     }
 }
 
+<<<<<<< HEAD
 function storeSubscriptionId(subId){
   var table = process.env.ENVIRONMENT + "_supervision_subscriptionids"
   query = `UPDATE ${table} SET sub_id='${subId}' WHERE ext_id=${supervisorExtensionId}`
@@ -478,10 +376,14 @@ function storeSubscriptionId(subId){
 }
 
 async function readCallMonitoringGroupSync(callback){
+=======
+async function readCallMonitoringGroup(){
+>>>>>>> 4246e74f9eca65e51025737ed3a5d593d6294472
   console.log(process.env.SUPERVISOR_GROUP_NAME)
   var resp = await rcsdk.get('/restapi/v1.0/account/~/call-monitoring-groups')
   var jsonObj = await resp.json()
   monitoredAgents = []
+  var supervisorExtensionId = ""
   for (var group of jsonObj.records){
     if (group.name == process.env.SUPERVISOR_GROUP_NAME){
       var resp = await rcsdk.get('/restapi/v1.0/account/~/call-monitoring-groups/' + group.id + "/members")
@@ -504,12 +406,12 @@ async function readCallMonitoringGroupSync(callback){
           supervisorExtensionId = member.id
         }
       }
-      return callback(null, supervisorExtensionId)
     }
   }
-  callback("Cannot find call monitor group", "")
+  return supervisorExtensionId
 }
 
+<<<<<<< HEAD
 async function readCallMonitoringGroup(){
   console.log(process.env.SUPERVISOR_GROUP_NAME)
   var resp = await rcsdk.get('/restapi/v1.0/account/~/call-monitoring-groups')
@@ -545,6 +447,9 @@ async function readCallMonitoringGroup(){
 }
 
 async function checkRegisteredWebHookSubscription(subscriptionId) {
+=======
+async function checkRegisteredWebHookSubscription() {
+>>>>>>> 4246e74f9eca65e51025737ed3a5d593d6294472
     try {
       let response = await rcsdk.get('/restapi/v1.0/subscription')
       let json = await response.json()
@@ -557,14 +462,12 @@ async function checkRegisteredWebHookSubscription(subscriptionId) {
               if (process.env.DELETE_EXISTING_WEBHOOK_SUBSCRIPTION == 1){
                 // Needed for local test as ngrok address might be expired
                 console.log("Subscription exist => delete it then subscribe a new one")
-                await rcsdk.delete('/restapi/v1.0/subscription/' + record.id)
+                await platform.delete('/restapi/v1.0/subscription/' + record.id)
                 startWebhookSubscription()
               }else{
-                //await readCallMonitoringGroup() WHY??
-                g_subscriptionId = subscriptionId
                 if (record.status != "Active"){
                   console.log("Subscription is not active => renew it")
-                  await rcsdk.post('/restapi/v1.0/subscription/' + record.id + "/renew")
+                  await platform.post('/restapi/v1.0/subscription/' + record.id + "/renew")
                   console.log("Renew: " + record.id)
                 }else {
                   console.log("Subscription is active => good to go.")
@@ -581,7 +484,7 @@ async function checkRegisteredWebHookSubscription(subscriptionId) {
     }catch(e){
       console.log("checkRegisteredWebHookSubscription ERROR")
       console.log(e)
-      login()
+      //login()
     }
 }
 
@@ -616,7 +519,7 @@ async function deleteAllRegisteredWebHookSubscriptions() {
       }
     }
     console.log("Deleted all")
-    storeSubscriptionId("")
+    fs.writeFileSync(subscriptionFile, "")
   }else{
     console.log("No subscription to delete")
   }
