@@ -3,9 +3,10 @@ const pgdb = require('./db')
 const { RTCAudioSink } = require('wrtc').nonstandard
 const Softphone = require('ringcentral-softphone').default
 
-const opus = require('node-opus');
+const opus = require('@discordjs/opus');
+
 const wav = require('wav');
-const WatsonEngine = require('./watson.js');
+
 var server = require('./index')
 var MAXBUFFERSIZE = 32000
 
