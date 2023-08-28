@@ -140,34 +140,12 @@ async function login(){
 
 platform.on(platform.events.loginSuccess, async function(e){
   console.log("Login success")
-<<<<<<< HEAD
-  /*
-  readCallMonitoringGroup((err, resp) => {
-    if (!err){
-      console.log("response: "  + resp)
-      console.log("supervisorExtensionId: " + supervisorExtensionId)
-      supervisor.initializePhoneEngine(rcsdk)
-      startNotification()
-    }else{
-      console.log(err)
-    }
-  })
-  */
-  await readCallMonitoringGroup()
-  if (supervisorExtensionId != ""){
-    console.log("supervisorExtensionId: " + supervisorExtensionId)
-    supervisor.initializePhoneEngine(rcsdk)
-    startNotification()
-  }else{
-    console.log("Cannot read call monitor group")
-=======
   let result = await readCallMonitoringGroup()
   if (result != ""){
     supervisor.initializePhoneEngine(rcsdk)
     startNotification()
   }else{
     console.log("Cannot find call monitor group", "")
->>>>>>> 4246e74f9eca65e51025737ed3a5d593d6294472
   }
 });
 
@@ -359,26 +337,7 @@ async function startWebhookSubscription() {
     }
 }
 
-<<<<<<< HEAD
-function storeSubscriptionId(subId){
-  var table = process.env.ENVIRONMENT + "_supervision_subscriptionids"
-  query = `UPDATE ${table} SET sub_id='${subId}' WHERE ext_id=${supervisorExtensionId}`
-  var query = `INSERT INTO ${table} (ext_id, sub_id, tokens, device_id)`
-  query += " VALUES ($1,$2,$3,$4)"
-  var values = [supervisorExtensionId, subId, "", ""]
-  query += ` ON CONFLICT (ext_id) DO UPDATE SET sub_id='${subId}'`
-  pgdb.insert(query, values, (err, result) =>  {
-      if (err){
-        console.error(err.message);
-      }
-      console.log("subscription id saved!")
-    })
-}
-
-async function readCallMonitoringGroupSync(callback){
-=======
 async function readCallMonitoringGroup(){
->>>>>>> 4246e74f9eca65e51025737ed3a5d593d6294472
   console.log(process.env.SUPERVISOR_GROUP_NAME)
   var resp = await rcsdk.get('/restapi/v1.0/account/~/call-monitoring-groups')
   var jsonObj = await resp.json()
@@ -411,45 +370,7 @@ async function readCallMonitoringGroup(){
   return supervisorExtensionId
 }
 
-<<<<<<< HEAD
-async function readCallMonitoringGroup(){
-  console.log(process.env.SUPERVISOR_GROUP_NAME)
-  var resp = await rcsdk.get('/restapi/v1.0/account/~/call-monitoring-groups')
-  var jsonObj = await resp.json()
-  monitoredAgents = []
-  for (var group of jsonObj.records){
-    if (group.name == process.env.SUPERVISOR_GROUP_NAME){
-      var resp = await rcsdk.get('/restapi/v1.0/account/~/call-monitoring-groups/' + group.id + "/members")
-      var jsonObj1 = await resp.json()
-      for (var member of jsonObj1.records){
-        if (member.permissions[0] == "Monitored"){
-            console.log("Monitored Agent: " + member.extensionNumber)
-            var agentInfo = {
-                id: member.id,
-                status: 'Disconnected',
-                mergedTranscription: {
-                  index: -1,
-                  customer: [],
-                  agent: []
-                }
-            }
-            monitoredAgents.push(agentInfo)
-        }else if (member.permissions[0] == "Monitoring"){
-          console.log("Supervisor: " + member.extensionNumber)
-          supervisorExtensionId = member.id
-        }
-      }
-      //return callback(null, supervisorExtensionId)
-    }
-  }
-  //callback("Cannot find call monitor group", "")
-  return
-}
-
-async function checkRegisteredWebHookSubscription(subscriptionId) {
-=======
 async function checkRegisteredWebHookSubscription() {
->>>>>>> 4246e74f9eca65e51025737ed3a5d593d6294472
     try {
       let response = await rcsdk.get('/restapi/v1.0/subscription')
       let json = await response.json()
