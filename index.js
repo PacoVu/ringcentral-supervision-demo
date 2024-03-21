@@ -7,16 +7,7 @@ var fs = require('fs')
 
 const RingCentral = require('@ringcentral/sdk').SDK
 const PhoneEngine = require('./supervisor-engine');
-/*
-var agentInfo = {
-    id: "",
-    mergedTranscription: {
-      index: -1,
-      customer: [],
-      agent: []
-    }
-}
-*/
+
 var monitoredAgents = []
 
 var supervisorExtensionId = ""
