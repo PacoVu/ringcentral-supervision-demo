@@ -4,9 +4,7 @@ RINGCENTRAL_SERVER_URL=https://platform.devtest.ringcentral.com
 RINGCENTRAL_CLIENT_ID=Your_App_Client_Id
 RINGCENTRAL_CLIENT_SECRET=Your_App_client_Secret
 
-RINGCENTRAL_USERNAME=Your_Supervisor_Username
-RINGCENTRAL_EXTENSION=Your_Supervisor_Extension_Number
-RINGCENTRAL_PASSWORD=Your_Supervisor_Password
+RINGCENTRAL_JWT=Your_Supervisor_JWT
 
 AGENT_EXTENSION_NUMBER=Your_Agent_Extension_Number
 SUPERVISOR_GROUP_NAME=Demo Supervisor
