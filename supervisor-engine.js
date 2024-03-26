@@ -1,119 +1,118 @@
 const fs = require('fs')
-const pgdb = require('./db')
-const { RTCAudioSink } = require('wrtc').nonstandard
+const RtpPacket = require('werift-rtp')
 const Softphone = require('ringcentral-softphone').default
 
 const WatsonEngine = require('./watson.js');
 var server = require('./index')
-var MAXBUFFERSIZE = 32000
+var MAXBUFFERSIZE = 12000
 
 function PhoneEngine() {
   this.channels = []
   this.softphone = null
-  this.deviceId = ""
   return this
 }
 
 PhoneEngine.prototype = {
-  initializePhoneEngine: async function(rcsdk){
+  initializePhoneEngine: async function(){
+    this.softphone = new Softphone({
+      username: process.env.SIP_INFO_USERNAME,
+      password: process.env.SIP_INFO_PASSWORD,
+      authorizationId: process.env.SIP_INFO_AUTHORIZATION_ID,
+    });
+
     if (this.softphone){
       console.log("Has been initialized")
+    }else{
+      console.log("SP initialization failed")
       return
     }
-    this.softphone = new Softphone(rcsdk)
+
     try {
-        console.log("CREATE SP REGISTER?")
-        await this.softphone.register()
-        this.deviceId = this.softphone.device.id
-        console.log(this.deviceId)
-        server.sendPhoneEvent('ready')
+      await this.softphone.register();
+      server.sendPhoneEvent('ready')
+      // detect inbound call
+      this.softphone.on('invite', async (sipMessage) => {
 
-        this.softphone.on('INVITE', sipMessage => {
-          console.log("SIP Invite")
-          console.log("p-rc-api-ids " + sipMessage.headers['p-rc-api-ids'])
-          console.log("p-rc-api-monitoring-ids " + sipMessage.headers['p-rc-api-monitoring-ids'])
-          var headers = sipMessage.headers['p-rc-api-monitoring-ids'].split(";")
-          //var headers = sipMessage.headers['p-rc-api-ids'].split(";")
-          var partyId = headers[0].split("=")[1]
-          var channelIndex = 0
-          for (channelIndex=0; channelIndex<this.channels.length; channelIndex++){
-            if (this.channels[channelIndex].partyId == partyId){
-              this.channels[channelIndex].callId = sipMessage.headers['Call-Id']
-              this.channels[channelIndex].watson = new WatsonEngine(this.channels[channelIndex].speakerName, this.channels[channelIndex].speakerId)
-              this.softphone.answer(sipMessage)
-              server.sendPhoneEvent('connected')
-              break
-            }
-          }
-          var localSpeachRegconitionReady = false
-          this.softphone.once('track', e => {
-            this.channels[channelIndex].audioSink = new RTCAudioSink(e.track)
-            var buffer = null
-            var creatingWatsonSocket = false
-            var dump3Frames = 3
-            this.channels[channelIndex].audioSink.ondata = data => {
-              if (this.channels[channelIndex].doRecording)
-                this.channels[channelIndex].audioStream.write(Buffer.from(data.samples.buffer))
-              if (!creatingWatsonSocket && !localSpeachRegconitionReady){
-                dump3Frames--
-                if (dump3Frames <= 0){
-                  creatingWatsonSocket = true
-                  console.log("third frame sample rate: " + data.sampleRate)
-                  //if (data.sampleRate < 16000)
-                  //  MAXBUFFERSIZE = 8000 // Have to limit to 16K for running on heroku low memory!
+        console.log("SIP Invite")
+        var headers = sipMessage.headers['p-rc-api-ids'].split(";")
+        if (sipMessage.headers['p-rc-api-monitoring-ids']){
+          console.log("p-rc-api-monitoring-ids ", sipMessage.headers['p-rc-api-monitoring-ids'])
+          headers = sipMessage.headers['p-rc-api-monitoring-ids'].split(";")
+        }
 
-                  this.channels[channelIndex].watson.createWatsonSocket(data.sampleRate, (err, res) => {
-                    if (!err) {
-                      localSpeachRegconitionReady = true
-                      console.log("WatsonSocket created! " + res)
-                    }else{
-                      console.log("WatsonSocket creation failed!!!!!")
-                    }
-                  })
-                }
-              }
-              if (buffer != null){
-                  buffer = Buffer.concat([buffer, Buffer.from(data.samples.buffer)])
-              }else
-                  buffer = Buffer.from(data.samples.buffer)
-              if (buffer.length > MAXBUFFERSIZE){
-                  if (localSpeachRegconitionReady){
-                    this.channels[channelIndex].watson.transcribe(buffer)
-                  }else{
-                    console.log(`Dumping data of party ${this.channels[channelIndex].partyId} / ${this.channels[channelIndex].speakerName}`)
-                  }
-                  buffer = null
-              }
-            }
-          })
-      })
-      this.softphone.on('BYE', sipMessage => {
-        console.log("RECEIVE BYE MESSAGE => Hanged up now")
-        //console.log(sipMessage.headers)
-        var i = 0
-        for (i=0; i<this.channels.length; i++){
-          var agent = this.channels[i]
-          if (agent.callId == sipMessage.headers['Call-Id']){
-            console.log(`Agent callId: ${agent.callId}`)
-            console.log(`Agent party id: ${this.channels[i].partyId}`)
-            this.channels[i].partyId = ""
-            server.sendPhoneEvent('ready')
-            this.channels[i].audioSink.stop()
-            this.channels[i].audioSink = null
-            if (agent.doRecording){
-              this.channels[i].audioStream.end()
-              this.channels[i].audioStream = null
-            }
-            var thisClass = this
-            setTimeout(function () {
-              thisClass.channels[i].watson.closeConnection()
-              thisClass.channels[i].watson = null
-              //thisClass.channels.splice(i, 1);
-            }, 15000, i)
+        var partyId = headers[0].split("=")[1]
+        var channelIndex = 0
+
+        for (channelIndex=0; channelIndex<this.channels.length; channelIndex++){
+          if (this.channels[channelIndex].partyId == partyId){
+            this.channels[channelIndex].callId = sipMessage.headers['Call-Id']
+            this.channels[channelIndex].watson = new WatsonEngine(this.channels[channelIndex].speakerName, this.channels[channelIndex].speakerId)
             break
           }
         }
-      })
+
+        // answer the call
+        this.channels[channelIndex].callSession = await this.softphone.answer(sipMessage);
+        server.sendPhoneEvent('connected')
+
+        // receive audio
+        var buffer = null
+        var watsonSpeachRegconitionReady = false
+
+        // Create Watson engine
+        this.channels[channelIndex].watson.createWatsonSocket(8000, (err, res) => {
+            if (!err) {
+              watsonSpeachRegconitionReady = true
+              console.log("WatsonSocket created! " + res)
+            }else{
+              console.log("WatsonSocket creation failed!!!!!")
+            }
+        })
+
+        this.channels[channelIndex].callSession.on('audioPacket', (rtpPacket) => {
+            if (this.channels[channelIndex].doRecording)
+                this.channels[channelIndex].audioStream.write(rtpPacket.payload)
+
+            if (buffer != null){
+                buffer = Buffer.concat([buffer, Buffer.from(rtpPacket.payload)])
+            }else{
+                buffer = Buffer.from(rtpPacket.payload)
+            }
+            if (buffer.length > MAXBUFFERSIZE){
+                if (watsonSpeachRegconitionReady){
+                  this.channels[channelIndex].watson.transcribe(buffer)
+                }else{
+                  console.log(`Dumping data of party ${this.channels[channelIndex].partyId} / ${this.channels[channelIndex].speakerName}`)
+                }
+                buffer = null
+            }
+        });
+
+        // Either the agent or the customer hang up
+        this.channels[channelIndex].callSession.once('disposed', () => {
+          console.log("RECEIVE BYE MESSAGE => Hanged up now for this channel:")
+          console.log("Stop recording!")
+
+          console.log(`Agent callId: ${this.channels[channelIndex].callId}`)
+          console.log(`Agent party id: ${this.channels[channelIndex].partyId}`)
+          server.sendPhoneEvent('ready')
+          if (this.channels[channelIndex].doRecording){
+                this.channels[channelIndex].audioStream.end()
+                this.channels[channelIndex].audioStream.close()
+                this.channels[channelIndex].audioStream = null
+          }
+
+          var thisClass = this
+          setTimeout(function (partyId) {
+            var index = thisClass.channels.findIndex( c => c.partyId === partyId)
+            if (index >= 0){
+              thisClass.channels[index].watson.closeConnection()
+              thisClass.channels[index].watson = null
+              thisClass.channels.splice(index, 1)
+            }
+          }, 10000, this.channels[channelIndex].partyId)
+        });
+      });
     }catch(e){
       console.log("FAILED REGISTER?")
       console.log(e)
@@ -128,12 +127,13 @@ PhoneEngine.prototype = {
       partyId : agentObj.partyId,
       callId: "",
       watson: null,
-      audioStream: null,
-      audioSink: null
+      callSession: null,
+      audioStream: null
     }
     this.channels.push(channel)
   },
   enableRecording: function(recording){
+    console.log("enableRecording", recording)
     for (var i=0; i<this.channels.length; i++){
       this.channels[i].doRecording = recording
       var date = new Date().toISOString()

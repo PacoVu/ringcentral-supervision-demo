@@ -2,15 +2,18 @@ const server = require('./index')
 const WS = require('ws')
 const request = require('request')
 const TranslatorV3 = require('ibm-watson/language-translator/v3');
-const NLUnderstandingV1 = require("ibm-watson/natural-language-understanding/v1.js")
-//const { IamAuthenticator } = require('ibm-watson/auth');
+const NLUnderstandingV1 = require("ibm-watson/natural-language-understanding/v1")
+const { IamAuthenticator } = require('ibm-watson/auth');
 
 var fiftynineMinute = 59
+var english_language_model = 'en-US_NarrowbandModel'
+var eng_wsURI = '';
+
 
 getWatsonToken()
+
 setInterval(function(){
   fiftynineMinute--
-  //console.log("refresh watson token in " + fiftynineMinute + " mins")
   if (fiftynineMinute <= 1){
     getWatsonToken()
     fiftynineMinute = 59
@@ -18,19 +21,19 @@ setInterval(function(){
   }
 }, 60000)
 
-var english_language_model = 'en-US_NarrowbandModel'
-
-var eng_wsURI = '';
-
 function getWatsonToken(){
-  const wsURI = `wss://api.us-south.speech-to-text.watson.cloud.ibm.com/instances/${process.env.INSTANCE_ID}/v1/recognize?access_token=`
-  request.post("https://iam.cloud.ibm.com/identity/token", {form:
+  const wsURI = `wss://api.us-south.speech-to-text.watson.cloud.ibm.com/instances/${process.env.STT_INSTANCE_ID}/v1/recognize?access_token=`
+  console.log(wsURI)
+  request.post("https://iam.cloud.ibm.com/identity/token", {
+    form:
       { grant_type:'urn:ibm:params:oauth:grant-type:apikey',
         apikey: process.env.WATSON_SPEECH2TEXT_API_KEY
-      }}, function(error, response, body) {
-        var jsonObj = JSON.parse(body)
-        eng_wsURI = wsURI + jsonObj.access_token + '&model=en-US_NarrowbandModel'
-  });
+      }
+    },
+    function(error, response, body) {
+      var jsonObj = JSON.parse(body)
+      eng_wsURI = wsURI + jsonObj.access_token + '&model=en-US_NarrowbandModel'
+    });
 }
 
 //
@@ -39,29 +42,25 @@ function WatsonEngine(speakerName, speakerId) {
   this.ws = null
   this.speakerId = speakerId
   this.NLUnderstanding = undefined
-  /*
+
   this.NLUnderstanding = new NLUnderstandingV1({
-
-    version: '2021-08-01',
-    iam_apikey: process.env.WATSON_NLU_API_KEY,
-    url: 'https://gateway.watsonplatform.net/natural-language-understanding/api'
-
-    //
-    version: '2021-08-01',
+    version: '2022-04-07',
     authenticator: new IamAuthenticator({
       apikey: process.env.WATSON_NLU_API_KEY,
     }),
-    serviceUrl: 'https://api.us-east.natural-language-understanding.watson.cloud.ibm.com',
-    //
+    serviceUrl: `https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/${process.env.NLU_INSTANCE_ID}`,
   });
-  */
-  /*
+
+
   this.translator = new TranslatorV3({
     version: '2018-05-01',
-    iam_apikey: process.env.WATSON_LANGUAGE_TRANSLATION_API_KEY,
-    url: 'https://gateway.watsonplatform.net/language-translator/api'
+    authenticator: new IamAuthenticator({
+      apikey: process.env.WATSON_LANGUAGE_TRANSLATION_API_KEY,
+    }),
+    serviceUrl: `https://api.us-south.language-translator.watson.cloud.ibm.com/instances/${process.env.LT_INSTANCE_ID}`,
   });
-  */
+
+
   this.sentimentScore = 0
   this.sentimentCount = 1
 
@@ -101,13 +100,14 @@ WatsonEngine.prototype = {
     this.ws = new WS(eng_wsURI);
     var configs = {
       'action': 'start',
-      'content-type': `audio/l16;rate=${sampleRate};channels=1`,
+      'content-type': `audio/mulaw;rate=${sampleRate};channels=1`,
       'timestamps': false,
       'interim_results': true,
       'inactivity_timeout': -1,
       'smart_formatting': true,
       'speaker_labels': false
     };
+
     var thisClass = this
     this.ws.onopen = function(evt) {
       console.log("Watson Socket open")
@@ -116,14 +116,14 @@ WatsonEngine.prototype = {
     };
 
     this.ws.onclose = function(data) {
-      console.log("Watson Socket closed. NEED TO NOTIFY SUPERVISION ENGINE!")
+      console.log("Watson Socket closed.")
     };
     this.ws.onconnection = function(evt) {
-      console.log("Watson Socket connect")
+      console.log("Watson Socket connected.")
     };
 
     this.ws.onerror = function(evt) {
-      console.log("Watson Socket error")
+      console.log("Watson Socket error.")
       console.log(evt)
       callback(evt, "")
     };
@@ -198,12 +198,12 @@ WatsonEngine.prototype = {
   translate: function(text, callback){
     var translateParams = {
       text: text,
-      model_id: 'en-es',
+      modelId: 'en-es',
     };
 
     this.translator.translate(translateParams)
       .then(translationResult => {
-        callback(null, translationResult.translations[0].translation)
+        callback(null, translationResult.result.translations[0].translation)
       })
       .catch(err => {
         console.log('error:', err);
@@ -221,41 +221,43 @@ WatsonEngine.prototype = {
         }
       }
     }
+    //console.log(parameters)
     var thisClass = this
+
     this.NLUnderstanding.analyze(parameters)
       .then(analysisResults => {
-          if (analysisResults.keywords.length > 0){
-            for (var keyword of analysisResults.keywords){
-              if (keyword.hasOwnProperty("sentiment")){
-                thisClass.transcript.sentenceSentimentScore = keyword.sentiment.score
-                thisClass.sentimentScore += keyword.sentiment.score
-                var scaled = Math.floor((thisClass.sentimentScore / thisClass.sentimentCount) * 100)
-                if (scaled > 0){
-                  thisClass.transcript.analysis.sentimentScore = Math.ceil((scaled / 2) + 50)
-                }else{
-                  thisClass.transcript.analysis.sentimentScore = Math.ceil(scaled / 2) * -1
+          if (analysisResults.result.keywords.length > 0){
+              for (var keyword of analysisResults.result.keywords){
+                if (keyword.hasOwnProperty("sentiment")){
+                  thisClass.transcript.sentenceSentimentScore = keyword.sentiment.score
+                  thisClass.sentimentScore += keyword.sentiment.score
+                  var scaled = Math.floor((thisClass.sentimentScore / thisClass.sentimentCount) * 100)
+                  if (scaled > 0){
+                    thisClass.transcript.analysis.sentimentScore = Math.ceil((scaled / 2) + 50)
+                  }else{
+                    thisClass.transcript.analysis.sentimentScore = Math.ceil(scaled / 2) * -1
+                  }
+                  thisClass.sentimentCount++
                 }
-                thisClass.sentimentCount++
+                if (keyword.hasOwnProperty('emotion')){
+                  thisClass.sadnessScore += keyword.emotion.sadness
+                  thisClass.joyScore += keyword.emotion.joy
+                  thisClass.fearScore += keyword.emotion.fear
+                  thisClass.disgustScore += keyword.emotion.disgust
+                  thisClass.angerScore += keyword.emotion.anger
+                  thisClass.transcript.analysis.sadnessScore = Math.floor((thisClass.sadnessScore / thisClass.emotionCount) * 100)
+                  thisClass.transcript.analysis.joyScore = Math.floor((thisClass.joyScore / thisClass.emotionCount) * 100)
+                  thisClass.transcript.analysis.fearScore = Math.floor((thisClass.fearScore / thisClass.emotionCount) * 100)
+                  thisClass.transcript.analysis.disgustScore = Math.floor((thisClass.disgustScore / thisClass.emotionCount) * 100)
+                  thisClass.transcript.analysis.angerScore = Math.floor((thisClass.angerScore / thisClass.emotionCount) * 100)
+                  thisClass.emotionCount++
+                }
               }
-              if (keyword.hasOwnProperty('emotion')){
-                thisClass.sadnessScore += keyword.emotion.sadness
-                thisClass.joyScore += keyword.emotion.joy
-                thisClass.fearScore += keyword.emotion.fear
-                thisClass.disgustScore += keyword.emotion.disgust
-                thisClass.angerScore += keyword.emotion.anger
-                thisClass.transcript.analysis.sadnessScore = Math.floor((thisClass.sadnessScore / thisClass.emotionCount) * 100)
-                thisClass.transcript.analysis.joyScore = Math.floor((thisClass.joyScore / thisClass.emotionCount) * 100)
-                thisClass.transcript.analysis.fearScore = Math.floor((thisClass.fearScore / thisClass.emotionCount) * 100)
-                thisClass.transcript.analysis.disgustScore = Math.floor((thisClass.disgustScore / thisClass.emotionCount) * 100)
-                thisClass.transcript.analysis.angerScore = Math.floor((thisClass.angerScore / thisClass.emotionCount) * 100)
-                thisClass.emotionCount++
-              }
-            }
           }
           callback(null, "")
       })
       .catch(err => {
-          console.log('error:', err);
+          console.log('error!');
           callback(err.message, "")
       });
   }

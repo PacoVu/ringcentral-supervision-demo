@@ -1,29 +1,28 @@
-PORT=5000
+PORT=3004
 
 RINGCENTRAL_SERVER_URL=https://platform.devtest.ringcentral.com
 RINGCENTRAL_CLIENT_ID=Your_App_Client_Id
 RINGCENTRAL_CLIENT_SECRET=Your_App_client_Secret
 
-RINGCENTRAL_USERNAME=Your_Supervisor_Username
-RINGCENTRAL_EXTENSION=Your_Supervisor_Extension_Number
-RINGCENTRAL_PASSWORD=Your_Supervisor_Password
+RINGCENTRAL_JWT=Supervisor-JWT
 
-AGENT_EXTENSION_NUMBER=Your_Agent_Extension_Number
-SUPERVISOR_GROUP_NAME=Demo Supervisor
+SIP_INFO_USERNAME=Sip-Device-Uusername
+SIP_INFO_PASSWORD=Sip-Device-Pwd
+SIP_INFO_AUTHORIZATION_ID=Sip-Auth-Id
+
+SUPERVISOR_GROUP_NAME=Your_Call_Monitoring_Group_Name
 
 NODE_TLS_REJECT_UNAUTHORIZED=0
 WEB_SOCKET_DEBUGGING=false
 WEB_RTC_DEBUGGING=false
 
 DELETE_EXISTING_WEBHOOK_SUBSCRIPTION=1
-DELIVERY_MODE_ADDRESS=https://XXXXXXX.ngrok.io/webhookcallback
+DELIVERY_MODE_ADDRESS=https://XXXX-XX-XX-XX-XX.ngrok-free.app/webhookcallback
 
 WATSON_SPEECH2TEXT_API_KEY=Your_Watson_Speech_To_Text_Api_Key
 WATSON_LANGUAGE_TRANSLATION_API_KEY=Your_Watson_Language_Translation_Api_Key
 WATSON_NLU_API_KEY=Your_Watson_NLU_Api_Key
 
-PGHOST=
-PGUSER=
-PGDATABASE=
-PGPASSWORD=
-PGPORT=
+STT_INSTANCE_ID=Your_SpeechToText_Instance_Id
+NLU_INSTANCE_ID=Your_NLU_Instance_Id
+LT_INSTANCE_ID=Your_LanguageTranslator_Instance_Id
