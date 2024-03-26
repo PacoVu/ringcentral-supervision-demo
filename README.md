@@ -60,9 +60,9 @@ Login your account at https://service.ringcentral.com and select the supervisor 
 - On the device page, click the *Set Up and Provision* button.
 - On the popup dialog, click the `Set up manually using SIP` link.
 - Copy the values of following fields and paste them in the .env keys accordingly.
-    * User name
-    * Password
-    * Authorization Id
+    * User name => SIP_INFO_USERNAME
+    * Password => SIP_INFO_PASSWORD
+    * Authorization Id => SIP_INFO_AUTHORIZATION_ID
 
 
 ## Run the demo
