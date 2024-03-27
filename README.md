@@ -11,7 +11,6 @@ Login your RingCentral developer account at https://developers.ringcentral.com a
 ```
 git clone https://github.com/PacoVu/ringcentral-supervision-demo
 cd ringcentral-supervision-demo
-$ npm install --save
 cp .env.sample .env
 ```
 
@@ -77,14 +76,14 @@ Copy the ngrok address and specify it in the .env as follow:
 
 `DELIVERY_MODE_ADDRESS=https://XXXXXXXX.ngrok.io/webhookcallback`
 
-Install Dependencies and Start the server
+Install the required dependencies and start the server process
 ```
 $ cd ringcentral-supervision-demo
 $ npm install --save
 $ node index.js
 ```
 
-Install Dependencies and Start the client
+Install the required dependencies and start the client process
 ```
 $ cd ringcentral-supervision-demo
 $ cd client
@@ -94,9 +93,15 @@ $ npm start
 
 ## Test
 
-Make an call to the monitored agent phone number, answer it and start a conversation.
+Make a call to the monitored agent phone number, answer it and start a conversation.
 
 Watch the conversation transcription on the client app.
+
+Enable the call recording to record the call. The demo call recording will record and save the audio tracks (agent and customer) in separate files. To play back the recorded audio, duplicate the terminal window where you run the server process and enter the following command:
+
+```
+$ play -b 8 -r 8000 -e mu-law [name-of-the-file].raw
+```
 
 Enable the translation to see conversation translated from English to Spanish.
 
